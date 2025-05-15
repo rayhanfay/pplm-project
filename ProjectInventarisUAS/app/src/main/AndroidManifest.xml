@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ProjectInventarisUAS"
+        tools:targetApi="31">
+        <activity
+            android:name=".ui.adminsection.borrowing.BorrowingDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.studentsection.borrowing.BorrowingTimerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.adminsection.borrowing.ScanReturnActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.studentsection.borrowing.BorrowingItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.studentsection.scancode.ScanCodeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.adminsection.item.ItemDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.adminsection.item.AddItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.studentsection.StudentSectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.adminsection.AdminSectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SplashScreenActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".utils.timer.TimerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
+
+        <receiver
+            android:name=".utils.ReminderReceiver"
+            android:exported="true" />
+    </application>
+
+</manifest>

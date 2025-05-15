@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.adminsection.item.ItemDetailActivity"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Tambah Item"
+        android:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item ID" />
+
+            <TextView
+                android:id="@+id/tvItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Name"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvItemtype"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Type"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvItemStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Status"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvItemDesciption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Description"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

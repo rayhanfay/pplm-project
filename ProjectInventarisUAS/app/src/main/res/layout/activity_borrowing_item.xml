@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.studentsection.borrowing.BorrowingItemActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Borrowing Item"
+        android:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <View
+                android:id="@+id/itemCodeInvisible"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/etItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Item Name"
+                android:enabled="false"
+                android:layout_marginTop="16dp" />
+
+            <AutoCompleteTextView
+                android:id="@+id/etAdminName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Admin Name"
+                android:layout_marginTop="16dp"
+                android:inputType="none" />
+
+            <EditText
+                android:id="@+id/etDateBorrowed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Date Borrowed"
+                android:layout_marginTop="16dp"
+                android:focusable="false" />
+
+            <LinearLayout
+                android:id="@+id/lyBorrowingHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/etStartHours"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Start Hours"
+                    android:focusable="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" to "
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="8dp" />
+
+                <EditText
+                    android:id="@+id/etEndHours"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="End Hours"
+                    android:focusable="false" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnBowrowItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Borrow Item" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

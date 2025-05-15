@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.adminsection.borrowing.BorrowingDetailActivity"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Borrowing Detail"
+        android:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvBorrowingCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Borrowing Code" />
+
+            <TextView
+                android:id="@+id/tvDateBorrowed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Date Borrowed"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/lyBorrowingHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/tvStartHours"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Start Hours" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" to "
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="8dp" />
+
+                <TextView
+                    android:id="@+id/tvEndHours"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="End Hours" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvStudentName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Student Name"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvAdminName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Admin Name"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvLastLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last Location"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvReturnTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Return Time"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

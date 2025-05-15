@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Tambah Item"
+        android:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/etItemId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Item ID"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/etItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Item Name"
+                android:layout_marginTop="16dp"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/etItemtype"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Item Type"
+                android:layout_marginTop="16dp"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/etItemStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Item Status"
+                android:layout_marginTop="16dp"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Save Item" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
