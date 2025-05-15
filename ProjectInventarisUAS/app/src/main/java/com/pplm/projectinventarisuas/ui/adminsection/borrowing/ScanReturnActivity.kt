@@ -14,7 +14,9 @@ import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import com.pplm.projectinventarisuas.data.model.Borrowing
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
+import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.databinding.ActivityScanCodeBinding
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import java.text.SimpleDateFormat
@@ -26,6 +28,7 @@ class ScanReturnActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScanCodeBinding
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val borrowingRepository = BorrowingRepository()
+    private val itemRepository = ItemRepository()
     private var isProcessing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,7 +132,7 @@ class ScanReturnActivity : AppCompatActivity() {
                         }
 
                         "On Borrow" -> {
-                            updateBorrowingStatusToReturned(it.borrowing_id, getCurrentTime())
+                            updateBorrowingStatusToReturned(it, getCurrentTime())
                         }
                     }
                 }
@@ -153,18 +156,33 @@ class ScanReturnActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateBorrowingStatusToReturned(borrowingId: String, returnTime: String) {
-        borrowingRepository.updateBorrowingStatus(borrowingId, "Returned", returnTime) { success ->
+    private fun updateBorrowingStatusToReturned(borrowing: Borrowing, returnTime: String) {
+        borrowingRepository.updateBorrowingStatus(
+            borrowing.borrowing_id,
+            "Returned",
+            returnTime
+        ) { success ->
             if (success) {
-                CustomDialog.alert(
-                    context = this,
-                    message = "Status berhasil diubah ke Returned",
-                    onDismiss = { finish() }
-                )
+                val itemId = borrowing.item_id
+                itemRepository.updateItemStatus(itemId, "Available") { itemUpdated ->
+                    if (itemUpdated) {
+                        CustomDialog.alert(
+                            context = this,
+                            message = "Barang berhasil dikembalikan dan status item diubah ke 'Available'",
+                            onDismiss = { finish() }
+                        )
+                    } else {
+                        CustomDialog.alert(
+                            context = this,
+                            message = "Status pengembalian berhasil, tapi gagal update status item",
+                            onDismiss = { finish() }
+                        )
+                    }
+                }
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Gagal update status",
+                    message = "Gagal update status peminjaman",
                     onDismiss = { isProcessing = false }
                 )
             }

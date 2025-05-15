@@ -49,4 +49,10 @@ class ItemRepository {
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
+
+    fun updateItemStatus(itemId: String, newStatus: String, callback: (Boolean) -> Unit) {
+        database.child("item").child(itemId).child("item_status").setValue(newStatus)
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
 }

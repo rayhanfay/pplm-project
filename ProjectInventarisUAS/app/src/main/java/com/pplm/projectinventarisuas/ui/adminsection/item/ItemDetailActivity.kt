@@ -31,11 +31,22 @@ class ItemDetailActivity : AppCompatActivity() {
         isEditMode = intent.getBooleanExtra("isEditMode", false)
 
         setupToolbar()
+        setupUserPermission()
         populateFields(item)
         setupButtons()
-        setEditMode(isEditMode)
     }
 
+    private fun setupUserPermission() {
+        val userRole = getUserRole()
+        if (userRole == "admin") {
+            setEditMode(isEditMode)
+            binding.btnEdit.visibility = View.VISIBLE
+        } else {
+            setEditMode(false)
+            binding.btnEdit.visibility = View.GONE
+            binding.btnSave.visibility = View.GONE
+        }
+    }
     private fun setupViewModel() {
         val factory = ViewModelFactory(ItemRepository(), BorrowingRepository(), UserRepository())
         viewModel = ViewModelProvider(this, factory)[ItemViewModel::class.java]
@@ -71,13 +82,21 @@ class ItemDetailActivity : AppCompatActivity() {
             )
 
             viewModel.updateItem(updatedItem)
-            CustomDialog.alert(
-                context = this,
-                message = "Item berhasil diperbarui",
-                onDismiss = { finish() }
-            )
-            setEditMode(false)
-            item = updatedItem
+            if (getUserRole() == "admin") {
+                viewModel.updateItem(updatedItem)
+                CustomDialog.alert(
+                    context = this,
+                    message = "Item berhasil diperbarui",
+                    onDismiss = { finish() }
+                )
+                setEditMode(false)
+                item = updatedItem
+            } else {
+                CustomDialog.alert(
+                    context = this,
+                    message = "Anda tidak memiliki izin untuk mengubah data"
+                )
+            }
         }
     }
 
@@ -91,5 +110,10 @@ class ItemDetailActivity : AppCompatActivity() {
 
         binding.btnEdit.visibility = if (enabled) View.GONE else View.VISIBLE
         binding.btnSave.visibility = if (enabled) View.VISIBLE else View.GONE
+    }
+
+    private fun getUserRole(): String {
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        return sharedPref.getString("userRole", "") ?: ""
     }
 }

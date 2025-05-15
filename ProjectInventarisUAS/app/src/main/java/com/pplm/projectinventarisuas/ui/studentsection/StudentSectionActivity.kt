@@ -96,4 +96,22 @@ class StudentSectionActivity : AppCompatActivity() {
             )
         }
     }
+
+    private fun setupSwipeToRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.loadItems()
+        }
+
+        viewModel.items.observe(this) { itemList ->
+            adapter = ItemAdapter(itemList) { selectedItem -> viewItem(selectedItem) }
+            binding.recyclerView.adapter = adapter
+            adapter.notifyDataSetChanged()
+            binding.swipeRefresh.isRefreshing = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadItems()
+    }
 }
