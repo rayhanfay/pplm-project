@@ -1,5 +1,6 @@
 package com.pplm.projectinventarisuas.data.repository
 
+import android.util.Log
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.User
 import java.security.MessageDigest
@@ -17,8 +18,10 @@ class UserRepository {
                 val adminPassword = admin.child("admin_password").value.toString()
 
                 if (username == adminUsername && hashedPassword == adminPassword) {
+                    val adminId = admin.child("admin_id").value.toString()
                     val adminName = admin.child("admin_name").value.toString()
-                    callback(User("admin", adminName))
+                    val isPasswordChanged = admin.child("isPasswordChanged").value as Boolean
+                    callback(User("admin", adminName, adminId, isPasswordChanged = isPasswordChanged))
                     return@addOnSuccessListener
                 }
             }
@@ -31,7 +34,15 @@ class UserRepository {
                     if (username == studentUsername && hashedPassword == studentPassword) {
                         val studentId = student.child("student_id").value.toString()
                         val studentName = student.child("student_name").value.toString()
-                        callback(User("student", studentName, studentId))
+                        val isPasswordChanged = student.child("isPasswordChanged").value as Boolean
+                        callback(
+                            User(
+                                "student",
+                                studentId,
+                                studentName,
+                                isPasswordChanged = isPasswordChanged
+                            )
+                        )
                         return@addOnSuccessListener
                     }
                 }
@@ -39,6 +50,33 @@ class UserRepository {
             }.addOnFailureListener { callback(null) }
 
         }.addOnFailureListener { callback(null) }
+    }
+
+    fun changePassword(
+        userId: String,
+        userRole: String,
+        newPassword: String,
+        callback: (Boolean) -> Unit
+    ) {
+        val hashedPassword = hashPassword(newPassword)
+        val userRef = database.child(userRole).child(userId)
+
+        when (userRole) {
+            "admin" -> {
+                userRef.child("admin_password").setValue(hashedPassword)
+            }
+
+            "student" -> {
+                userRef.child("student_password").setValue(hashedPassword)
+            }
+        }
+
+        userRef.child("isPasswordChanged").setValue(true).addOnCompleteListener { changeTask ->
+            callback(changeTask.isSuccessful)
+        }.addOnFailureListener { exception ->
+            println("Error updating password: ${exception.message}")
+            callback(false)
+        }
     }
 
     private fun hashPassword(password: String): String {

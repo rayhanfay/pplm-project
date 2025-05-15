@@ -27,6 +27,9 @@
         android:theme="@style/Theme.ProjectInventarisUAS"
         tools:targetApi="31">
         <activity
+            android:name=".ui.auth.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.adminsection.borrowing.BorrowingDetailActivity"
             android:exported="false" />
         <activity

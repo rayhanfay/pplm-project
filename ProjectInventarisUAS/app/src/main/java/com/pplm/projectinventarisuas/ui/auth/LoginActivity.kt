@@ -48,16 +48,29 @@ class LoginActivity : AppCompatActivity() {
                     apply()
                 }
 
-                val intent = when (user.role) {
-                    "admin" -> Intent(this, AdminSectionActivity::class.java)
-                    "student" -> Intent(this, StudentSectionActivity::class.java)
-                    else -> null
-                }
-
-                intent?.let {
-                    CustomDialog.alert(this, "Login berhasil sebagai ${user.role}") {
-                        startActivity(it)
+                if (!user.isPasswordChanged) {
+                    CustomDialog.alert(
+                        this,
+                        "Ini adalah login pertama Anda. Silakan ganti password terlebih dahulu."
+                    ) {
+                        val intent = Intent(this, ChangePasswordActivity::class.java)
+                        intent.putExtra("userId", user.id)
+                        intent.putExtra("userRole", user.role)
+                        startActivity(intent)
                         finish()
+                    }
+                } else {
+                    val intent = when (user.role) {
+                        "admin" -> Intent(this, AdminSectionActivity::class.java)
+                        "student" -> Intent(this, StudentSectionActivity::class.java)
+                        else -> null
+                    }
+
+                    intent?.let {
+                        CustomDialog.alert(this, "Login berhasil sebagai ${user.role}") {
+                            startActivity(it)
+                            finish()
+                        }
                     }
                 }
 
