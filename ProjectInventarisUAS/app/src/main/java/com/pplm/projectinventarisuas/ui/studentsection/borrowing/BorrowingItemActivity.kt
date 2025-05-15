@@ -8,32 +8,40 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.FirebaseDatabase
-import com.pplm.projectinventarisuas.data.model.Item
-import com.pplm.projectinventarisuas.databinding.ActivityBorrowingItemBinding
-import java.util.Calendar
+import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.edit
+import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
+import com.pplm.projectinventarisuas.data.repository.ItemRepository
+import com.pplm.projectinventarisuas.data.repository.UserRepository
+import com.pplm.projectinventarisuas.databinding.ActivityBorrowingItemBinding
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.generateBorrowingId
+import com.pplm.projectinventarisuas.utils.viewmodel.BorrowingViewModel
+import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
+import java.util.Calendar
 
 class BorrowingItemActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBorrowingItemBinding
-    private val database = FirebaseDatabase.getInstance().reference
+    private lateinit var borrowingViewModel: BorrowingViewModel
     private var itemCode: String? = null
-    private val adminIdMap = mutableMapOf<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBorrowingItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupViewModel()
+        setupObservers()
+
         setupToolbar()
         itemCode = intent.getStringExtra("ITEM_CODE")
-        itemCode?.let { fetchItemName(it) }
-        loadAdminNames()
+        itemCode?.let {
+            borrowingViewModel.fetchItemName(it)
+        }
+
+        borrowingViewModel.loadAdminMap()
         setupDatePicker()
         setupTimePickers()
 
@@ -44,36 +52,55 @@ class BorrowingItemActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupViewModel() {
+        val borrowingRepository = BorrowingRepository()
+        val itemRepository = ItemRepository()
+        val userRepository = UserRepository()
+
+        val factory = ViewModelFactory(itemRepository, borrowingRepository, userRepository)
+        borrowingViewModel = ViewModelProvider(this, factory)[BorrowingViewModel::class.java]
+    }
+
+    private fun setupObservers() {
+        borrowingViewModel.itemName.observe(this) { name ->
+            binding.etItemName.setText(name)
+        }
+
+        borrowingViewModel.adminMap.observe(this) { adminMap ->
+            setupAdminNameDropdown(adminMap.keys.toList())
+        }
+
+        borrowingViewModel.saveStatus.observe(this) { (success, message) ->
+            if (success) {
+                val borrowingId = borrowingViewModel.lastBorrowingId.value ?: return@observe
+
+                CustomDialog.alert(
+                    context = this,
+                    message = "Data peminjaman disimpan"
+                ) {
+                    val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
+                    prefs.edit { putString("activeBorrowingId", borrowingId) }
+
+                    startActivity(Intent(this, BorrowingTimerActivity::class.java).apply {
+                        putExtra("BORROWING_ID", borrowingId)
+                        putExtra("END_HOUR", binding.etEndHours.text.toString())
+                    })
+                }
+            } else {
+                CustomDialog.alert(
+                    context = this,
+                    message = "Gagal menyimpan: $message"
+                )
+                Log.e("SaveError", "Error saving: $message")
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
-    }
-
-    private fun fetchItemName(code: String) {
-        database.child("item").child(code).get().addOnSuccessListener {
-            val item = it.getValue(Item::class.java)
-            binding.etItemName.setText(item?.item_name ?: "Unknown")
-        }
-    }
-
-    private fun loadAdminNames() {
-        adminIdMap.clear()
-        database.child("admin").get().addOnSuccessListener { snapshot ->
-            val names = mutableListOf<String>()
-            snapshot.children.forEach { child ->
-                val name = child.child("admin_name").getValue(String::class.java)
-                val id = child.child("admin_id").getValue(String::class.java)
-                if (name != null && id != null) {
-                    names.add(name)
-                    adminIdMap[name] = id
-                }
-            }
-            setupAdminNameDropdown(names)
-        }.addOnFailureListener {
-            Toast.makeText(this, "Gagal load admin: ${it.message}", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun setupAdminNameDropdown(names: List<String>) {
@@ -86,7 +113,6 @@ class BorrowingItemActivity : AppCompatActivity() {
         binding.etAdminName.setOnClickListener {
             binding.etAdminName.showDropDown()
         }
-        Log.d("AdminMap", "Loaded Admin IDs: $adminIdMap")
     }
 
     @SuppressLint("SetTextI18n")
@@ -126,7 +152,7 @@ class BorrowingItemActivity : AppCompatActivity() {
             val studentId = sharedPref.getString("studentId", "") ?: ""
             val borrowingId = generateBorrowingId()
             val adminName = binding.etAdminName.text.toString()
-            val adminId = adminIdMap[adminName] ?: "UNKNOWN"
+            val adminId = borrowingViewModel.getAdminIdByName(adminName) ?: "UNKNOWN"
             val dateBorrowed = binding.etDateBorrowed.text.toString()
             val startHours = binding.etStartHours.text.toString()
             val endHours = binding.etEndHours.text.toString()
@@ -144,29 +170,7 @@ class BorrowingItemActivity : AppCompatActivity() {
                 "last_location" to "-"
             )
 
-            database.child("borrowing").child(borrowingId).setValue(borrowingData)
-                .addOnSuccessListener {
-                    CustomDialog.alert(
-                        context = this,
-                        message = "Data peminjaman disimpan"
-                    ) {
-                        val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
-                        prefs.edit { putString("activeBorrowingId", borrowingId) }
-
-                        startActivity(Intent(this, BorrowingTimerActivity::class.java).apply {
-                            putExtra("BORROWING_ID", borrowingId)
-                            putExtra("END_HOUR", endHours)
-                        })
-                    }
-
-                }
-                .addOnFailureListener {
-                    CustomDialog.alert(
-                        context = this,
-                        message = "Gagal menyimpan: ${it.message}"
-                    )
-                    Log.e("SaveError", "Error saving: ${it.message}")
-                }
+            borrowingViewModel.saveBorrowing(borrowingData, itemId)
         }
     }
 

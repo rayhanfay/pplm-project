@@ -7,6 +7,14 @@ class ItemRepository {
 
     private val database = DatabaseProvider.getDatabaseReference()
 
+    fun Item.toMap(): Map<String, Any> = mapOf(
+        "item_id" to item_id,
+        "item_name" to item_name,
+        "item_type" to item_type,
+        "item_status" to item_status,
+        "item_description" to item_description
+    )
+
     fun getItems(callback: (List<Item>) -> Unit) {
         database.child("item").get().addOnSuccessListener { snapshot ->
             val itemList = snapshot.children.mapNotNull { it.getValue(Item::class.java) }
@@ -23,7 +31,7 @@ class ItemRepository {
     }
 
     fun addItem(item: Item, callback: (Boolean) -> Unit) {
-        database.child("item").child(item.item_id).setValue(item)
+        database.child("item").child(item.item_id).setValue(item.toMap())
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
@@ -34,5 +42,11 @@ class ItemRepository {
         }.addOnFailureListener {
             callback(false)
         }
+    }
+
+    fun updateItem(item: Item, callback: (Boolean) -> Unit) {
+        database.child("item").child(item.item_id).setValue(item.toMap())
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
     }
 }

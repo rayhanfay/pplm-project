@@ -1,6 +1,5 @@
 package com.pplm.projectinventarisuas.data.repository
 
-import android.util.Log
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.User
 import java.security.MessageDigest
@@ -38,8 +37,8 @@ class UserRepository {
                         callback(
                             User(
                                 "student",
-                                studentId,
                                 studentName,
+                                studentId,
                                 isPasswordChanged = isPasswordChanged
                             )
                         )

@@ -3,6 +3,7 @@ package com.pplm.projectinventarisuas.data.repository
 import com.pplm.projectinventarisuas.data.dao.BorrowingDao
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.Borrowing
+import com.pplm.projectinventarisuas.data.model.Item
 
 class BorrowingRepository : BorrowingDao {
 
@@ -91,6 +92,49 @@ class BorrowingRepository : BorrowingDao {
         borrowingRef.child("return_time").setValue(returnTime)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
+    }
+
+    fun fetchItemById(itemId: String, callback: (Item?) -> Unit) {
+        database.child("item").child(itemId).get()
+            .addOnSuccessListener {
+                callback(it.getValue(Item::class.java))
+            }
+            .addOnFailureListener {
+                callback(null)
+            }
+    }
+
+    fun fetchAdminMap(callback: (Map<String, String>) -> Unit) {
+        database.child("admin").get().addOnSuccessListener { snapshot ->
+            val map = mutableMapOf<String, String>()
+            snapshot.children.forEach {
+                val name = it.child("admin_name").getValue(String::class.java)
+                val id = it.child("admin_id").getValue(String::class.java)
+                if (name != null && id != null) map[name] = id
+            }
+            callback(map)
+        }.addOnFailureListener {
+            callback(emptyMap())
+        }
+    }
+
+    fun saveBorrowingAndUpdateItem(
+        borrowingData: Map<String, String>,
+        itemId: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        val borrowingId = borrowingData["borrowing_id"] ?: return callback(false, "Invalid ID")
+        database.child("borrowing").child(borrowingId).setValue(borrowingData)
+            .addOnSuccessListener {
+                database.child("item").child(itemId).child("item_status").setValue("In Use")
+                    .addOnSuccessListener {
+                        callback(true, null)
+                    }
+                    .addOnFailureListener { callback(false, it.message) }
+            }
+            .addOnFailureListener {
+                callback(false, it.message)
+            }
     }
 
     override fun deleteBorrowing(borrowing: Borrowing, callback: (Boolean) -> Unit) {

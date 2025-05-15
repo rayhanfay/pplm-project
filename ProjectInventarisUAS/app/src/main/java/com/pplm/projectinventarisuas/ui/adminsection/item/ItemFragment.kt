@@ -84,12 +84,15 @@ class ItemFragment : Fragment() {
     private fun viewItem(item: Item) {
         val intent = Intent(requireContext(), ItemDetailActivity::class.java)
         intent.putExtra("item", item)
+        intent.putExtra("isEditMode", false)
         startActivity(intent)
     }
 
     private fun editItem(item: Item) {
-        Toast.makeText(requireContext(), "Edit: ${item.item_name}", Toast.LENGTH_SHORT).show()
-        // TODO: Navigate to AddItemActivity with edit mode
+        val intent = Intent(requireContext(), ItemDetailActivity::class.java)
+        intent.putExtra("item", item)
+        intent.putExtra("isEditMode", true)
+        startActivity(intent)
     }
 
     private fun deleteItem(item: Item) {

@@ -24,39 +24,59 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvItemId"
+            <EditText
+                android:id="@+id/etItemId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Item ID" />
+                android:text="Item ID"
+                android:enabled="false" />
 
-            <TextView
-                android:id="@+id/tvItemName"
+            <EditText
+                android:id="@+id/etItemName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Item Name"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:enabled="false" />
 
-            <TextView
-                android:id="@+id/tvItemtype"
+            <EditText
+                android:id="@+id/etItemType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Item Type"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:enabled="false" />
 
-            <TextView
-                android:id="@+id/tvItemStatus"
+            <EditText
+                android:id="@+id/etItemStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Item Status"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:enabled="false" />
 
-            <TextView
-                android:id="@+id/tvItemDesciption"
+            <EditText
+                android:id="@+id/etItemDesciption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Item Description"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:enabled="false" />
+
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Simpan"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

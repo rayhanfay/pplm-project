@@ -16,6 +16,14 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
         }
     }
 
+    fun updateItem(item: Item) {
+        repository.updateItem(item) { success ->
+            if (success) {
+                loadItems()
+            }
+        }
+    }
+
     fun deleteItem(item: Item) {
         repository.deleteItem(item) { success ->
             if (success) {

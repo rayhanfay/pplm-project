@@ -10,6 +10,18 @@ class BorrowingViewModel(private val repository: BorrowingRepository) : ViewMode
     private val _borrowingList = MutableLiveData<List<Borrowing>>()
     val borrowingList: LiveData<List<Borrowing>> get() = _borrowingList
 
+    private val _adminMap = MutableLiveData<Map<String, String>>()
+    val adminMap: LiveData<Map<String, String>> get() = _adminMap
+
+    private val _itemName = MutableLiveData<String>()
+    val itemName: LiveData<String> get() = _itemName
+
+    private val _saveStatus = MutableLiveData<Pair<Boolean, String?>>()
+    val saveStatus: LiveData<Pair<Boolean, String?>> get() = _saveStatus
+
+    private val _lastBorrowingId = MutableLiveData<String>()
+    val lastBorrowingId: LiveData<String> get() = _lastBorrowingId
+
     fun loadBorrowingData() {
         repository.getBorrowingData { list ->
             _borrowingList.value = list
@@ -22,5 +34,29 @@ class BorrowingViewModel(private val repository: BorrowingRepository) : ViewMode
                 loadBorrowingData()
             }
         }
+    }
+
+    fun loadAdminMap() {
+        repository.fetchAdminMap {
+            _adminMap.value = it
+        }
+    }
+
+    fun fetchItemName(itemId: String) {
+        repository.fetchItemById(itemId) {
+            _itemName.value = it?.item_name ?: "Unknown"
+        }
+    }
+
+    fun saveBorrowing(data: Map<String, String>, itemId: String) {
+        _lastBorrowingId.value = data["borrowing_id"]
+
+        repository.saveBorrowingAndUpdateItem(data, itemId) { success, message ->
+            _saveStatus.value = Pair(success, message)
+        }
+    }
+
+    fun getAdminIdByName(adminName: String): String? {
+        return adminMap.value?.get(adminName)
     }
 }
