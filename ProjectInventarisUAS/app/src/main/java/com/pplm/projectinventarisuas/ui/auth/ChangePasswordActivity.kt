@@ -1,10 +1,14 @@
 package com.pplm.projectinventarisuas.ui.auth
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
@@ -19,6 +23,7 @@ class ChangePasswordActivity : AppCompatActivity() {
     private lateinit var viewModel: UserViewModel
     private lateinit var userId: String
     private lateinit var userRole: String
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,61 @@ class ChangePasswordActivity : AppCompatActivity() {
         Log.e("Auth", "User  Role: $userRole")
 
         setupButtonSave()
+        setupShowPassword()
         setupObservers()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupShowPassword() {
+        binding.etNewPassword.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (binding.etNewPassword.right - binding.etNewPassword.compoundDrawables[2].bounds.width())) {
+                    isPasswordVisible = !isPasswordVisible
+                    if (isPasswordVisible) {
+                        binding.etNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        binding.etNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye, 0
+                        )
+                    } else {
+                        binding.etNewPassword.inputType =
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        binding.etNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye_closed, 0
+                        )
+                    }
+                    binding.etNewPassword.post {
+                        binding.etNewPassword.setSelection(binding.etNewPassword.text.length)
+                    }
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+
+        binding.etConfirmNewPassword.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (binding.etConfirmNewPassword.right - binding.etConfirmNewPassword.compoundDrawables[2].bounds.width())) {
+                    isPasswordVisible = !isPasswordVisible
+                    if (isPasswordVisible) {
+                        binding.etConfirmNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        binding.etConfirmNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye, 0
+                        )
+                    } else {
+                        binding.etConfirmNewPassword.inputType =
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        binding.etConfirmNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye_closed, 0
+                        )
+                    }
+                    binding.etConfirmNewPassword.post {
+                        binding.etConfirmNewPassword.setSelection(binding.etConfirmNewPassword.text.length)
+                    }
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
     }
 
     private fun setupButtonSave() {
