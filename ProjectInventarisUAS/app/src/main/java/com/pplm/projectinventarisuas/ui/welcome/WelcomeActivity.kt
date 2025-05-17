@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.ActivityWelcomeBinding
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.utils.adapter.WelcomePagerAdapter
@@ -18,9 +19,22 @@ class WelcomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val fragments = listOf(
-            WelcomeFragment.newInstance("First Welcome Message"),
-            WelcomeFragment.newInstance("Second Welcome Message"),
-            WelcomeFragment.newInstance("Third Welcome Message", isLast = true)
+            WelcomeFragment.newInstance(
+                title = "Selamat Datang di Aplikasi Peminjaman Inventaris Teknik Informatika!",
+                description = "Aplikasi ini memudahkan Anda untuk meminjam peralatan penting seperti infokus, proyektor, dan alat lainnya untuk menunjang kegiatan di jurusan kami.",
+                imageRes = R.drawable.onboarding_image1
+            ),
+            WelcomeFragment.newInstance(
+                title = "Pilih Barang yang Ingin Dipinjam !",
+                description = "Cari dan pilih barang yang Anda butuhkan, seperti infokus atau alat peraga lainnya, lalu tentukan waktu peminjaman yang sesuai.",
+                imageRes = R.drawable.onboarding_image2
+            ),
+            WelcomeFragment.newInstance(
+                title = "Konfirmasi dan Pengembalian Barang",
+                description = "Setelah selesai menggunakan barang, Anda dapat mengatur pengembalian sesuai jadwal dan pastikan barang kembali dalam kondisi baik.",
+                imageRes = R.drawable.onboarding_image3,
+                isLast = true
+            )
         )
 
         val adapter = WelcomePagerAdapter(this, fragments)

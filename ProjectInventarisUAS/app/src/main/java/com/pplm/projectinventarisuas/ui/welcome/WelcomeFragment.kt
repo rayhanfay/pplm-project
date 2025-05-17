@@ -21,8 +21,10 @@ class WelcomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        private const val ARG_TEXT = "text"
+        private const val ARG_TITLE = "title"
+        private const val ARG_DESCRIPTION = "description"
         private const val ARG_IS_LAST = "is_last"
+        private const val ARG_IMAGE_RES = "image_res"
         private const val REQUEST_CODE_PERMISSIONS = 100
 
         fun getRequiredPermissions(): Array<String> {
@@ -37,10 +39,12 @@ class WelcomeFragment : Fragment() {
             return basePermissions.toTypedArray()
         }
 
-        fun newInstance(text: String, isLast: Boolean = false): WelcomeFragment {
+        fun newInstance(title: String, description: String, imageRes: Int, isLast: Boolean = false): WelcomeFragment {
             return WelcomeFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_TEXT, text)
+                    putString(ARG_TITLE, title)
+                    putString(ARG_DESCRIPTION, description)
+                    putInt(ARG_IMAGE_RES, imageRes)
                     putBoolean(ARG_IS_LAST, isLast)
                 }
             }
@@ -58,10 +62,16 @@ class WelcomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val text = arguments?.getString(ARG_TEXT) ?: ""
+        val title = arguments?.getString(ARG_TITLE) ?: ""
+        val description = arguments?.getString(ARG_DESCRIPTION) ?: ""
+        val imageRes = arguments?.getInt(ARG_IMAGE_RES) ?: 0
         val isLast = arguments?.getBoolean(ARG_IS_LAST) ?: false
 
-        binding.tvWelcome.text = text
+        binding.tvTitle.text = title
+        if (imageRes !=0){
+            binding.ivWelcomeImage.setImageResource(imageRes)
+        }
+        binding.tvDescription.text = description
         binding.btnSkip.visibility = if (isLast) View.GONE else View.VISIBLE
         binding.btnFinish.visibility = if (isLast) View.VISIBLE else View.GONE
 
