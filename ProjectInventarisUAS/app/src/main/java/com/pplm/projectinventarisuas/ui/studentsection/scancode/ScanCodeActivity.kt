@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Size
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -25,6 +26,8 @@ class ScanCodeActivity : AppCompatActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private var isActivityStarted = false
     private val database = FirebaseDatabase.getInstance().reference
+    private var shutdownHandler: Handler? = null
+    private var shutdownRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,7 @@ class ScanCodeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestPermissionAndStartCamera()
+        startAutoCloseTimer()
     }
 
     private fun requestPermissionAndStartCamera() {
@@ -150,8 +154,21 @@ class ScanCodeActivity : AppCompatActivity() {
             })
     }
 
+    private fun startAutoCloseTimer() {
+        shutdownHandler = Handler(mainLooper)
+        shutdownRunnable = Runnable {
+            CustomDialog.alert(
+                context = this,
+                message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
+                onDismiss = { finish() }
+            )
+        }
+        shutdownHandler?.postDelayed(shutdownRunnable!!, 60000)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        shutdownHandler?.removeCallbacks(shutdownRunnable!!)
     }
 }

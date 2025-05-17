@@ -1,5 +1,6 @@
 package com.pplm.projectinventarisuas.ui.adminsection.item
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
+import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.ItemViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
@@ -45,8 +47,18 @@ class ItemDetailActivity : AppCompatActivity() {
             setEditMode(false)
             binding.btnEdit.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
+            binding.fabScanCode.visibility = View.VISIBLE
+        }
+
+        setupScanCodeButton()
+    }
+
+    private fun setupScanCodeButton() {
+        binding.fabScanCode.setOnClickListener {
+            startActivity(Intent(this, ScanCodeActivity::class.java))
         }
     }
+
     private fun setupViewModel() {
         val factory = ViewModelFactory(ItemRepository(), BorrowingRepository(), UserRepository())
         viewModel = ViewModelProvider(this, factory)[ItemViewModel::class.java]

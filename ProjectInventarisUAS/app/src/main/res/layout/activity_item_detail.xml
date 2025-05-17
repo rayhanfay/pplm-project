@@ -1,82 +1,91 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.adminsection.item.ItemDetailActivity"
-    android:orientation="vertical">
+    tools:context=".ui.adminsection.item.ItemDetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:title="Tambah Item"
-        android:titleTextColor="@android:color/white" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:title="Detail Item"
+            android:titleTextColor="@android:color/white" />
 
-            <EditText
-                android:id="@+id/etItemId"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Item ID"
-                android:enabled="false" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <EditText
-                android:id="@+id/etItemName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item Name"
-                android:layout_marginTop="16dp"
-                android:enabled="false" />
+                <EditText
+                    android:id="@+id/etItemId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false" />
 
-            <EditText
-                android:id="@+id/etItemType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item Type"
-                android:layout_marginTop="16dp"
-                android:enabled="false" />
+                <EditText
+                    android:id="@+id/etItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false" />
 
-            <EditText
-                android:id="@+id/etItemStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item Status"
-                android:layout_marginTop="16dp"
-                android:enabled="false" />
+                <EditText
+                    android:id="@+id/etItemType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false" />
 
-            <EditText
-                android:id="@+id/etItemDesciption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item Description"
-                android:layout_marginTop="16dp"
-                android:enabled="false" />
+                <EditText
+                    android:id="@+id/etItemStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false" />
 
-            <Button
-                android:id="@+id/btnEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Edit" />
+                <EditText
+                    android:id="@+id/etItemDesciption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:enabled="false" />
 
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Simpan"
-                android:visibility="gone" />
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+                <Button
+                    android:id="@+id/btnEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Edit" />
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Simpan"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabScanCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Pinjam"
+        android:src="@android:drawable/ic_menu_camera"
+        android:visibility="gone" />
+</FrameLayout>

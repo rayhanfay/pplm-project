@@ -6,6 +6,23 @@ import android.util.Log
 
 object CustomDialog {
 
+    private var loadingDialog: AlertDialog? = null
+
+    fun showLoading(context: Context, message: String = "Memproses...") {
+        if (loadingDialog?.isShowing == true) return
+
+        loadingDialog = AlertDialog.Builder(context)
+            .setCancelable(false)
+            .setMessage(message)
+            .create()
+        loadingDialog?.show()
+    }
+
+    fun dismissLoading() {
+        loadingDialog?.dismiss()
+        loadingDialog = null
+    }
+
     fun alert(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
         val dialog = AlertDialog.Builder(context)
             .setMessage(message)
