@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/white"
     tools:context=".ui.studentsection.StudentSectionActivity">
 
@@ -15,10 +15,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:gravity="center_vertical"
             android:background="@color/yellow"
-            android:orientation="horizontal">
+            android:padding="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Welcome Gugugaga"
+                android:text="Welcome User"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -34,30 +34,92 @@
                 android:id="@+id/btnLogout"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_lock"
                 android:background="@drawable/circle_white"
-                android:padding="8dp" />
+                android:padding="8dp"
+                android:src="@drawable/ic_lock" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Borrowing"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingHorizontal="8dp"
-            tools:listitem="@layout/item_borrowing_layout" />
+            android:layout_weight="1">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Item Type"
+                        android:paddingStart="16dp"
+                        android:paddingTop="12dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvItemSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginTop="4dp"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        tools:listitem="@layout/item_summary_card" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="12dp"
+                        android:paddingHorizontal="16dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.5"
+                            android:text="All Item"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black" />
+
+                        <EditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="160dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="2"
+                            android:hint="Search..."
+                            android:background="@drawable/rounded_edittext"
+                            android:paddingHorizontal="12dp"
+                            android:inputType="text"
+                            android:maxLines="1" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="8dp"
+                        android:paddingTop="8dp"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        tools:listitem="@layout/item_borrowing_layout" />
+                </LinearLayout>
+            </ScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
