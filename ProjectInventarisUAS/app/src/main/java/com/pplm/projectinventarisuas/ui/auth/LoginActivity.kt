@@ -2,6 +2,7 @@ package com.pplm.projectinventarisuas.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
@@ -44,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
                     putBoolean("isLoggedIn", true)
                     putString("userRole", user.role)
                     putString("userName", user.name)
+                    Log.e("Auth", "User Name: ${user.name}")
                     user.id?.let { putString("studentId", it) }
                     apply()
                 }
@@ -55,7 +57,9 @@ class LoginActivity : AppCompatActivity() {
                     ) {
                         val intent = Intent(this, ChangePasswordActivity::class.java)
                         intent.putExtra("userId", user.id)
+                        Log.e("Auth", "User ID: ${user.id}")
                         intent.putExtra("userRole", user.role)
+                        Log.e("Auth", "User Role: ${user.role}")
                         startActivity(intent)
                         finish()
                     }
@@ -67,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     intent?.let {
-                        CustomDialog.alert(this, "Login berhasil sebagai ${user.role}") {
+                        CustomDialog.alert(this, "Login berhasil") {
                             startActivity(it)
                             finish()
                         }

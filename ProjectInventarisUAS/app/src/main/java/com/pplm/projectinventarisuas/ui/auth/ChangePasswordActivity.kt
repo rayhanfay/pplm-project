@@ -30,9 +30,14 @@ class ChangePasswordActivity : AppCompatActivity() {
         userId = intent.getStringExtra("userId") ?: ""
         userRole = intent.getStringExtra("userRole") ?: ""
 
-        Log.e("Auth", "User ID: $userId")
-        Log.e("Auth", "User Role: $userRole")
+        Log.e("Auth", "User  ID: $userId")
+        Log.e("Auth", "User  Role: $userRole")
 
+        setupButtonSave()
+        setupObservers()
+    }
+
+    private fun setupButtonSave() {
         binding.btnSave.setOnClickListener {
             val newPassword = binding.etNewPassword.text.toString().trim()
             val confirmPassword = binding.etConfirmNewPassword.text.toString().trim()
@@ -42,10 +47,18 @@ class ChangePasswordActivity : AppCompatActivity() {
             } else if (newPassword != confirmPassword) {
                 CustomDialog.alert(this, "Passwords do not match")
             } else {
-                viewModel.changePassword(userId, userRole, newPassword)
+                viewModel.isPasswordSameAsCurrent(userId, userRole, newPassword) { isSame ->
+                    if (isSame) {
+                        CustomDialog.alert(this, "New password cannot be the same as the old password")
+                    } else {
+                        viewModel.changePassword(userId, userRole, newPassword)
+                    }
+                }
             }
         }
+    }
 
+    private fun setupObservers() {
         viewModel.passwordChangeResult.observe(this) { success ->
             if (success) {
                 CustomDialog.alert(this, "Password changed successfully") {

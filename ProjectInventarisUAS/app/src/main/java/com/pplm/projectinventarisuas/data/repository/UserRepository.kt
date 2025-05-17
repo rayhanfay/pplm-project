@@ -8,7 +8,7 @@ class UserRepository {
 
     private val database = DatabaseProvider.getDatabaseReference()
 
-    fun login(username: String, password: String, callback: (User?) -> Unit) {
+    fun login(username: String, password: String, callback: (User ?) -> Unit) {
         val hashedPassword = hashPassword(password)
 
         database.child("admin").get().addOnSuccessListener { adminSnapshot ->
@@ -75,6 +75,31 @@ class UserRepository {
         }.addOnFailureListener { exception ->
             println("Error updating password: ${exception.message}")
             callback(false)
+        }
+    }
+
+    fun fetchCurrentPassword(userId: String, userRole: String, callback: (String?) -> Unit) {
+        val userRef = database.child(userRole).child(userId)
+        userRef.get().addOnSuccessListener { snapshot ->
+            val currentPassword = if (userRole == "admin") {
+                snapshot.child("admin_password").value.toString()
+            } else {
+                snapshot.child("student_password").value.toString()
+            }
+            callback(currentPassword)
+        }.addOnFailureListener {
+            callback(null)
+        }
+    }
+
+    fun isPasswordSameAsCurrent(userId: String, userRole: String, newPassword: String, callback: (Boolean) -> Unit) {
+        fetchCurrentPassword(userId, userRole) { currentPassword ->
+            if (currentPassword != null) {
+                val hashedNewPassword = hashPassword(newPassword)
+                callback(hashedNewPassword == currentPassword)
+            } else {
+                callback(false)
+            }
         }
     }
 
