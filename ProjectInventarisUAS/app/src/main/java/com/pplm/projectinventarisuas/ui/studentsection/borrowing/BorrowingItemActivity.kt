@@ -15,6 +15,7 @@ import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.ActivityBorrowingItemBinding
+import com.pplm.projectinventarisuas.ui.studentsection.StudentSectionActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.generateBorrowingId
 import com.pplm.projectinventarisuas.utils.viewmodel.BorrowingViewModel
@@ -63,7 +64,19 @@ class BorrowingItemActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         borrowingViewModel.itemName.observe(this) { name ->
-            binding.etItemName.setText(name)
+            if (name == null || name == "UNKNOWN" || name.isEmpty()) {
+                CustomDialog.alert(
+                    context = this,
+                    message = "Item tidak ditemukan atau tidak tersedia"
+                ) {
+                    val intent = Intent(this, StudentSectionActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            } else {
+                binding.etItemName.setText(name)
+            }
         }
 
         borrowingViewModel.adminMap.observe(this) { adminMap ->
@@ -133,15 +146,45 @@ class BorrowingItemActivity : AppCompatActivity() {
 
     @SuppressLint("DefaultLocale")
     private fun setupTimePickers() {
-        val timeListener = { field: EditText ->
+        val timeListener = { field: EditText, isStartHour: Boolean ->
             val cal = Calendar.getInstance()
-            TimePickerDialog(this, { _, hour, minute ->
-                field.setText(String.format("%02d:%02d", hour, minute))
-            }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            TimePickerDialog(
+                this,
+                { _, hour, minute ->
+                    val totalMinutes = hour * 60 + minute
+                    val minMinutes = 7 * 60 + 30
+                    val maxMinutes = 18 * 60
+
+                    if (isStartHour) {
+                        if (totalMinutes in minMinutes..maxMinutes) {
+                            field.setText(String.format("%02d:%02d", hour, minute))
+                        } else {
+                            CustomDialog.alert(
+                                context = this,
+                                message = "Jam mulai hanya diperbolehkan antara 07:30 hingga 18:00"
+                            )
+                            field.setText("")
+                        }
+                    } else {
+                        if (totalMinutes in minMinutes..maxMinutes) {
+                            field.setText(String.format("%02d:%02d", hour, minute))
+                        } else {
+                            CustomDialog.alert(
+                                context = this,
+                                message = "Jam akhir hanya diperbolehkan antara 07:30 hingga 18:00"
+                            )
+                            field.setText("")
+                        }
+                    }
+                },
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                true
+            ).show()
         }
 
-        binding.etStartHours.setOnClickListener { timeListener(binding.etStartHours) }
-        binding.etEndHours.setOnClickListener { timeListener(binding.etEndHours) }
+        binding.etStartHours.setOnClickListener { timeListener(binding.etStartHours, true) }
+        binding.etEndHours.setOnClickListener { timeListener(binding.etEndHours, false) }
     }
 
     private fun saveBorrowingData() {
@@ -205,6 +248,42 @@ class BorrowingItemActivity : AppCompatActivity() {
 
         if (end.isEmpty()) {
             CustomDialog.alert(context = this, message = "Jam akhir harus diisi")
+            return false
+        }
+
+        val startParts = start.split(":")
+        val startHour = startParts.getOrNull(0)?.toIntOrNull()
+        val startMinute = startParts.getOrNull(1)?.toIntOrNull()
+        if (startHour == null || startMinute == null) {
+            CustomDialog.alert(context = this, message = "Jam mulai tidak valid")
+            return false
+        }
+
+        val startTotalMinutes = startHour * 60 + startMinute
+        val minMinutes = 7 * 60 + 30
+        val maxMinutes = 18 * 60
+
+        if (startTotalMinutes !in minMinutes..maxMinutes) {
+            CustomDialog.alert(context = this, message = "Jam mulai harus antara 07:30 hingga 18:00")
+            return false
+        }
+
+        val endParts = end.split(":")
+        val endHour = endParts.getOrNull(0)?.toIntOrNull()
+        val endMinute = endParts.getOrNull(1)?.toIntOrNull()
+        if (endHour == null || endMinute == null) {
+            CustomDialog.alert(context = this, message = "Jam akhir tidak valid")
+            return false
+        }
+
+        val endTotalMinutes = endHour * 60 + endMinute
+        if (endTotalMinutes !in minMinutes..maxMinutes) {
+            CustomDialog.alert(context = this, message = "Jam akhir harus antara 07:30 hingga 18:00")
+            return false
+        }
+
+        if (endTotalMinutes <= startTotalMinutes) {
+            CustomDialog.alert(context = this, message = "Jam akhir harus lebih dari jam mulai")
             return false
         }
 

@@ -28,6 +28,7 @@ class ScanCodeActivity : AppCompatActivity() {
     private val database = FirebaseDatabase.getInstance().reference
     private var shutdownHandler: Handler? = null
     private var shutdownRunnable: Runnable? = null
+    private var isDialogShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,24 +90,42 @@ class ScanCodeActivity : AppCompatActivity() {
                                 val rawValue = barcode.rawValue
                                 if (rawValue != null && !isActivityStarted) {
                                     isActivityStarted = true
-                                    checkExistingBorrowing(rawValue) { hasActiveBorrowing ->
-                                        if (hasActiveBorrowing) {
-                                            CustomDialog.alert(
-                                                context = this,
-                                                message = "Item sedang dipinjam dan belum dikembalikan",
-                                                onDismiss = {
-                                                    isActivityStarted = false
-                                                }
-                                            )
-                                        } else {
-                                            val intent = Intent(
-                                                this,
-                                                BorrowingItemActivity::class.java
-                                            ).apply {
-                                                putExtra("ITEM_CODE", rawValue)
+                                    checkItemExists(rawValue) { exists ->
+                                        if (!exists) {
+                                            if (!isDialogShowing) {
+                                                isDialogShowing = true
+                                                CustomDialog.alert(
+                                                    context = this,
+                                                    message = "Item dengan kode '$rawValue' tidak ditemukan.",
+                                                    onDismiss = {
+                                                        isDialogShowing = false
+                                                        isActivityStarted = false
+                                                    }
+                                                )
                                             }
-                                            startActivity(intent)
-                                            finish()
+                                            return@checkItemExists
+                                        }
+
+                                        checkExistingBorrowing(rawValue) { hasActiveBorrowing ->
+                                            if (hasActiveBorrowing) {
+                                                if (!isDialogShowing) {
+                                                    isDialogShowing = true
+                                                    CustomDialog.alert(
+                                                        context = this,
+                                                        message = "Item sedang dipinjam dan belum dikembalikan",
+                                                        onDismiss = {
+                                                            isDialogShowing = false
+                                                            isActivityStarted = false
+                                                        }
+                                                    )
+                                                }
+                                            } else {
+                                                val intent = Intent(this, BorrowingItemActivity::class.java).apply {
+                                                    putExtra("ITEM_CODE", rawValue)
+                                                }
+                                                startActivity(intent)
+                                                finish()
+                                            }
                                         }
                                     }
                                     break
@@ -114,10 +133,17 @@ class ScanCodeActivity : AppCompatActivity() {
                             }
                         }
                         .addOnFailureListener {
-                            CustomDialog.alert(
-                                context = this,
-                                message = "Gagal memproses gambar: ${it.message}"
-                            )
+                            if (!isDialogShowing) {
+                                isDialogShowing = true
+                                CustomDialog.alert(
+                                    context = this,
+                                    message = "Gagal memproses gambar: ${it.message}",
+                                    onDismiss = {
+                                        isDialogShowing = false
+                                        isActivityStarted = false
+                                    }
+                                )
+                            }
                         }
                         .addOnCompleteListener {
                             imageProxy.close()
@@ -134,6 +160,30 @@ class ScanCodeActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    private fun checkItemExists(itemId: String, onResult: (Boolean) -> Unit) {
+        database.child("item").child(itemId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    onResult(snapshot.exists())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    if (!isDialogShowing) {
+                        isDialogShowing = true
+                        CustomDialog.alert(
+                            context = this@ScanCodeActivity,
+                            message = "Gagal memeriksa item: ${error.message}",
+                            onDismiss = {
+                                isDialogShowing = false
+                                isActivityStarted = false
+                            }
+                        )
+                    }
+                    onResult(false)
+                }
+            })
+    }
+
     private fun checkExistingBorrowing(itemId: String, onComplete: (Boolean) -> Unit) {
         database.child("borrowing").orderByChild("item_id").equalTo(itemId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -145,10 +195,17 @@ class ScanCodeActivity : AppCompatActivity() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    CustomDialog.alert(
-                        context = this@ScanCodeActivity,
-                        message = "Gagal mengecek peminjaman: ${error.message}"
-                    )
+                    if (!isDialogShowing) {
+                        isDialogShowing = true
+                        CustomDialog.alert(
+                            context = this@ScanCodeActivity,
+                            message = "Gagal mengecek peminjaman: ${error.message}",
+                            onDismiss = {
+                                isDialogShowing = false
+                                isActivityStarted = false
+                            }
+                        )
+                    }
                     onComplete(false)
                 }
             })
@@ -157,11 +214,17 @@ class ScanCodeActivity : AppCompatActivity() {
     private fun startAutoCloseTimer() {
         shutdownHandler = Handler(mainLooper)
         shutdownRunnable = Runnable {
-            CustomDialog.alert(
-                context = this,
-                message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
-                onDismiss = { finish() }
-            )
+            if (!isDialogShowing) {
+                isDialogShowing = true
+                CustomDialog.alert(
+                    context = this,
+                    message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
+                    onDismiss = {
+                        isDialogShowing = false
+                        finish()
+                    }
+                )
+            }
         }
         shutdownHandler?.postDelayed(shutdownRunnable!!, 60000)
     }

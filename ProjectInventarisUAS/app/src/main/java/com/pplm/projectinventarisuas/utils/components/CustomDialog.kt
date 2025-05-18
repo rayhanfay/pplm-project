@@ -3,6 +3,12 @@ package com.pplm.projectinventarisuas.utils.components
 import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
+import com.pplm.projectinventarisuas.R
 
 object CustomDialog {
 
@@ -11,9 +17,13 @@ object CustomDialog {
     fun showLoading(context: Context, message: String = "Memproses...") {
         if (loadingDialog?.isShowing == true) return
 
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(R.layout.dialog_loading, null)
+        view.findViewById<TextView>(R.id.tvMessage).text = message
+
         loadingDialog = AlertDialog.Builder(context)
+            .setView(view)
             .setCancelable(false)
-            .setMessage(message)
             .create()
         loadingDialog?.show()
     }
@@ -24,16 +34,20 @@ object CustomDialog {
     }
 
     fun alert(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert, null)
+        view.findViewById<TextView>(R.id.tvMessage).text = message
+
         val dialog = AlertDialog.Builder(context)
-            .setMessage(message)
+            .setView(view)
             .setCancelable(false)
-            .setPositiveButton("OK") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                onDismiss?.invoke()
-            }
             .create()
+
+        view.findViewById<Button>(R.id.btnOk).setOnClickListener {
+            dialog.dismiss()
+            onDismiss?.invoke()
+        }
+
         dialog.show()
-        Log.d("CustomDialog", "Dialog displayed")
     }
 
     fun confirm(
@@ -42,19 +56,25 @@ object CustomDialog {
         onConfirm: () -> Unit,
         onCancel: (() -> Unit)? = null
     ) {
-        AlertDialog.Builder(context)
-            .setMessage(message)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
+        view.findViewById<TextView>(R.id.tvMessage).text = message
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(view)
             .setCancelable(false)
-            .setPositiveButton("Ya") { dialog, _ ->
-                dialog.dismiss()
-                onConfirm()
-            }
-            .setNegativeButton("Tidak") { dialog, _ ->
-                dialog.dismiss()
-                onCancel?.invoke()
-            }
             .create()
-            .show()
+
+        view.findViewById<Button>(R.id.btnYes).setOnClickListener {
+            dialog.dismiss()
+            onConfirm()
+        }
+
+        view.findViewById<Button>(R.id.btnNo).setOnClickListener {
+            dialog.dismiss()
+            onCancel?.invoke()
+        }
+
+        dialog.show()
     }
 
     fun options(
@@ -63,12 +83,23 @@ object CustomDialog {
         options: List<String>,
         onSelect: (Int) -> Unit
     ) {
-        AlertDialog.Builder(context)
-            .setTitle(title)
-            .setItems(options.toTypedArray()) { _, which ->
-                onSelect(which)
-            }
-            .setNegativeButton("Batal", null)
-            .show()
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_options, null)
+        view.findViewById<TextView>(R.id.tvTitle).text = title
+
+        val listView = view.findViewById<ListView>(R.id.listOptions)
+        val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, options)
+        listView.adapter = adapter
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(view)
+            .setCancelable(true)
+            .create()
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            dialog.dismiss()
+            onSelect(position)
+        }
+
+        dialog.show()
     }
 }
