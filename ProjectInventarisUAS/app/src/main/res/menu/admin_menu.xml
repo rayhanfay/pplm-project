@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/borrowing_menu"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_borrowing"
         android:title="Borrowing"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/item_menu"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/ic_add_list"
         android:title="Item"
         app:showAsAction="ifRoom" />
 
