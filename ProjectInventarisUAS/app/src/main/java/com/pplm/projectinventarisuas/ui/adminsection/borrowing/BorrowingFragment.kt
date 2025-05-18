@@ -80,15 +80,24 @@ class BorrowingFragment : Fragment() {
     }
 
     private fun deleteBorrowing(borrowing: Borrowing) {
-        viewModel.deleteBorrowing(borrowing)
-        if (!isDialogVisible) {
-            isDialogVisible = true
-            CustomDialog.alert(
-                context = requireContext(),
-                message = "Borrowing deleted successfully",
-                onDismiss = { isDialogVisible = false }
-            )
-        }
+        if (isDialogVisible) return
+
+        isDialogVisible = true
+        CustomDialog.confirm(
+            context = requireContext(),
+            message = "Yakin ingin menghapus peminjaman ini?",
+            onConfirm = {
+                viewModel.deleteBorrowing(borrowing)
+                CustomDialog.alert(
+                    context = requireContext(),
+                    message = "Peminjaman berhasil dihapus",
+                    onDismiss = { isDialogVisible = false }
+                )
+            },
+            onCancel = {
+                isDialogVisible = false
+            }
+        )
     }
 
     @SuppressLint("NotifyDataSetChanged")

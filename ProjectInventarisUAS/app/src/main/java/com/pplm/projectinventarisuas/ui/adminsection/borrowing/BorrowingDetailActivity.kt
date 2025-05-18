@@ -24,6 +24,8 @@ class BorrowingDetailActivity : AppCompatActivity() {
 
         val item = intent.getParcelableExtra<Borrowing>("borrowing")
         item?.let {
+            supportActionBar?.title = it.borrowing_id
+
             binding.tvBorrowingCode.text = "Borrowing Code: ${it.borrowing_id}"
             binding.tvDateBorrowed.text = "Date Borrowed: ${it.date_borrowed}"
             binding.tvStartHours.text = "Start Hours: ${it.start_hour}"

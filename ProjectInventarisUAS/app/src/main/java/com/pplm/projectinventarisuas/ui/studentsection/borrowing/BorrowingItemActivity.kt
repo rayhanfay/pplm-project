@@ -76,6 +76,7 @@ class BorrowingItemActivity : AppCompatActivity() {
                 }
             } else {
                 binding.etItemName.setText(name)
+                supportActionBar?.title = name
             }
         }
 
