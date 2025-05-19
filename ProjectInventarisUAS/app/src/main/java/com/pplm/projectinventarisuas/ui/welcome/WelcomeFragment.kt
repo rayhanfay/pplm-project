@@ -1,6 +1,8 @@
 package com.pplm.projectinventarisuas.ui.welcome
 
 import android.Manifest
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -20,6 +22,9 @@ class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
 
+    private var currentPermissionIndex = 0
+    private val permissionList by lazy { getRequiredPermissions().toList() }
+
     companion object {
         private const val ARG_TITLE = "title"
         private const val ARG_DESCRIPTION = "description"
@@ -33,6 +38,9 @@ class WelcomeFragment : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                basePermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 basePermissions.add(Manifest.permission.POST_NOTIFICATIONS)
             }
@@ -68,7 +76,7 @@ class WelcomeFragment : Fragment() {
         val isLast = arguments?.getBoolean(ARG_IS_LAST) ?: false
 
         binding.tvTitle.text = title
-        if (imageRes !=0){
+        if (imageRes != 0) {
             binding.ivWelcomeImage.setImageResource(imageRes)
         }
         binding.tvDescription.text = description
@@ -84,10 +92,12 @@ class WelcomeFragment : Fragment() {
         }
 
         binding.btnFinish.setOnClickListener {
+            checkExactAlarmPermission()
             if (allPermissionsGranted()) {
                 (requireActivity() as WelcomeActivity).goToLogin()
             } else {
-                requestPermissions(getRequiredPermissions(), REQUEST_CODE_PERMISSIONS)
+                currentPermissionIndex = 0
+                requestNextPermission()
             }
         }
     }
@@ -101,6 +111,35 @@ class WelcomeFragment : Fragment() {
         }
     }
 
+    private fun checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent().apply {
+                    action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                }
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun requestNextPermission() {
+        if (currentPermissionIndex >= permissionList.size) {
+            if (allPermissionsGranted()) {
+                (requireActivity() as WelcomeActivity).goToLogin()
+            }
+            return
+        }
+
+        val permission = permissionList[currentPermissionIndex]
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            currentPermissionIndex++
+            requestNextPermission()
+        } else {
+            requestPermissions(arrayOf(permission), REQUEST_CODE_PERMISSIONS)
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -109,25 +148,26 @@ class WelcomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                (requireActivity() as WelcomeActivity).goToLogin()
-            } else {
-                val shouldShowRationale = permissions.any {
-                    shouldShowRequestPermissionRationale(it)
-                }
+            val permission = permissions.firstOrNull() ?: return
+            val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
 
+            if (granted) {
+                currentPermissionIndex++
+                requestNextPermission()
+            } else {
+                val shouldShowRationale = shouldShowRequestPermissionRationale(permission)
                 if (shouldShowRationale) {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Aplikasi membutuhkan izin untuk melanjutkan. Silakan berikan izin untuk dapat menggunakan aplikasi.",
+                        message = "Aplikasi membutuhkan izin ${permission.substringAfterLast('.')} untuk melanjutkan.",
                         onDismiss = {
-                            requestPermissions(getRequiredPermissions(), REQUEST_CODE_PERMISSIONS)
+                            requestPermissions(arrayOf(permission), REQUEST_CODE_PERMISSIONS)
                         }
                     )
                 } else {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Izin diperlukan agar aplikasi dapat berjalan dengan baik. Anda dapat mengaktifkannya secara manual di Pengaturan.",
+                        message = "Izin ${permission.substringAfterLast('.')} dibutuhkan agar aplikasi berjalan dengan baik. Aktifkan secara manual di Pengaturan.",
                         onDismiss = {
                             val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)

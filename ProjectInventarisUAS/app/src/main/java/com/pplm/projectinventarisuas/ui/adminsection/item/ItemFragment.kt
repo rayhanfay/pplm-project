@@ -95,15 +95,19 @@ class ItemFragment : Fragment() {
         CustomDialog.options(
             context = requireContext(),
             title = "Pilih Aksi",
-            options = listOf("View Item", "Edit Item", "Delete Item")
-        ) { which ->
-            isDialogVisible = false
-            when (which) {
-                0 -> viewItem(item)
-                1 -> editItem(item)
-                2 -> deleteItem(item)
+            onView = {
+                isDialogVisible = false
+                viewItem(item)
+            },
+            onEdit = {
+                isDialogVisible = false
+                editItem(item)
+            },
+            onDelete = {
+                isDialogVisible = false
+                deleteItem(item)
             }
-        }
+        )
     }
 
     private fun viewItem(item: Item) {

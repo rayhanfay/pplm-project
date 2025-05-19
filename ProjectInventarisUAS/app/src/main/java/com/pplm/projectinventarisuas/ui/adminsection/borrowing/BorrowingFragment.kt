@@ -52,19 +52,25 @@ class BorrowingFragment : Fragment() {
     }
 
     private fun showBorrowingOptionsDialog(borrowing: Borrowing) {
-        val options = arrayOf("View Borrowing", "Edit Borrowing", "Delete Borrowing")
+        if (isDialogVisible) return
 
+        isDialogVisible = true
         CustomDialog.options(
             context = requireContext(),
             title = "Pilih Aksi",
-            options = listOf("View Borrowing", "Edit Borrowing", "Delete Borrowing")
-        ) { which ->
-            when (which) {
-                0 -> viewBorrowing(borrowing)
-                1 -> editBorrowing(borrowing)
-                2 -> deleteBorrowing(borrowing)
+            onView = {
+                isDialogVisible = false
+                viewBorrowing(borrowing)
+            },
+            onEdit = {
+                isDialogVisible = false
+                editBorrowing(borrowing)
+            },
+            onDelete = {
+                isDialogVisible = false
+                deleteBorrowing(borrowing)
             }
-        }
+        )
     }
 
     private fun viewBorrowing(borrowing: Borrowing) {

@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -18,7 +19,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -53,7 +57,10 @@ class ReminderReceiver : BroadcastReceiver() {
     companion object {
         private const val CHANNEL_ID = "reminder_channel"
         private const val CHANNEL_NAME = "Reminder Notifications"
+        private const val RADAR_CHANNEL_ID = "radar_channel" // Channel baru untuk radar
+        private const val RADAR_CHANNEL_NAME = "Location Alerts" // Nama channel radar
         private const val NOTIFICATION_ID = 1001
+        private const val RADAR_NOTIFICATION_ID = 2001 // ID berbeda untuk notifikasi radar
         private const val TAG = "BorrowingLog"
     }
 
@@ -68,6 +75,10 @@ class ReminderReceiver : BroadcastReceiver() {
                 Log.d(TAG, "Calling sendLastLocation()")
                 sendLastLocation(context, borrowingId)
             }
+            "OUT_OF_RANGE_ACTION" -> {
+                Log.d(TAG, "User is outside permitted radius")
+                showOutOfRangeNotification(context, borrowingId)
+            }
             else -> {
                 Log.d(TAG, "Calling showReminderNotification()")
                 showReminderNotification(context)
@@ -78,7 +89,7 @@ class ReminderReceiver : BroadcastReceiver() {
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showReminderNotification(context: Context) {
         Log.d(TAG, "Showing reminder notification")
-        createNotificationChannel(context)
+        createNotificationChannel(context, CHANNEL_ID, CHANNEL_NAME, "Channel for reminder notifications")
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
@@ -92,18 +103,62 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun createNotificationChannel(context: Context) {
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showOutOfRangeNotification(context: Context, borrowingId: String?) {
+        if (borrowingId == null) {
+            Log.w(TAG, "showOutOfRangeNotification: borrowingId is null")
+            return
+        }
+
+        Log.d(TAG, "Showing out of range notification")
+        createNotificationChannel(context, RADAR_CHANNEL_ID, RADAR_CHANNEL_NAME,
+            "Channel for location alert notifications")
+
+        val notificationIntent = Intent(context, Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity")).apply {
+            putExtra("BORROWING_ID", borrowingId)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(context, RADAR_CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setContentTitle("Peringatan Lokasi")
+            .setContentText("Anda berada di luar area yang diperbolehkan. Harap kembali ke lokasi yang ditentukan.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(false)
+            .setOngoing(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            notify(RADAR_NOTIFICATION_ID, builder.build())
+        }
+
+        updateOutOfRangeStatus(borrowingId, true)
+    }
+
+    private fun updateOutOfRangeStatus(borrowingId: String, isOutOfRange: Boolean) {
+        val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
+            .child(borrowingId)
+        borrowingRef.child("out_of_range").setValue(isOutOfRange)
+        Log.d(TAG, "Updated out_of_range status to $isOutOfRange for borrowingId: $borrowingId")
+    }
+
+    private fun createNotificationChannel(context: Context, channelId: String, channelName: String, description: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
+                channelId,
+                channelName,
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Channel for reminder notifications"
+                this.description = description
             }
             val manager = context.getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
-            Log.d(TAG, "Notification channel created")
+            Log.d(TAG, "Notification channel created: $channelId")
         }
     }
 
@@ -127,9 +182,38 @@ class ReminderReceiver : BroadcastReceiver() {
                     borrowingRef.child("last_location").setValue(latLng)
                     Log.d(TAG, "Location sent: $latLng for borrowingId: $borrowingId")
 
+                    checkDistanceToTarget(context, location, borrowingId)
+
                     scheduleNextLocationSend(context, borrowingId)
                 } else {
-                    Log.w(TAG, "Location is null")
+                    Log.w(TAG, "lastLocation is null, requesting single update")
+                    val locationRequest =
+                        com.google.android.gms.location.LocationRequest.Builder(
+                            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, 0
+                        ).setMaxUpdates(1).build()
+                    val singleUpdateCallback = object : com.google.android.gms.location.LocationCallback() {
+                        override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
+                            val loc = result.lastLocation
+                            if (loc != null) {
+                                val latLng = "${loc.latitude},${loc.longitude}"
+                                val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
+                                    .child(borrowingId)
+                                borrowingRef.child("last_location").setValue(latLng)
+                                Log.d(TAG, "Location (single update) sent: $latLng for borrowingId: $borrowingId")
+
+                                checkDistanceToTarget(context, loc, borrowingId)
+                                scheduleNextLocationSend(context, borrowingId)
+                            } else {
+                                Log.w(TAG, "Single update location is still null")
+                            }
+                            fusedLocationClient.removeLocationUpdates(this)
+                        }
+                    }
+                    fusedLocationClient.requestLocationUpdates(
+                        locationRequest,
+                        singleUpdateCallback,
+                        null
+                    )
                 }
             }.addOnFailureListener {
                 Log.e(TAG, "Failed to get location: ${it.message}")
@@ -138,6 +222,51 @@ class ReminderReceiver : BroadcastReceiver() {
             Toast.makeText(context, "Location permission not granted", Toast.LENGTH_SHORT).show()
             Log.w(TAG, "Location permission not granted")
         }
+    }
+
+    private fun checkDistanceToTarget(context: Context, currentLocation: Location, borrowingId: String) {
+        val targetLatitude = 0.4801978305934569
+        val targetLongitude = 101.37665907336893
+        val radiusInMeters = 50.0f
+
+        val targetLocation = Location("Target").apply {
+            latitude = targetLatitude
+            longitude = targetLongitude
+        }
+
+        val distanceInMeters = currentLocation.distanceTo(targetLocation)
+        Log.d(TAG, "Distance to target: $distanceInMeters meters for borrowingId: $borrowingId")
+
+        val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
+            .child(borrowingId)
+
+        borrowingRef.child("out_of_range").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val wasOutOfRange = snapshot.getValue(Boolean::class.java) ?: false
+
+                if (distanceInMeters > radiusInMeters && !wasOutOfRange) {
+                    val intent = Intent(context, ReminderReceiver::class.java).apply {
+                        action = "OUT_OF_RANGE_ACTION"
+                        putExtra("BORROWING_ID", borrowingId)
+                    }
+                    context.sendBroadcast(intent)
+                } else if (distanceInMeters <= radiusInMeters && wasOutOfRange) {
+                    cancelOutOfRangeNotification(context)
+                    updateOutOfRangeStatus(borrowingId, false)
+                    Log.d(TAG, "User returned to permitted radius")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Failed to read out_of_range status: ${error.message}")
+            }
+        })
+    }
+
+    private fun cancelOutOfRangeNotification(context: Context) {
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.cancel(RADAR_NOTIFICATION_ID)
+        Log.d(TAG, "Cancelled out of range notification")
     }
 
     private fun scheduleNextLocationSend(context: Context, borrowingId: String) {

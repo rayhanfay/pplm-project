@@ -96,25 +96,36 @@ object CustomDialog {
 
     fun options(
         context: Context,
-        title: String,
-        options: List<String>,
-        onSelect: (Int) -> Unit
+        title: String = "Pilih Opsi!",
+        onView: () -> Unit,
+        onEdit: () -> Unit,
+        onDelete: () -> Unit
     ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_options, null)
-        view.findViewById<TextView>(R.id.tvTitle).text = title
+        view.findViewById<TextView>(R.id.tvOption).text = title
 
-        val listView = view.findViewById<ListView>(R.id.listOptions)
-        val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, options)
-        listView.adapter = adapter
+        val btnView = view.findViewById<Button>(R.id.btnView)
+        val btnEdit = view.findViewById<Button>(R.id.btnEdit)
+        val btnDelete = view.findViewById<Button>(R.id.btnDelet)
 
         val dialog = AlertDialog.Builder(context)
             .setView(view)
             .setCancelable(true)
             .create()
 
-        listView.setOnItemClickListener { _, _, position, _ ->
+        btnView.setOnClickListener {
             dialog.dismiss()
-            onSelect(position)
+            onView()
+        }
+
+        btnEdit.setOnClickListener {
+            dialog.dismiss()
+            onEdit()
+        }
+
+        btnDelete.setOnClickListener {
+            dialog.dismiss()
+            onDelete()
         }
 
         dialog.show()

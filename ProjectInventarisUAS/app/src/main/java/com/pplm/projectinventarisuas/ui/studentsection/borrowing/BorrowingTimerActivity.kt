@@ -6,8 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -16,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.*
 import com.google.firebase.database.*
 import com.pplm.projectinventarisuas.databinding.ActivityBorrowingTimerBinding
 import com.pplm.projectinventarisuas.ui.studentsection.StudentSectionActivity
@@ -34,11 +37,32 @@ class BorrowingTimerActivity : AppCompatActivity() {
     private var borrowingId: String? = null
     private var endHour: String? = null
 
+    // Radius monitoring properties
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var geofenceClient: GeofencingClient
+    private lateinit var locationCallback: LocationCallback
+    private val targetLatitude = 0.4801978305934569
+    private val targetLongitude = 101.37665907336893
+    private val radiusInMeters = 50.0f
+    private var locationPermissionGranted = false
+    private var isOutsideRadius = false
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (!isGranted) {
             Toast.makeText(this, "Permission denied for notifications", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        locationPermissionGranted = permissions.entries.all { it.value }
+        if (locationPermissionGranted) {
+            startLocationMonitoring()
+        } else {
+            Toast.makeText(this, "Location permission required for area monitoring", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -53,6 +77,11 @@ class BorrowingTimerActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        // Initialize location components
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        geofenceClient = LocationServices.getGeofencingClient(this)
+
         preventBackNavigation()
         checkAndRequestPermissions()
         observeTimerState()
@@ -68,6 +97,100 @@ class BorrowingTimerActivity : AppCompatActivity() {
             }
         }
         checkNotificationPermission()
+        checkLocationPermission()
+    }
+
+    private fun checkLocationPermission() {
+        val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+        val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
+        val backgroundLocationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        } else {
+            null
+        }
+
+        val permissionsToRequest = mutableListOf(fineLocationPermission, coarseLocationPermission)
+        backgroundLocationPermission?.let { permissionsToRequest.add(it) }
+
+        when {
+            permissionsToRequest.all {
+                ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+            } -> {
+                locationPermissionGranted = true
+                startLocationMonitoring()
+            }
+            else -> {
+                locationPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+            }
+        }
+    }
+
+    private fun startLocationMonitoring() {
+        if (!locationPermissionGranted) return
+
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .setWaitForAccurateLocation(false)
+            .setMinUpdateIntervalMillis(5000)
+            .setMaxUpdateDelayMillis(15000)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                for (location in result.locations) {
+                    checkUserDistance(location)
+                }
+            }
+        }
+
+        try {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+            Log.d("RadarLog", "Started location monitoring")
+        } catch (e: SecurityException) {
+            Log.e("RadarLog", "Security exception: ${e.message}")
+        }
+    }
+
+    private fun checkUserDistance(currentLocation: Location) {
+        val targetLocation = Location("Target").apply {
+            latitude = targetLatitude
+            longitude = targetLongitude
+        }
+
+        val distanceInMeters = currentLocation.distanceTo(targetLocation)
+        Log.d("RadarLog", "Distance to target: $distanceInMeters meters")
+
+        if (distanceInMeters > radiusInMeters && !isOutsideRadius) {
+            isOutsideRadius = true
+            showOutOfRangeReminder()
+        } else if (distanceInMeters <= radiusInMeters && isOutsideRadius) {
+            isOutsideRadius = false
+        }
+    }
+
+    private fun showOutOfRangeReminder() {
+        Log.d("RadarLog", "User is outside the permitted radius")
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            action = "OUT_OF_RANGE_ACTION"
+            putExtra("BORROWING_ID", borrowingId)
+        }
+
+        val requestCode = (borrowingId.hashCode() + 888) and 0xFFFFFFF
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        try {
+            pendingIntent.send()
+        } catch (e: PendingIntent.CanceledException) {
+            Log.e("RadarLog", "Failed to send out of range notification: ${e.message}")
+        }
     }
 
     private fun requestExactAlarmPermission() {
@@ -238,6 +361,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     prefs.edit() { remove("alarmSet_$borrowingId") }
 
                     stopTimerService()
+                    stopLocationMonitoring()
                     cancelReminderNotifications()
                     cancelLocationSend()
 
@@ -261,6 +385,15 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 Log.e("BorrowingLog", "Failed to read status: ${error.message}")
             }
         })
+    }
+
+    private fun stopLocationMonitoring() {
+        try {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+            Log.d("RadarLog", "Stopped location monitoring")
+        } catch (e: Exception) {
+            Log.e("RadarLog", "Error stopping location updates: ${e.message}")
+        }
     }
 
     private fun cancelReminderNotifications() {
@@ -307,5 +440,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 ).show()
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopLocationMonitoring()
     }
 }
