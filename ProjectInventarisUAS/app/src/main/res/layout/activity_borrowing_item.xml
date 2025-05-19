@@ -11,6 +11,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:backgroundTint="@color/yellow"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -25,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center"
             android:padding="16dp">
 
             <View
@@ -38,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Item Name"
+                android:fontFamily="@font/poppins"
                 android:enabled="false"
                 android:layout_marginTop="16dp" />
 
@@ -46,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Admin Name"
+                android:fontFamily="@font/poppins"
                 android:layout_marginTop="16dp"
                 android:inputType="none" />
 
@@ -54,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Date Borrowed"
+                android:fontFamily="@font/poppins"
                 android:layout_marginTop="16dp"
                 android:focusable="false" />
 
@@ -70,12 +75,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Start Hours"
+                    android:fontFamily="@font/poppins"
                     android:focusable="false" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" to "
+                    android:fontFamily="@font/poppins"
                     android:layout_gravity="center_vertical"
                     android:layout_marginHorizontal="8dp" />
 
@@ -85,12 +92,17 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="End Hours"
+                    android:fontFamily="@font/poppins"
                     android:focusable="false" />
             </LinearLayout>
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/btnBowrowItem"
                 android:layout_width="match_parent"
+                android:textAllCaps="false"
+                android:fontFamily="@font/poppins_semibold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_add"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Borrow Item" />

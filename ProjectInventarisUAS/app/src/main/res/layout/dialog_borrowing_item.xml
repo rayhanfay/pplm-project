@@ -1,223 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="360dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/bg_dialog_rounded"
-    android:padding="20dp"
     android:layout_gravity="center"
-    android:elevation="8dp">
+    card_view:cardElevation="8dp"
+    card_view:cardCornerRadius="12dp"
+    android:layout_margin="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Id : AL-00123"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
+    <!-- Satu-satunya child: LinearLayout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":"
-            android:layout_marginHorizontal="8dp"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="14sp"
-            android:hint="MM/dd/yyyy - MM/dd/yyyy"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp"
-            android:focusable="false"
-            android:clickable="true"
-            android:drawablePadding="8dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Star"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":"
-            android:layout_marginHorizontal="8dp"
-            android:textSize="16sp" />
-
-        <Spinner
-            android:id="@+id/spinnerStartHour"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":"
+            android:text="Item Id : AL-00123"
             android:textSize="16sp"
-            android:layout_marginHorizontal="4dp" />
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
 
-        <Spinner
-            android:id="@+id/spinnerStartMinute"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <!-- Tanggal -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
 
-        <Space
-            android:layout_width="8dp"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="14sp" />
 
-        <Spinner
-            android:id="@+id/startEndAmPm"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:layout_marginHorizontal="8dp"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/etDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:hint="MM/dd/yyyy - MM/dd/yyyy"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp"
+                android:focusable="false"
+                android:clickable="true"
+                android:drawablePadding="8dp" />
+        </LinearLayout>
+
+        <!-- Start Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start"
+                android:textSize="14sp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:layout_marginHorizontal="8dp"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerStartHour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="16sp"
+                android:layout_marginHorizontal="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerStartMinute"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/startEndAmPm"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+        </LinearLayout>
+
+        <!-- End Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:layout_marginHorizontal="8dp"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spinnerEndHour"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="16sp"
+                android:layout_marginHorizontal="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerEndMinute"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/spinnerEndAmPm"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp" />
+        </LinearLayout>
+
+        <!-- Admin -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":"
-            android:layout_marginHorizontal="8dp"
-            android:textSize="16sp" />
-
-        <Spinner
-            android:id="@+id/spinnerEndHour"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":"
-            android:textSize="16sp"
-            android:layout_marginHorizontal="4dp" />
-
-        <Spinner
-            android:id="@+id/spinnerEndMinute"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
-
-        <Space
-            android:layout_width="8dp"
-            android:layout_height="wrap_content" />
-
-        <Spinner
-            android:id="@+id/spinnerEndAmPm"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Admin"
-        android:textSize="14sp"
-        android:layout_marginBottom="8dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp"
-        android:gravity="center_vertical">
-
-        <AutoCompleteTextView
-            android:id="@+id/actvAdmin"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:hint="Select Admin"
+            android:text="Admin"
             android:textSize="14sp"
-            android:background="@drawable/bg_edittext_outline"
-            android:padding="12dp"
-            android:inputType="none"
-            android:focusable="false"
-            android:clickable="true" />
-    </LinearLayout>
+            android:layout_marginBottom="8dp" />
 
-    <!-- Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
-
-        <android.widget.Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/bg_button_cancle"
-            android:text="Cancel"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_vertical">
 
-        <android.widget.Button
-            android:id="@+id/btnAdd"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            <AutoCompleteTextView
+                android:id="@+id/actvAdmin"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Select Admin"
+                android:textSize="14sp"
+                android:background="@drawable/bg_edittext_outline"
+                android:padding="12dp"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <!-- Tombol -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/bg_button_add"
-            android:text="Borrow"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <android.widget.Button
+                android:id="@+id/btnCancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/bg_button_cancle"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <android.widget.Button
+                android:id="@+id/btnAdd"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/bg_button_add"
+                android:text="Borrow"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/poppins_semibold" />
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>
