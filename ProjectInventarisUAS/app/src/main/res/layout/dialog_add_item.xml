@@ -22,6 +22,7 @@
             android:hint="Item code"
             android:fontFamily="@font/poppins"
             android:padding="12dp"
+            android:textSize="14sp"
             android:background="@android:color/transparent"
             android:inputType="text" />
     </androidx.cardview.widget.CardView>
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
             android:hint="Tool name"
+            android:textSize="14sp"
             android:padding="12dp"
             android:background="@android:color/transparent"
             android:inputType="text" />
@@ -55,6 +57,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
             android:hint="Type"
+            android:textSize="14sp"
             android:padding="12dp"
             android:background="@android:color/transparent"
             android:inputType="text" />
@@ -72,6 +75,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/poppins"
             android:hint="Description"
+            android:textSize="14sp"
             android:padding="12dp"
             android:background="@android:color/transparent"
             android:gravity="top"
