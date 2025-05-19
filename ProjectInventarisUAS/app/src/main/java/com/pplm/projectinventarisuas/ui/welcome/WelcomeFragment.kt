@@ -112,25 +112,25 @@ class WelcomeFragment : Fragment() {
             if (allPermissionsGranted()) {
                 (requireActivity() as WelcomeActivity).goToLogin()
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Semua permission harus diberikan untuk melanjutkan.",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                val shouldShowRequestPermissionRationale = permissions.any {
+                val shouldShowRationale = permissions.any {
                     shouldShowRequestPermissionRationale(it)
                 }
 
-                if (!shouldShowRequestPermissionRationale) {
+                if (shouldShowRationale) {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Permissions are required for the app to work properly. Please grant them in the settings.",
+                        message = "Aplikasi membutuhkan izin untuk melanjutkan. Silakan berikan izin untuk dapat menggunakan aplikasi.",
                         onDismiss = {
-                            val intent =
-                                Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri: Uri =
-                                Uri.fromParts("package", requireContext().packageName, null)
+                            requestPermissions(getRequiredPermissions(), REQUEST_CODE_PERMISSIONS)
+                        }
+                    )
+                } else {
+                    CustomDialog.alert(
+                        context = requireContext(),
+                        message = "Izin diperlukan agar aplikasi dapat berjalan dengan baik. Anda dapat mengaktifkannya secara manual di Pengaturan.",
+                        onDismiss = {
+                            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)
                             intent.data = uri
                             startActivity(intent)
                         }

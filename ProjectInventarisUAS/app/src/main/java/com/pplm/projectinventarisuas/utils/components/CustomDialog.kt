@@ -33,6 +33,23 @@ object CustomDialog {
         loadingDialog = null
     }
 
+    fun success(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_succes, null)
+        view.findViewById<TextView>(R.id.tvMessage).text = message
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(view)
+            .setCancelable(false)
+            .create()
+
+        view.findViewById<Button>(R.id.btnOk).setOnClickListener {
+            dialog.dismiss()
+            onDismiss?.invoke()
+        }
+
+        dialog.show()
+    }
+
     fun alert(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert, null)
         view.findViewById<TextView>(R.id.tvMessage).text = message

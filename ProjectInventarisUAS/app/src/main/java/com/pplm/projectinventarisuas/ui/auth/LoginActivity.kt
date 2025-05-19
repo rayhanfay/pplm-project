@@ -44,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
             if (username.isEmpty() || password.isEmpty()) {
                 CustomDialog.alert(this, "Lengkapi username dan password")
             } else {
+                CustomDialog.showLoading(this, "Sedang login...")
                 viewModel.login(username, password)
             }
         }
@@ -79,6 +80,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupObserver() {
         viewModel.user.observe(this) { user ->
+            CustomDialog.dismissLoading()
+
             if (user != null) {
                 val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
                 with(sharedPref.edit()) {
@@ -105,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
                         else -> null
                     }
                     intent?.let {
-                        CustomDialog.alert(this, "Login berhasil") {
+                        CustomDialog.success(this, "Login berhasil!") {
                             startActivity(it)
                             finish()
                         }
