@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:layout_margin="16dp"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Borrowing Code -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Borrowing Code:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvBorrowingCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Date Borrowed -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date Borrowed:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvDateBorrowed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Borrowing Hours -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Borrowing Hours:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <LinearLayout
+            android:id="@+id/lyBorrowingHours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp">
+             <TextView
+                 android:id="@+id/tvStartHours"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:textSize="16sp"
+                 android:fontFamily="@font/poppins"
+                 android:textColor="@android:color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" to "
+                android:fontFamily="@font/poppins"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="8dp" />
+
+            <TextView
+                android:id="@+id/tvEndHours"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+                <!-- Student Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student Name:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+
+        <TextView
+            android:id="@+id/tvStudentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Admin Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Name:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvAdminName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Last Location -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last Location:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvLastLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Return Time -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Return Time:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvReturnTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Status -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_semibold" />
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+            </LinearLayout>
+</androidx.cardview.widget.CardView>
+

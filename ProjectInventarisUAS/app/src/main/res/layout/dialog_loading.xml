@@ -2,24 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:padding="24dp"
-    android:gravity="center_vertical">
+    android:layout_gravity="center"
+    android:gravity="center">
 
-    <ProgressBar
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/progressBar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:indeterminate="true"
-        style="?android:attr/progressBarStyleLarge" />
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:lottie_rawRes="@raw/anim_loading_yellow"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/tvMessage"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/poppins_semibold"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:text="Memproses..."
         android:textSize="16sp"
         android:textColor="@android:color/black" />
+
 </LinearLayout>

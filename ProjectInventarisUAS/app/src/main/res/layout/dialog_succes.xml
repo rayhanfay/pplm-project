@@ -23,15 +23,26 @@
             android:layout_gravity="center" />
 
         <TextView
-            android:id="@+id/tvMessage"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login Error?"
+            android:text="Sussces"
             android:textAlignment="center"
             android:fontFamily="@font/poppins_semibold"
             android:textSize="24sp"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sussces"
+            android:textAlignment="center"
+            android:fontFamily="@font/poppins"
+            android:textSize="12sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="11dp"
             android:layout_marginBottom="20dp" />
 
         <android.widget.Button
