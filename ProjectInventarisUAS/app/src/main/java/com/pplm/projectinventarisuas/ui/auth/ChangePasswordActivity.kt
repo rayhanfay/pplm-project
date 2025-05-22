@@ -101,17 +101,30 @@ class ChangePasswordActivity : AppCompatActivity() {
             val newPassword = binding.etNewPassword.text.toString().trim()
             val confirmPassword = binding.etConfirmNewPassword.text.toString().trim()
 
-            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                CustomDialog.alert(this, "Please fill in all fields")
-            } else if (newPassword != confirmPassword) {
-                CustomDialog.alert(this, "Passwords do not match")
-            } else {
-                viewModel.isPasswordSameAsCurrent(userId, userRole, newPassword) { isSame ->
-                    if (isSame) {
-                        CustomDialog.alert(this, "New password cannot be the same as the old password")
-                    } else {
-                        viewModel.changePassword(userId, userRole, newPassword)
-                    }
+            var isValid = true
+
+            if (newPassword.isEmpty()) {
+                binding.etNewPassword.error = "Password baru tidak boleh kosong"
+                isValid = false
+            }
+
+            if (confirmPassword.isEmpty()) {
+                binding.etConfirmNewPassword.error = "Konfirmasi password tidak boleh kosong"
+                isValid = false
+            }
+
+            if (!isValid) return@setOnClickListener
+
+            if (newPassword != confirmPassword) {
+                binding.etConfirmNewPassword.error = "Konfirmasi tidak cocok dengan password baru"
+                return@setOnClickListener
+            }
+
+            viewModel.isPasswordSameAsCurrent(userId, userRole, newPassword) { isSame ->
+                if (isSame) {
+                    CustomDialog.alert(this, "Password baru tidak boleh sama dengan yang lama")
+                } else {
+                    viewModel.changePassword(userId, userRole, newPassword)
                 }
             }
         }

@@ -41,12 +41,22 @@ class LoginActivity : AppCompatActivity() {
             val username = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (username.isEmpty() || password.isEmpty()) {
-                CustomDialog.alert(this, "Lengkapi username dan password")
-            } else {
-                CustomDialog.showLoading(this, "Sedang login...")
-                viewModel.login(username, password)
+            var isValid = true
+
+            if (username.isEmpty()) {
+                binding.etUsername.error = "Username tidak boleh kosong"
+                isValid = false
             }
+
+            if (password.isEmpty()) {
+                binding.etPassword.error = "Password tidak boleh kosong"
+                isValid = false
+            }
+
+            if (!isValid) return@setOnClickListener
+
+            CustomDialog.showLoading(this, "Sedang login...")
+            viewModel.login(username, password)
         }
     }
 
