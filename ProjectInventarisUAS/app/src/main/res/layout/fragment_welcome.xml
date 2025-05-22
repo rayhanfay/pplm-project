@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
     android:background="@color/white"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
 
-    <!-- Konten utama (judul, gambar, deskripsi) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Judul Onboarding"
+            android:layout_marginBottom="24dp"
             android:fontFamily="@font/poppins_semibold"
-            android:textSize="28sp"
-            android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:text="Judul Onboarding"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/ivWelcomeImage"
@@ -41,44 +39,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
-            android:text="Deskripsi onboarding di sini"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:text="Deskripsi onboarding di sini" />
     </LinearLayout>
 
-    <!-- Tombol Skip dan Finish -->
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical">
 
         <android.widget.Button
             android:id="@+id/btnSkip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textColor="@color/white"
-            android:fontFamily="@font/poppins_semibold"
-            android:textAllCaps="false"
             android:layout_gravity="bottom|end"
-            android:background="@drawable/bg_button_edit"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_button_primary"
+            android:fontFamily="@font/poppins_semibold"
+            android:padding="16dp"
             android:text="Skip"
-            android:layout_marginBottom="8dp"/>
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
 
         <android.widget.Button
             android:id="@+id/btnFinish"
-            android:fontFamily="@font/poppins_semibold"
             android:layout_width="match_parent"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
             android:layout_height="wrap_content"
-            android:padding="16dp"
             android:layout_gravity="bottom|end"
-            android:background="@drawable/bg_button_edit"
+            android:background="@drawable/bg_button_primary"
+            android:fontFamily="@font/poppins_semibold"
+            android:padding="16dp"
             android:text="Finish"
-            />
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

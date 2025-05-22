@@ -3,18 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".ui.SplashScreenActivity"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".ui.SplashScreenActivity">
 
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:text="Splash Screen"
+        android:layout_centerInParent="true"
         android:src="@drawable/logo"
-        android:layout_centerInParent="true"/>
+        android:text="Splash Screen" />
+
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Kelompok 1" />
 
 </RelativeLayout>

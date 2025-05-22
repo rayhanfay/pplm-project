@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_button_add"
+                android:background="@drawable/bg_button_success"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Yes"
                 android:textAllCaps="false"
