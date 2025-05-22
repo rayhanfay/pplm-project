@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="360dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="16dp"
-    android:background="@drawable/bg_dialog_rounded"
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="8dp">
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
         android:padding="20dp">
 
@@ -49,9 +47,9 @@
             android:id="@+id/btnOk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button_add"
+            android:background="@drawable/bg_button_cancle"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Ok"
+            android:text="OK"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
 

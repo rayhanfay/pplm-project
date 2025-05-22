@@ -1,8 +1,15 @@
 package com.pplm.projectinventarisuas.utils.components
 
 import android.app.AlertDialog
+import android.app.Dialog // Import Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity // Import Gravity
 import android.view.LayoutInflater
+import android.view.View // Import View
+import android.view.ViewGroup // Import ViewGroup for LayoutParams
+import android.view.Window // Import Window
 import android.widget.Button
 import android.widget.TextView
 import com.pplm.projectinventarisuas.R
@@ -22,6 +29,11 @@ object CustomDialog {
             .setView(view)
             .setCancelable(false)
             .create()
+
+        loadingDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        loadingDialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        loadingDialog?.window?.setGravity(Gravity.CENTER)
+
         loadingDialog?.show()
     }
 
@@ -44,6 +56,10 @@ object CustomDialog {
             .setView(view)
             .setCancelable(false)
             .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
             dialog.dismiss()
@@ -71,6 +87,10 @@ object CustomDialog {
             .setView(view)
             .setCancelable(false)
             .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
             dialog.dismiss()
@@ -100,6 +120,10 @@ object CustomDialog {
             .setView(view)
             .setCancelable(false)
             .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnYes).setOnClickListener {
             dialog.dismiss()
@@ -137,6 +161,10 @@ object CustomDialog {
             .setView(view)
             .setCancelable(true)
             .create()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.CENTER)
 
         btnView.setOnClickListener {
             dialog.dismiss()

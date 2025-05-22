@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -67,13 +69,12 @@ class LoginActivity : AppCompatActivity() {
                 if (event.rawX >= (binding.etPassword.right - binding.etPassword.compoundDrawables[2].bounds.width())) {
                     isPasswordVisible = !isPasswordVisible
                     if (isPasswordVisible) {
-                        binding.etPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
                         binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye, 0
                         )
                     } else {
-                        binding.etPassword.inputType =
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                         binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye_closed, 0
                         )

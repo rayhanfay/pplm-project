@@ -5,19 +5,17 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_dialog_rounded"
-    android:fitsSystemWindows="true"
+    android:background="@android:color/white"
     tools:context=".ui.auth.LoginActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/loginCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:cardBackgroundColor="@color/yellow"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
+        android:layout_marginHorizontal="16dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,68 +24,96 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:fontFamily="@font/poppins_semibold"
+                android:paddingTop="20dp"
                 android:text="Login"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
-            <EditText
-                android:id="@+id/etUsername"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/rounded_edittext"
-                android:fontFamily="@font/poppins"
-                android:hint="Username"
-                android:inputType="textEmailAddress"
-                android:paddingStart="16dp"
-                android:textColor="#000" />
-
-            <EditText
-                android:id="@+id/etPassword"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20sp"
-                android:layout_marginBottom="20sp"
-                android:background="@drawable/rounded_edittext"
-                android:drawableEnd="@drawable/ic_eye_closed"
-                android:drawablePadding="10dp"
-                android:fontFamily="@font/poppins"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:paddingStart="16dp"
-                android:textColor="#000" />
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
-            <Button
+                <EditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/poppins"
+                    android:hint="Username"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:textColor="#000"
+                    android:textColorHighlight="#4F85BA"
+                    android:textCursorDrawable="@drawable/custom_cursor" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:drawableEnd="@drawable/ic_eye_closed"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/poppins"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:textColor="#000"
+                    android:textColorHighlight="#4F85BA"
+                    android:textCursorDrawable="@drawable/custom_cursor" />
+            </androidx.cardview.widget.CardView>
+
+            <android.widget.Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/black"
+                android:background="@drawable/bg_button_primary"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Login"
-                android:textColor="#FFFFFF" />
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/tvRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginHorizontal="20dp"
                 android:fontFamily="@font/poppins_extralight_italic"
                 android:gravity="center"
-                android:text="Belum Memiliki Akun? Hubungi Admin"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:paddingBottom="20dp"
+                android:text="Belum Memiliki Akun? Hubungi Admin" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
