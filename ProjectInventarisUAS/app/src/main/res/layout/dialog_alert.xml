@@ -5,44 +5,55 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="16dp"
+    android:background="@drawable/bg_dialog_rounded"
     card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="8dp"
-    android:background="@android:color/transparent">
+    card_view:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@color/white">
+        android:padding="20dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/error"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:src="@drawable/error" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Alert"
+            android:textAlignment="center"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login Error?"
-            android:fontFamily="@font/poppins_semibold"
-            android:textSize="24sp"
-            android:textAlignment="center"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/poppins"
+            android:text="Alert message goes here"
+            android:textAlignment="center"
+            android:textSize="12sp" />
 
         <android.widget.Button
             android:id="@+id/btnOk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_button_add"
+            android:fontFamily="@font/poppins_semibold"
             android:text="Ok"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 

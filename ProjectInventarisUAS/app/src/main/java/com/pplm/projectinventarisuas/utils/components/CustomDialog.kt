@@ -2,11 +2,8 @@ package com.pplm.projectinventarisuas.utils.components
 
 import android.app.AlertDialog
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
 import com.pplm.projectinventarisuas.R
 
@@ -33,8 +30,9 @@ object CustomDialog {
         loadingDialog = null
     }
 
-    fun success(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
+    fun success(context: Context, title: String = "Sukses", message: String, onDismiss: (() -> Unit)? = null) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_succes, null)
+        view.findViewById<TextView>(R.id.tvTitle).text = title
         view.findViewById<TextView>(R.id.tvMessage).text = message
 
         val dialog = AlertDialog.Builder(context)
@@ -50,8 +48,9 @@ object CustomDialog {
         dialog.show()
     }
 
-    fun alert(context: Context, message: String, onDismiss: (() -> Unit)? = null) {
+    fun alert(context: Context, title: String = "Peringatan", message: String, onDismiss: (() -> Unit)? = null) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert, null)
+        view.findViewById<TextView>(R.id.tvTitle).text = title
         view.findViewById<TextView>(R.id.tvMessage).text = message
 
         val dialog = AlertDialog.Builder(context)
@@ -69,11 +68,13 @@ object CustomDialog {
 
     fun confirm(
         context: Context,
+        title: String = "Konfirmasi",
         message: String,
         onConfirm: () -> Unit,
         onCancel: (() -> Unit)? = null
     ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
+        view.findViewById<TextView>(R.id.tvTitle).text = title
         view.findViewById<TextView>(R.id.tvMessage).text = message
 
         val dialog = AlertDialog.Builder(context)

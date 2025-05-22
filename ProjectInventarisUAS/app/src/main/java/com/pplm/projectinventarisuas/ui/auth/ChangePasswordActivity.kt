@@ -122,7 +122,7 @@ class ChangePasswordActivity : AppCompatActivity() {
 
             viewModel.isPasswordSameAsCurrent(userId, userRole, newPassword) { isSame ->
                 if (isSame) {
-                    CustomDialog.alert(this, "Password baru tidak boleh sama dengan yang lama")
+                    CustomDialog.alert(this, "Password Tidak Berubah!!","Password baru tidak boleh sama dengan yang lama")
                 } else {
                     viewModel.changePassword(userId, userRole, newPassword)
                 }
@@ -133,7 +133,11 @@ class ChangePasswordActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.passwordChangeResult.observe(this) { success ->
             if (success) {
-                CustomDialog.alert(this, "Password changed successfully") {
+                CustomDialog.success(
+                    context = this,
+                    title = "Password berhasil diubah",
+                    message = "Silakan login kembali dengan password baru"
+                ) {
                     val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putBoolean("isLoggedIn", false)
@@ -144,7 +148,11 @@ class ChangePasswordActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-                CustomDialog.alert(this, "Failed to change password")
+                CustomDialog.alert(
+                    context = this,
+                    title = "Gagal",
+                    message = "Gagal mengubah password. Silakan coba lagi."
+                )
             }
         }
     }

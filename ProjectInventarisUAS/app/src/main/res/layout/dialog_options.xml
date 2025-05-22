@@ -5,67 +5,67 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="16dp"
+    android:background="@drawable/bg_dialog_rounded"
     card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="8dp"
-    android:background="@android:color/transparent">
+    card_view:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@color/white">
+        android:padding="20dp">
 
         <TextView
             android:id="@+id/tvOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pilih Opsi!"
-            android:textAlignment="center"
-            android:fontFamily="@font/poppins_semibold"
-            android:textSize="24sp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Pilih Opsi!"
+            android:textAlignment="center"
+            android:textSize="24sp" />
 
         <android.widget.Button
             android:id="@+id/btnView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button_add"
-            android:text="View"
-            android:layout_marginBottom="12dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_button_add"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="View"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:textColor="@android:color/white" />
 
         <android.widget.Button
             android:id="@+id/btnEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button_edit"
-            android:text="Edit"
-            android:layout_marginBottom="12dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_button_edit"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Edit"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:textColor="@android:color/white" />
 
         <android.widget.Button
             android:id="@+id/btnDelet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button_cancle"
-            android:text="Delete"
-            android:layout_marginBottom="12dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_button_cancle"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Delete"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

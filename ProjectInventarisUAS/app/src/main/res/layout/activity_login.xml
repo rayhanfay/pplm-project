@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_dialog_rounded"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
     tools:context=".ui.auth.LoginActivity">
 
     <androidx.cardview.widget.CardView
@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-
         app:cardBackgroundColor="@color/yellow"
         app:cardCornerRadius="24dp"
         app:cardElevation="12dp"

@@ -104,7 +104,11 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 if (!user.isPasswordChanged) {
-                    CustomDialog.alert(this, "Ini adalah login pertama Anda. Silakan ganti password terlebih dahulu.") {
+                    CustomDialog.alert(
+                        context = this,
+                        title = "Perlu Ganti Password",
+                        message = "Ini adalah login pertama Anda. Silakan ganti password terlebih dahulu."
+                    ) {
                         val intent = Intent(this, ChangePasswordActivity::class.java)
                         intent.putExtra("userId", user.id)
                         intent.putExtra("userRole", user.role)
@@ -118,14 +122,22 @@ class LoginActivity : AppCompatActivity() {
                         else -> null
                     }
                     intent?.let {
-                        CustomDialog.success(this, "Login berhasil!") {
+                        CustomDialog.success(
+                            context = this,
+                            title = "Login berhasil!",
+                            message = "",
+                        ) {
                             startActivity(it)
                             finish()
                         }
                     }
                 }
             } else {
-                CustomDialog.alert(this, "Username atau password salah")
+                CustomDialog.alert(
+                    context = this,
+                    title = "Login gagal",
+                    message = "Username atau password salah"
+                )
             }
         }
     }
