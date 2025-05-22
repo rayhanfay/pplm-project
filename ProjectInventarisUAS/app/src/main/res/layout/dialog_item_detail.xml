@@ -3,187 +3,191 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
+    android:layout_gravity="center"
     android:layout_margin="16dp"
-    android:layout_gravity="center">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Container dengan tampilan seperti Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-                <!-- Container dengan tampilan seperti Card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+            <!-- Reusable field layout -->
+            <!-- Nama Alat -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:elevation="4dp">
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Item Name:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                    <!-- Reusable field layout -->
-                    <!-- Nama Alat -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp">
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:text="Item Name:"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textStyle="bold"
-                            android:textSize="14sp" />
-                        <EditText
-                            android:id="@+id/etItemName"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:fontFamily="@font/poppins"
-                            android:background="@drawable/rounded_edittext"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <!-- Kode Alat -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp">
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:text="Item Code:"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textStyle="bold"
-                            android:textSize="14sp" />
-                        <EditText
-                            android:id="@+id/etItemId"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:fontFamily="@font/poppins"
-                            android:background="@drawable/rounded_edittext"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <!-- Kode Type -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp">
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:text="Type Code:"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:fontFamily="@font/poppins_semibold"/>
-                        <EditText
-                            android:id="@+id/etItemType"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:background="@drawable/rounded_edittext"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/poppins"/>
-                    </LinearLayout>
-
-                    <!-- Status -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp">
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text="Status:"
-                            android:textStyle="bold"
-                            android:textSize="14sp" />
-                        <EditText
-                            android:id="@+id/etItemStatus"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:background="@drawable/rounded_edittext"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/poppins"/>
-                    </LinearLayout>
-
-                    <!-- Deskripsi (multiline) -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Description:"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <EditText
-                        android:id="@+id/etItemDesciption"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:fontFamily="@font/poppins"
-                        android:background="@drawable/rounded_edittext"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:minLines="5"
-                        android:gravity="top"
-                        android:inputType="textMultiLine" />
-
-                    <!-- Tombol Aksi Bersebelahan -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="24dp"
-                        android:gravity="end">
-
-                        <android.widget.Button
-                            android:id="@+id/btnEdit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="8dp"
-                            android:text="Edit"
-                            android:textColor="@color/white"
-                            android:textAllCaps="false"
-                            android:background="@drawable/bg_button_edit"
-                            android:fontFamily="@font/poppins_semibold" />
-
-                        <android.widget.Button
-                            android:id="@+id/btnSave"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Save"
-                            android:textAllCaps="false"
-                            android:textColor="@color/white"
-                            android:background="@drawable/bg_button_add"
-                            android:fontFamily="@font/poppins_semibold" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
+                <EditText
+                    android:id="@+id/etItemName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
             </LinearLayout>
 
+            <!-- Kode Alat -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Item Code:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etItemId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Kode Type -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Type Code:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etItemType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Status -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Status:"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etItemStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Deskripsi (multiline) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Description:"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etItemDesciption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edittext"
+                android:enabled="false"
+                android:fontFamily="@font/poppins"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:minLines="5"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <!-- Tombol Aksi Bersebelahan -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <android.widget.Button
+                    android:id="@+id/btnEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_edit"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Edit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+
+                <android.widget.Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_add"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>
