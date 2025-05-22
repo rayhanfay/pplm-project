@@ -10,6 +10,7 @@ import com.pplm.projectinventarisuas.ui.adminsection.borrowing.BorrowingFragment
 import com.pplm.projectinventarisuas.ui.adminsection.borrowing.ScanReturnActivity
 import com.pplm.projectinventarisuas.ui.adminsection.item.AddItemActivity
 import com.pplm.projectinventarisuas.ui.adminsection.item.AddItemDialogFragment
+import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment
 import com.pplm.projectinventarisuas.ui.adminsection.item.ItemFragment
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog

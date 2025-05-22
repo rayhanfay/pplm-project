@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true">
@@ -20,17 +20,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:paddingBottom="24dp">
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Item Type"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/poppins_semibold"
+                    android:text="Item Type"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvItemSummary"
@@ -39,18 +40,29 @@
                     android:layout_marginBottom="12dp"
                     android:nestedScrollingEnabled="false"
                     android:overScrollMode="never"
+                    android:paddingHorizontal="8dp"
                     tools:listitem="@layout/item_summary_card" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="All Item"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/etSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Search..."
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/rounded_edittext"
-                    android:paddingHorizontal="12dp"
+                    android:hint="Search..."
                     android:inputType="text"
                     android:maxLines="1"
-                    android:layout_marginBottom="12dp" />
+                    android:padding="12dp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -60,6 +72,6 @@
                     android:overScrollMode="never"
                     tools:listitem="@layout/item_layout" />
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </FrameLayout>

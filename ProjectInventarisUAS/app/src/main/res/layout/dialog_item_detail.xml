@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,7 +14,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Container dengan tampilan seperti Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,8 +21,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Reusable field layout -->
-            <!-- Nama Alat -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,23 +32,22 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Item Name:"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:text="Nama Alat"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemName"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/rounded_edittext"
-                    android:enabled="false"
                     android:fontFamily="@font/poppins"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:padding="10dp"
+                    android:textSize="14sp"
+                    android:enabled="false"
+                    tools:text="Nama Item" />
             </LinearLayout>
 
-            <!-- Kode Alat -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,51 +59,22 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Item Code:"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etItemId"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/rounded_edittext"
-                    android:enabled="false"
-                    android:fontFamily="@font/poppins"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Kode Type -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="Type Code:"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:text="Jenis Alat"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemType"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/rounded_edittext"
-                    android:enabled="false"
                     android:fontFamily="@font/poppins"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:padding="10dp"
+                    android:textSize="14sp"
+                    android:enabled="false"
+                    tools:text="Jenis Item" />
             </LinearLayout>
 
-            <!-- Status -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -118,46 +86,45 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Status:"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:text="Status"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemStatus"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/rounded_edittext"
-                    android:enabled="false"
                     android:fontFamily="@font/poppins"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:padding="10dp"
+                    android:textSize="14sp"
+                    android:enabled="false"
+                    tools:text="Status Item" />
             </LinearLayout>
 
-            <!-- Deskripsi (multiline) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Description:"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:text="Deskripsi"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/etItemDesciption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/rounded_edittext"
-                android:enabled="false"
                 android:fontFamily="@font/poppins"
+                android:padding="10dp"
+                android:textSize="14sp"
+                android:enabled="false"
+                android:minLines="3"
                 android:gravity="top"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                tools:text="Deskripsi Item" />
 
-            <!-- Tombol Aksi Bersebelahan -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -169,8 +136,8 @@
                     android:id="@+id/btnEdit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_button_edit"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Edit"
@@ -186,7 +153,8 @@
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Save"
                     android:textAllCaps="false"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

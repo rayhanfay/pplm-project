@@ -42,10 +42,10 @@ class ItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewModel()
         setupSearchBar()
         setupSwipeToRefresh()
         setupRecyclerView()
-        setupViewModel()
     }
 
     private fun setupSearchBar() {
@@ -56,6 +56,7 @@ class ItemFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        // Inisialisasi adapter dengan listener untuk klik item
         adapter = ItemAdapter(emptyList()) { selectedItem ->
             showItemOptionsDialog(selectedItem)
         }
@@ -72,6 +73,7 @@ class ItemFragment : Fragment() {
 
         viewModel.items.observe(viewLifecycleOwner) { itemList ->
             adapter.updateItems(itemList)
+            binding.swipeRefresh.isRefreshing = false
         }
 
         viewModel.summaryItems.observe(viewLifecycleOwner) { itemList ->
@@ -96,38 +98,37 @@ class ItemFragment : Fragment() {
             context = requireContext(),
             title = "Pilih Aksi",
             onView = {
+                // Panggil dialog detail item untuk mode lihat
+                showItemDetailDialog(item, false)
                 isDialogVisible = false
-                viewItem(item)
             },
             onEdit = {
+                // Panggil dialog detail item untuk mode edit
+                showItemDetailDialog(item, true)
                 isDialogVisible = false
-                editItem(item)
             },
             onDelete = {
-                isDialogVisible = false
                 deleteItem(item)
+            },
+            onDismiss = {
+                isDialogVisible = false
             }
         )
     }
 
+    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
     private fun viewItem(item: Item) {
-        val intent = Intent(requireContext(), ItemDetailActivity::class.java)
-        intent.putExtra("item", item)
-        intent.putExtra("isEditMode", false)
-        startActivity(intent)
+        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
+        showItemDetailDialog(item, false)
     }
 
+    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
     private fun editItem(item: Item) {
-        val intent = Intent(requireContext(), ItemDetailActivity::class.java)
-        intent.putExtra("item", item)
-        intent.putExtra("isEditMode", true)
-        startActivity(intent)
+        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
+        showItemDetailDialog(item, true)
     }
 
     private fun deleteItem(item: Item) {
-        if (isDialogVisible) return
-
-        isDialogVisible = true
         CustomDialog.confirm(
             context = requireContext(),
             message = "Yakin ingin menghapus item ini?",
@@ -146,22 +147,28 @@ class ItemFragment : Fragment() {
     }
 
     private fun setupSwipeToRefresh() {
+        binding.etSearch.setText("")
+        binding.etSearch.clearFocus()
+
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
+
+        viewModel.loadItems()
+
         binding.swipeRefresh.setOnRefreshListener {
-            binding.etSearch.setText("")
-            binding.etSearch.clearFocus()
-
-            val imm =
-                requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-            imm.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
-
             viewModel.loadItems()
-
-            binding.swipeRefresh.isRefreshing = false
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // Metode untuk menampilkan ItemDetailDialogFragment
+    fun showItemDetailDialog(item: com.pplm.projectinventarisuas.data.model.Item, isEditMode: Boolean) {
+        val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
+        dialog.show(childFragmentManager, "ItemDetailDialog") // Gunakan childFragmentManager untuk dialog dari Fragment
     }
 }

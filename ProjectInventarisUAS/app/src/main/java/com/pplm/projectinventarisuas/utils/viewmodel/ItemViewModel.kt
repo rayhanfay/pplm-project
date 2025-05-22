@@ -16,24 +16,42 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
     private val _summaryItems = MutableLiveData<List<Item>>()
     val summaryItems: LiveData<List<Item>> get() = _summaryItems
 
-    fun loadItems() {
+    fun loadItemsAvailable() {
         repository.getItems { itemList ->
             allItems.clear()
             allItems.addAll(itemList)
 
             _items.value = itemList.filter { it.item_status == "Available" }
-
             _summaryItems.value = itemList.filter { it.item_status == "Available" }
         }
     }
 
-    fun searchItems(query: String) {
+    fun loadItems() {
+        repository.getItems { itemList ->
+            allItems.clear()
+            allItems.addAll(itemList)
+
+            _items.value = itemList
+            _summaryItems.value = itemList
+        }
+    }
+
+    fun searchItemsAvailable(query: String) {
         val filtered = allItems.filter { item ->
             item.item_status.equals("Available", true) && (
                     item.item_name.contains(query, ignoreCase = true) ||
                             item.item_type.contains(query, ignoreCase = true) ||
                             item.item_id.contains(query, ignoreCase = true)
                     )
+        }
+        _items.value = filtered
+    }
+
+    fun searchItems(query: String) {
+        val filtered = allItems.filter { item ->
+            item.item_name.contains(query, ignoreCase = true) ||
+                    item.item_type.contains(query, ignoreCase = true) ||
+                    item.item_id.contains(query, ignoreCase = true)
         }
         _items.value = filtered
     }

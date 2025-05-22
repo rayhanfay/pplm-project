@@ -30,7 +30,12 @@ object CustomDialog {
         loadingDialog = null
     }
 
-    fun success(context: Context, title: String = "Sukses", message: String, onDismiss: (() -> Unit)? = null) {
+    fun success(
+        context: Context,
+        title: String = "Sukses",
+        message: String,
+        onDismiss: (() -> Unit)? = null
+    ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_succes, null)
         view.findViewById<TextView>(R.id.tvTitle).text = title
         view.findViewById<TextView>(R.id.tvMessage).text = message
@@ -45,10 +50,19 @@ object CustomDialog {
             onDismiss?.invoke()
         }
 
+        dialog.setOnDismissListener {
+            onDismiss?.invoke()
+        }
+
         dialog.show()
     }
 
-    fun alert(context: Context, title: String = "Peringatan", message: String, onDismiss: (() -> Unit)? = null) {
+    fun alert(
+        context: Context,
+        title: String = "Peringatan",
+        message: String,
+        onDismiss: (() -> Unit)? = null
+    ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert, null)
         view.findViewById<TextView>(R.id.tvTitle).text = title
         view.findViewById<TextView>(R.id.tvMessage).text = message
@@ -63,6 +77,10 @@ object CustomDialog {
             onDismiss?.invoke()
         }
 
+        dialog.setOnDismissListener {
+            onDismiss?.invoke()
+        }
+
         dialog.show()
     }
 
@@ -71,7 +89,8 @@ object CustomDialog {
         title: String = "Konfirmasi",
         message: String,
         onConfirm: () -> Unit,
-        onCancel: (() -> Unit)? = null
+        onCancel: (() -> Unit)? = null,
+        onDismiss: (() -> Unit)? = null
     ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_confirm, null)
         view.findViewById<TextView>(R.id.tvTitle).text = title
@@ -92,6 +111,10 @@ object CustomDialog {
             onCancel?.invoke()
         }
 
+        dialog.setOnDismissListener {
+            onDismiss?.invoke()
+        }
+
         dialog.show()
     }
 
@@ -100,7 +123,8 @@ object CustomDialog {
         title: String = "Pilih Opsi!",
         onView: () -> Unit,
         onEdit: () -> Unit,
-        onDelete: () -> Unit
+        onDelete: () -> Unit,
+        onDismiss: (() -> Unit)? = null
     ) {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_options, null)
         view.findViewById<TextView>(R.id.tvOption).text = title
@@ -127,6 +151,10 @@ object CustomDialog {
         btnDelete.setOnClickListener {
             dialog.dismiss()
             onDelete()
+        }
+
+        dialog.setOnDismissListener {
+            onDismiss?.invoke()
         }
 
         dialog.show()

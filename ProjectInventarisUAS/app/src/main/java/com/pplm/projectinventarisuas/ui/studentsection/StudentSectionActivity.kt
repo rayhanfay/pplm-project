@@ -16,7 +16,7 @@ import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.ActivityStudentSectionBinding
-import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailActivity
+import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment // Import ItemDetailDialogFragment
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
 import com.pplm.projectinventarisuas.utils.adapter.ItemAdapter
@@ -55,7 +55,10 @@ class StudentSectionActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ItemAdapter(emptyList()) { selectedItem -> viewItem(selectedItem) }
+        // Inisialisasi adapter dengan listener untuk klik item
+        adapter = ItemAdapter(emptyList()) { selectedItem ->
+            showItemDetailDialog(selectedItem, false) // Panggil dialog detail item untuk mode lihat
+        }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
@@ -63,7 +66,7 @@ class StudentSectionActivity : AppCompatActivity() {
     private fun setupSearchBar() {
         binding.etSearch.doOnTextChanged { text, _, _, _ ->
             val query = text.toString()
-            viewModel.searchItems(query)
+            viewModel.searchItemsAvailable(query)
         }
     }
 
@@ -74,7 +77,9 @@ class StudentSectionActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory)[ItemViewModel::class.java]
 
         viewModel.items.observe(this) { itemList ->
-            adapter = ItemAdapter(itemList) { selectedItem -> viewItem(selectedItem) }
+            adapter = ItemAdapter(itemList) { selectedItem ->
+                showItemDetailDialog(selectedItem, false) // Panggil dialog detail item untuk mode lihat
+            }
             binding.recyclerView.adapter = adapter
             adapter.notifyDataSetChanged()
             binding.swipeRefresh.isRefreshing = false
@@ -93,14 +98,13 @@ class StudentSectionActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.loadItems()
+        viewModel.loadItemsAvailable()
     }
 
+    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
     private fun viewItem(item: Item) {
-        val intent = Intent(this, ItemDetailActivity::class.java).apply {
-            putExtra("item", item)
-        }
-        startActivity(intent)
+        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
+        showItemDetailDialog(item, false)
     }
 
     private fun setupScanCodeButton() {
@@ -133,12 +137,19 @@ class StudentSectionActivity : AppCompatActivity() {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
 
-            viewModel.loadItems()
+            viewModel.loadItemsAvailable()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadItems()
+        viewModel.loadItemsAvailable()
+    }
+
+    // Metode untuk menampilkan ItemDetailDialogFragment
+    fun showItemDetailDialog(item: Item, isEditMode: Boolean) {
+        val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
+        // Untuk Activity, gunakan supportFragmentManager
+        dialog.show(supportFragmentManager, "ItemDetailDialog")
     }
 }
