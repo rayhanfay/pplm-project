@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -48,17 +50,16 @@ class ChangePasswordActivity : AppCompatActivity() {
         binding.etNewPassword.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 if (event.rawX >= (binding.etNewPassword.right - binding.etNewPassword.compoundDrawables[2].bounds.width())) {
-                    isPasswordVisible = !isPasswordVisible
-                    if (isPasswordVisible) {
-                        binding.etNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                        binding.etNewPassword.setCompoundDrawablesWithIntrinsicBounds(
-                            0, 0, R.drawable.ic_eye, 0
-                        )
-                    } else {
-                        binding.etNewPassword.inputType =
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    val isCurrentPasswordVisible = binding.etNewPassword.transformationMethod is HideReturnsTransformationMethod
+                    if (isCurrentPasswordVisible) {
+                        binding.etNewPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                         binding.etNewPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye_closed, 0
+                        )
+                    } else {
+                        binding.etNewPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                        binding.etNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye, 0
                         )
                     }
                     binding.etNewPassword.post {
@@ -73,17 +74,16 @@ class ChangePasswordActivity : AppCompatActivity() {
         binding.etConfirmNewPassword.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 if (event.rawX >= (binding.etConfirmNewPassword.right - binding.etConfirmNewPassword.compoundDrawables[2].bounds.width())) {
-                    isPasswordVisible = !isPasswordVisible
-                    if (isPasswordVisible) {
-                        binding.etConfirmNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                        binding.etConfirmNewPassword.setCompoundDrawablesWithIntrinsicBounds(
-                            0, 0, R.drawable.ic_eye, 0
-                        )
-                    } else {
-                        binding.etConfirmNewPassword.inputType =
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    val isCurrentPasswordVisible = binding.etConfirmNewPassword.transformationMethod is HideReturnsTransformationMethod
+                    if (isCurrentPasswordVisible) {
+                        binding.etConfirmNewPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                         binding.etConfirmNewPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye_closed, 0
+                        )
+                    } else {
+                        binding.etConfirmNewPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                        binding.etConfirmNewPassword.setCompoundDrawablesWithIntrinsicBounds(
+                            0, 0, R.drawable.ic_eye, 0
                         )
                     }
                     binding.etConfirmNewPassword.post {
@@ -102,6 +102,11 @@ class ChangePasswordActivity : AppCompatActivity() {
             val confirmPassword = binding.etConfirmNewPassword.text.toString().trim()
 
             var isValid = true
+
+            if (newPassword.length < 8) {
+                binding.etNewPassword.error = "Password minimal 8 karakter"
+                isValid = false
+            }
 
             if (newPassword.isEmpty()) {
                 binding.etNewPassword.error = "Password baru tidak boleh kosong"
