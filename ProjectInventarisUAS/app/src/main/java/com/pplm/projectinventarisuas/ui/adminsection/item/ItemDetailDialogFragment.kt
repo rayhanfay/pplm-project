@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.DialogItemDetailBinding
 import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
@@ -146,6 +147,13 @@ class ItemDetailDialogFragment : DialogFragment() {
         val sharedPref = requireActivity().getSharedPreferences("LoginSession", AppCompatActivity.MODE_PRIVATE)
         return sharedPref.getString("userRole", "") ?: ""
     }
+
+    override fun onStart() {
+        super.onStart()
+        // Set rounded corners background for dialog
+        dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

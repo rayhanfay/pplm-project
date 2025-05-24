@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="#F5F5F5"
+    android:background="@color/colorBackground"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
         android:layout_width="276dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="#43A047"
+        android:backgroundTint="@color/colorSecondary"
         card_view:cardCornerRadius="16dp"
         card_view:cardElevation="6dp">
 
@@ -63,7 +63,7 @@
                 android:id="@+id/tvJudulDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Deskripsi Alat"
+                android:text="Perhatian !"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins_semibold"
                 android:textSize="16sp"/>
@@ -72,11 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text="Infokus Epson EB-X41 adalah proyektor digital dengan
-resolusi XGA (1024 x 768) dan tingkat kecerahan 3600
-lumens. Alat ini dilengkapi dengan port HDMI, VGA, dan
-USB, menjadikannya ideal untuk keperluan presentasi
-di kelas, seminar, atau kegiatan akademik lainnya."
+                android:text="Mohon kembalikan alat sesudah digunakan, dan jangan membawa alat keluar area kampus!"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins"
                 android:textSize="12sp"/>

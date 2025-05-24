@@ -74,9 +74,12 @@ class BorrowingFragment : Fragment() {
     }
 
     private fun viewBorrowing(borrowing: Borrowing) {
-        val intent = Intent(requireContext(), BorrowingDetailActivity::class.java)
-        intent.putExtra("borrowing", borrowing)
-        startActivity(intent)
+
+        val dialogFragment = BorrowingDetailDialogFragment(borrowing)
+        dialogFragment.show(childFragmentManager, "BorrowingDetailDialog")
+//        val intent = Intent(requireContext(), BorrowingDetailActivity::class.java)
+//        intent.putExtra("borrowing", borrowing)
+//        startActivity(intent)
     }
 
     private fun editBorrowing(borrowing: Borrowing) {

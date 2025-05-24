@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
+    android:background="@color/colorBackground"
     tools:context=".ui.adminsection.AdminSectionActivity">
 
     <LinearLayout
@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/yellow"
+            android:background="@color/colorPrimary"
             android:padding="16dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
@@ -23,6 +23,7 @@
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semibold"
@@ -36,7 +37,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/circle_white"
                 android:padding="8dp"
-                android:src="@drawable/ic_lock" />
+                android:src="@drawable/ic_logout" />
 
         </LinearLayout>
 
@@ -53,6 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
+                android:backgroundTint="@color/colorPrimary"
+                app:tint="@color/white"
                 android:contentDescription="Add Item"
                 android:src="@android:drawable/ic_input_add"
                 android:visibility="gone" />
@@ -63,8 +66,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
+                android:backgroundTint="@color/colorPrimary"
+                app:tint="@color/white"
                 android:contentDescription="Scan Return"
-                android:src="@android:drawable/ic_menu_camera"
+                android:src="@drawable/ic_scan_barcode"
                 android:visibility="gone" />
         </FrameLayout>
 
@@ -72,10 +77,11 @@
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="@color/bottomNavBackground"
             app:itemIconTint="@color/bottom_nav_selector"
             app:itemTextColor="@color/bottom_nav_selector"
             app:labelVisibilityMode="labeled"
+            app:itemRippleColor="@android:color/transparent"
             app:menu="@menu/admin_menu" />
 
     </LinearLayout>

@@ -2,6 +2,73 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="yellow">#FFC107</color>
-    <color name="colorPrimary">#FFC109</color>
+    <color name="yellow">#FBC02D</color>
+
+    <!-- Primary Theme Colors -->
+    <color name="colorPrimary">#1976D2</color>
+    <color name="colorPrimaryDark">#1565C0</color>
+    <color name="colorPrimaryLight">#90CAF9</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+
+    <!-- Secondary and Disabled -->
+    <color name="colorSecondary">#90CAF9</color>
+    <color name="colorOnSecondary">#0D47A1</color>
+    <color name="colorDisabled">#B0BEC5</color>
+    <color name="colorOnDisabled">#ECEFF1</color>
+
+    <!-- Backgrounds -->
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorAppBar">#1565C0</color>
+    <color name="colorCard">#FFFFFF</color>
+    <color name="colorCardList">#FAFAFA</color>
+    <color name="colorCardLogin">#FFFFFF</color>
+    <color name="colorCardLoginShadow">#E0E0E0</color>
+    <color name="colorInputFieldBackground">#FFFFFF</color>
+    <color name="colorInputFieldBorder">#BDBDBD</color>
+
+    <!-- Text Colors -->
+    <color name="textHeading">#212121</color>
+    <color name="textTitle">#424242</color>
+    <color name="textBody">#616161</color>
+    <color name="textInverse">#FFFFFF</color>
+
+    <!-- Icon Colors -->
+    <color name="iconDefault">#455A64</color>
+    <color name="iconNavbarActive">#1976D2</color>
+    <color name="iconNavbarInactive">#90A4AE</color>
+
+    <!-- Status Colors -->
+    <color name="colorSuccess">#388E3C</color>
+    <color name="colorWarning">#FBC02D</color>
+    <color name="colorError">#D32F2F</color>
+    <color name="colorDelete">#EF6C00</color>
+
+    <!-- Snackbar -->
+    <color name="snackbarBackground">#323232</color>
+
+    <!-- Bottom Navigation -->
+    <color name="bottomNavBackground">#FFFFFF</color>
+
+    <!-- Popup Success -->
+    <color name="popupSuccessBackground">#E8F5E9</color>
+    <color name="popupSuccessText">#2E7D32</color>
+
+    <!-- Popup Warning -->
+    <color name="popupWarningBackground">#FFFDE7</color>
+    <color name="popupWarningText">#F9A825</color>
+
+    <!-- Popup Error -->
+    <color name="popupErrorBackground">#FFEBEE</color>
+    <color name="popupErrorText">#C62828</color>
+
+    <!-- Popup Delete -->
+    <color name="popupDeleteBackground">#FFF3E0</color>
+    <color name="popupDeleteText">#EF6C00</color>
+
+    <!-- Popup Button Backgrounds -->
+    <color name="popupButtonSuccess">#388E3C</color>
+    <color name="popupButtonWarning">#F9A825</color>
+    <color name="popupButtonErrorDelete">#D32F2F</color>
+    <color name="popupButtonCancel">#BDBDBD</color>
+    <color name="popupButtonText">#FFFFFF</color>
 </resources>

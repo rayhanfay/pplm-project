@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
@@ -51,6 +52,7 @@ class AddItemDialogFragment : DialogFragment() {
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
+        dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
     }
 
     private fun saveItem() {
@@ -78,7 +80,7 @@ class AddItemDialogFragment : DialogFragment() {
 
                     viewModel.addItem(item) { success ->
                         if (success) {
-                            CustomDialog.alert(
+                            CustomDialog.success(
                                 context = requireContext(),
                                 message = "Item berhasil disimpan",
                                 onDismiss = { dismiss() }

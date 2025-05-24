@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorBackground"
     tools:context=".ui.studentsection.StudentSectionActivity">
 
     <LinearLayout
@@ -36,7 +37,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/circle_white"
                 android:padding="8dp"
-                android:src="@drawable/ic_lock" />
+                android:src="@drawable/ic_logout" />
         </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -61,6 +62,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
+                        android:textColor="@color/textHeading"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/poppins_semibold"
                         android:text="Item Type"
@@ -116,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:backgroundTint="#1976d2"
+        android:backgroundTint="@color/colorPrimary"
         android:contentDescription="Scan Code"
         android:minWidth="48dp"
         android:minHeight="48dp"
