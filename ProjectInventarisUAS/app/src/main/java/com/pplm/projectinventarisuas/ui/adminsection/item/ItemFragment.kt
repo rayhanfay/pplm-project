@@ -56,7 +56,6 @@ class ItemFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // Inisialisasi adapter dengan listener untuk klik item
         adapter = ItemAdapter(emptyList()) { selectedItem ->
             showItemOptionsDialog(selectedItem)
         }

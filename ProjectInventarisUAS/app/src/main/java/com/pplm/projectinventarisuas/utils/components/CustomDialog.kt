@@ -31,7 +31,10 @@ object CustomDialog {
             .create()
 
         loadingDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        loadingDialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        loadingDialog?.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         loadingDialog?.window?.setGravity(Gravity.CENTER)
 
         loadingDialog?.show()
@@ -58,7 +61,10 @@ object CustomDialog {
             .create()
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
@@ -89,7 +95,10 @@ object CustomDialog {
             .create()
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
@@ -122,7 +131,10 @@ object CustomDialog {
             .create()
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setGravity(Gravity.CENTER)
 
         view.findViewById<Button>(R.id.btnYes).setOnClickListener {
@@ -163,7 +175,10 @@ object CustomDialog {
             .create()
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setGravity(Gravity.CENTER)
 
         btnView.setOnClickListener {

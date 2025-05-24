@@ -16,7 +16,7 @@ import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.ActivityStudentSectionBinding
-import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment // Import ItemDetailDialogFragment
+import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
 import com.pplm.projectinventarisuas.utils.adapter.ItemAdapter
@@ -55,9 +55,8 @@ class StudentSectionActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // Inisialisasi adapter dengan listener untuk klik item
         adapter = ItemAdapter(emptyList()) { selectedItem ->
-            showItemDetailDialog(selectedItem, false) // Panggil dialog detail item untuk mode lihat
+            showItemDetailDialog(selectedItem, false)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -78,7 +77,7 @@ class StudentSectionActivity : AppCompatActivity() {
 
         viewModel.items.observe(this) { itemList ->
             adapter = ItemAdapter(itemList) { selectedItem ->
-                showItemDetailDialog(selectedItem, false) // Panggil dialog detail item untuk mode lihat
+                showItemDetailDialog(selectedItem, false)
             }
             binding.recyclerView.adapter = adapter
             adapter.notifyDataSetChanged()
@@ -101,9 +100,7 @@ class StudentSectionActivity : AppCompatActivity() {
         viewModel.loadItemsAvailable()
     }
 
-    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
     private fun viewItem(item: Item) {
-        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
         showItemDetailDialog(item, false)
     }
 
@@ -146,10 +143,8 @@ class StudentSectionActivity : AppCompatActivity() {
         viewModel.loadItemsAvailable()
     }
 
-    // Metode untuk menampilkan ItemDetailDialogFragment
     fun showItemDetailDialog(item: Item, isEditMode: Boolean) {
         val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
-        // Untuk Activity, gunakan supportFragmentManager
         dialog.show(supportFragmentManager, "ItemDetailDialog")
     }
 }

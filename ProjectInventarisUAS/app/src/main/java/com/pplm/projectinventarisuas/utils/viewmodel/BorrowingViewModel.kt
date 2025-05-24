@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pplm.projectinventarisuas.data.model.Borrowing
+import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 
 class BorrowingViewModel(private val repository: BorrowingRepository) : ViewModel() {
@@ -19,12 +20,21 @@ class BorrowingViewModel(private val repository: BorrowingRepository) : ViewMode
     private val _saveStatus = MutableLiveData<Pair<Boolean, String?>>()
     val saveStatus: LiveData<Pair<Boolean, String?>> get() = _saveStatus
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private val _lastBorrowingId = MutableLiveData<String>()
     val lastBorrowingId: LiveData<String> get() = _lastBorrowingId
 
+    private val _summaryBorrowingStatus = MutableLiveData<List<Borrowing>>()
+    val summaryBorrowingStatus: LiveData<List<Borrowing>> get() = _summaryBorrowingStatus
+
     fun loadBorrowingData() {
+        _isLoading.value = true
         repository.getBorrowingData { list ->
             _borrowingList.value = list
+            _summaryBorrowingStatus.value = list
+            _isLoading.value = false
         }
     }
 

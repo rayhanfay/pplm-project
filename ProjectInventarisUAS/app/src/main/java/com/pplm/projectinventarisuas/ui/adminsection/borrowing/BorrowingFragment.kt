@@ -9,13 +9,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pplm.projectinventarisuas.data.model.Borrowing
+import com.pplm.projectinventarisuas.data.model.BorrowingSummary
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.FragmentBorrowingBinding
 import com.pplm.projectinventarisuas.utils.adapter.BorrowingAdapter
+import com.pplm.projectinventarisuas.utils.adapter.BorrowingSummaryAdapter
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.BorrowingViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
@@ -25,6 +28,7 @@ class BorrowingFragment : Fragment() {
     private var _binding: FragmentBorrowingBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: BorrowingViewModel
+    private lateinit var summaryAdapter: BorrowingSummaryAdapter
     private lateinit var adapter: BorrowingAdapter
     private var isDialogVisible = false
 
@@ -39,16 +43,28 @@ class BorrowingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
         setupViewModel()
+        setupRecyclerView()
+        setupSwipeRefresh()
     }
 
     private fun setupRecyclerView() {
-        adapter = BorrowingAdapter(emptyList()) { selectedBorrowing ->
+        val itemRepository = ItemRepository()
+        adapter = BorrowingAdapter(emptyList(), itemRepository) { selectedBorrowing ->
             showBorrowingOptionsDialog(selectedBorrowing)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadBorrowingData()
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.swipeRefreshLayout.isRefreshing = isLoading
+        }
     }
 
     private fun showBorrowingOptionsDialog(borrowing: Borrowing) {
@@ -59,27 +75,23 @@ class BorrowingFragment : Fragment() {
             context = requireContext(),
             title = "Pilih Aksi",
             onView = {
-                isDialogVisible = false
                 viewBorrowing(borrowing)
             },
             onEdit = {
-                isDialogVisible = false
                 editBorrowing(borrowing)
             },
             onDelete = {
-                isDialogVisible = false
                 deleteBorrowing(borrowing)
+            },
+            onDismiss = {
+                isDialogVisible = false
             }
         )
     }
 
     private fun viewBorrowing(borrowing: Borrowing) {
-
         val dialogFragment = BorrowingDetailDialogFragment(borrowing)
         dialogFragment.show(childFragmentManager, "BorrowingDetailDialog")
-//        val intent = Intent(requireContext(), BorrowingDetailActivity::class.java)
-//        intent.putExtra("borrowing", borrowing)
-//        startActivity(intent)
     }
 
     private fun editBorrowing(borrowing: Borrowing) {
@@ -113,16 +125,27 @@ class BorrowingFragment : Fragment() {
     private fun setupViewModel() {
         val borrowingRepository = BorrowingRepository()
         val userRepository = UserRepository()
+        val itemRepository = ItemRepository()
         val viewModelFactory =
-            ViewModelFactory(ItemRepository(), borrowingRepository, userRepository)
+            ViewModelFactory(itemRepository, borrowingRepository, userRepository)
         viewModel = ViewModelProvider(this, viewModelFactory)[BorrowingViewModel::class.java]
 
         viewModel.borrowingList.observe(viewLifecycleOwner) { borrowingList ->
-            adapter = BorrowingAdapter(borrowingList) { selectedItem ->
+            adapter = BorrowingAdapter(borrowingList, itemRepository) { selectedItem ->
                 showBorrowingOptionsDialog(selectedItem)
             }
             binding.recyclerView.adapter = adapter
-            adapter.notifyDataSetChanged()
+        }
+
+        viewModel.summaryBorrowingStatus.observe(viewLifecycleOwner) { itemList ->
+            val summaryMap = itemList
+                .groupingBy { it.status }
+                .eachCount()
+                .map { BorrowingSummary(it.key, it.value) }
+
+            summaryAdapter = BorrowingSummaryAdapter(summaryMap)
+            binding.rvBorrowingSummary.layoutManager = GridLayoutManager(requireContext(), 2)
+            binding.rvBorrowingSummary.adapter = summaryAdapter
         }
 
         viewModel.loadBorrowingData()
