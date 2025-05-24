@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/colorBackground"
+    android:fitsSystemWindows="true"
     tools:context=".ui.adminsection.AdminSectionActivity">
 
     <LinearLayout
@@ -16,18 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:padding="16dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
-                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Welcome Admin"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -55,10 +55,10 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                app:tint="@color/white"
                 android:contentDescription="Add Item"
                 android:src="@android:drawable/ic_input_add"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/white" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabScanReturn"
@@ -67,10 +67,10 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                app:tint="@color/white"
                 android:contentDescription="Scan Return"
                 android:src="@drawable/ic_scan_barcode"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/white" />
         </FrameLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -79,11 +79,9 @@
             android:layout_height="wrap_content"
             android:background="@color/bottomNavBackground"
             app:itemIconTint="@color/bottom_nav_selector"
+            app:itemRippleColor="@android:color/transparent"
             app:itemTextColor="@color/bottom_nav_selector"
             app:labelVisibilityMode="labeled"
-            app:itemRippleColor="@android:color/transparent"
             app:menu="@menu/admin_menu" />
-
     </LinearLayout>
-
 </FrameLayout>

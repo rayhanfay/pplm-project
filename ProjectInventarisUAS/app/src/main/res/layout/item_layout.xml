@@ -26,7 +26,7 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/tvItemCode"
+            android:id="@+id/tvItemName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tool Name"
@@ -35,7 +35,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvItemName"
+            android:id="@+id/tvItemCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Code"

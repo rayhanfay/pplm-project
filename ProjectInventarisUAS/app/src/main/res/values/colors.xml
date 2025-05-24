@@ -71,4 +71,6 @@
     <color name="popupButtonErrorDelete">#D32F2F</color>
     <color name="popupButtonCancel">#BDBDBD</color>
     <color name="popupButtonText">#FFFFFF</color>
+
+    <color name="bottom_nav_active_indicator_color">#330D47A1</color>
 </resources>

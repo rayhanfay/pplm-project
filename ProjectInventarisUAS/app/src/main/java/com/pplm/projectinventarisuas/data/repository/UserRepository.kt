@@ -1,13 +1,23 @@
 package com.pplm.projectinventarisuas.data.repository
 
-import android.util.Log // Import kelas Log
+import android.util.Log
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.User
+import com.pplm.projectinventarisuas.data.dao.UserDao
 import java.security.MessageDigest
+import com.google.firebase.database.DatabaseReference
 
-class UserRepository {
+class UserRepository : UserDao {
 
-    private val database = DatabaseProvider.getDatabaseReference()
+    private val database: DatabaseReference = DatabaseProvider.getDatabaseReference()
+
+    private fun hashPassword(password: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(password.toByteArray(Charsets.UTF_8))
+        val hashedPassword = hashBytes.joinToString("") { "%02x".format(it) }
+        Log.d("UserRepository", "Password di-hash. Panjang hash: ${hashedPassword.length}")
+        return hashedPassword
+    }
 
     private fun checkStudentLogin(
         username: String,
@@ -22,14 +32,12 @@ class UserRepository {
                     "Snapshot siswa ditemukan. Jumlah anak: ${studentSnapshot.childrenCount}"
                 )
                 for (student in studentSnapshot.children) {
-                    val studentUsername = student.child("student_username").value.toString()
-                        .trim() // Tambahkan .trim()
-                    val studentPassword = student.child("student_password").value.toString()
-                        .trim() // Tambahkan .trim()
+                    val studentUsername = student.child("student_username").value.toString().trim()
+                    val studentPassword = student.child("student_password").value.toString().trim()
                     val studentId = student.child("student_id").value.toString()
                     val studentName = student.child("student_name").value.toString()
                     val isPasswordChanged =
-                        student.child("isPasswordChanged").value as? Boolean ?: false // Handle null
+                        student.child("isPasswordChanged").value as? Boolean ?: false
                     Log.d(
                         "UserRepository",
                         "Membandingkan siswa: DB Username=$studentUsername, DB Password=$studentPassword"
@@ -54,18 +62,18 @@ class UserRepository {
             } else {
                 Log.w("UserRepository", "Path siswa tidak ada atau kosong.")
             }
-            callback(null) // Mengembalikan null jika tidak ada siswa yang cocok atau path tidak ada
+            callback(null)
         }.addOnFailureListener { exception ->
             Log.e("UserRepository", "Gagal mengambil data siswa: ${exception.message}", exception)
             callback(null)
         }
     }
 
-    fun login(username: String, password: String, callback: (User?) -> Unit) {
+    override fun login(username: String, password: String, callback: (User?) -> Unit) {
         val hashedPassword = hashPassword(password)
         Log.d(
             "UserRepository",
-            "Mencoba login untuk Username: $username, Hashed Password: $hashedPassword"
+            "Mencoba login untuk Username: $username, Hashed Password: ${hashedPassword.take(5)}..." // Amankan log
         )
 
         database.child("admin").get().addOnSuccessListener { adminSnapshot ->
@@ -75,17 +83,19 @@ class UserRepository {
                     "Snapshot admin ditemukan. Jumlah anak: ${adminSnapshot.childrenCount}"
                 )
                 for (admin in adminSnapshot.children) {
-                    val adminUsername =
-                        admin.child("admin_username").value.toString().trim() // Tambahkan .trim()
-                    val adminPassword =
-                        admin.child("admin_password").value.toString().trim() // Tambahkan .trim()
+                    val adminUsername = admin.child("admin_username").value.toString().trim()
+                    val adminPassword = admin.child("admin_password").value.toString().trim()
                     val adminId = admin.child("admin_id").value.toString()
                     val adminName = admin.child("admin_name").value.toString()
                     val isPasswordChanged =
-                        admin.child("isPasswordChanged").value as? Boolean ?: false // Handle null
+                        admin.child("isPasswordChanged").value as? Boolean ?: false
                     Log.d(
                         "UserRepository",
-                        "Membandingkan admin: DB Username=$adminUsername, DB Password=$adminPassword"
+                        "Membandingkan admin: DB Username=$adminUsername, DB Password=${
+                            adminPassword.take(
+                                5
+                            )
+                        }..."
                     )
                     if (username == adminUsername && hashedPassword == adminPassword) {
                         Log.d(
@@ -107,7 +117,6 @@ class UserRepository {
             } else {
                 Log.w("UserRepository", "Path admin tidak ada atau kosong.")
             }
-            // Jika tidak ditemukan di admin, periksa siswa
             checkStudentLogin(username, hashedPassword, callback)
 
         }.addOnFailureListener { exception ->
@@ -116,7 +125,7 @@ class UserRepository {
         }
     }
 
-    fun changePassword(
+    override fun changePassword(
         userId: String,
         userRole: String,
         newPassword: String,
@@ -126,18 +135,18 @@ class UserRepository {
         val userRef = database.child(userRole).child(userId)
         Log.d(
             "UserRepository",
-            "Mengubah password untuk User ID: $userId, Peran: $userRole, Hashed New Password: $hashedPassword"
+            "Mengubah password untuk User ID: $userId, Peran: $userRole, Hashed New Password: ${
+                hashedPassword.take(
+                    5
+                )
+            }..."
         )
-
 
         when (userRole) {
             "admin" -> {
                 userRef.child("admin_password").setValue(hashedPassword)
                     .addOnSuccessListener {
-                        Log.d(
-                            "UserRepository",
-                            "Password admin berhasil diatur."
-                        )
+                        Log.d("UserRepository", "Password admin berhasil diatur.")
                     }
                     .addOnFailureListener { e ->
                         Log.e(
@@ -151,10 +160,7 @@ class UserRepository {
             "student" -> {
                 userRef.child("student_password").setValue(hashedPassword)
                     .addOnSuccessListener {
-                        Log.d(
-                            "UserRepository",
-                            "Password siswa berhasil diatur."
-                        )
+                        Log.d("UserRepository", "Password siswa berhasil diatur.")
                     }
                     .addOnFailureListener { e ->
                         Log.e(
@@ -187,7 +193,11 @@ class UserRepository {
         }
     }
 
-    fun fetchCurrentPassword(userId: String, userRole: String, callback: (String?) -> Unit) {
+    override fun fetchCurrentPassword(
+        userId: String,
+        userRole: String,
+        callback: (String?) -> Unit
+    ) {
         val userRef = database.child(userRole).child(userId)
         Log.d(
             "UserRepository",
@@ -195,14 +205,14 @@ class UserRepository {
         )
         userRef.get().addOnSuccessListener { snapshot ->
             val currentPassword = if (userRole == "admin") {
-                snapshot.child("admin_password").value.toString().trim() // Tambahkan .trim()
+                snapshot.child("admin_password").value.toString().trim()
             } else {
-                snapshot.child("student_password").value.toString().trim() // Tambahkan .trim()
+                snapshot.child("student_password").value.toString().trim()
             }
             Log.d(
                 "UserRepository",
                 "Password saat ini diambil: ${currentPassword?.take(5)}..."
-            ) // Log sebagian untuk keamanan
+            )
             callback(currentPassword)
         }.addOnFailureListener { exception ->
             Log.e(
@@ -214,7 +224,7 @@ class UserRepository {
         }
     }
 
-    fun isPasswordSameAsCurrent(
+    override fun isPasswordSameAsCurrent(
         userId: String,
         userRole: String,
         newPassword: String,
@@ -238,13 +248,5 @@ class UserRepository {
                 callback(false)
             }
         }
-    }
-
-    private fun hashPassword(password: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hashBytes = digest.digest(password.toByteArray(Charsets.UTF_8))
-        val hashedPassword = hashBytes.joinToString("") { "%02x".format(it) }
-        Log.d("UserRepository", "Password di-hash. Panjang hash: ${hashedPassword.length}")
-        return hashedPassword
     }
 }

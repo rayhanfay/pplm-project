@@ -3,26 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorBackground"
-    tools:context=".ui.adminsection.borrowing.BorrowingFragment"
-    android:padding="16dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Borrowing"
-        android:textColor="@color/textHeading"
-        android:fontFamily="@font/poppins_semibold"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
-
+    android:orientation="vertical"
+    android:paddingVertical="16dp"
+    tools:context=".ui.adminsection.borrowing.BorrowingFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        tools:listitem="@layout/item_summary_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_summary_card" />
 
 </LinearLayout>

@@ -2,12 +2,14 @@ package com.pplm.projectinventarisuas.data.repository
 
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.Item
+import com.pplm.projectinventarisuas.data.dao.ItemDao
+import com.google.firebase.database.DatabaseReference
 
-class ItemRepository {
+class ItemRepository : ItemDao {
 
-    private val database = DatabaseProvider.getDatabaseReference()
+    private val database: DatabaseReference = DatabaseProvider.getDatabaseReference()
 
-    fun Item.toMap(): Map<String, Any> = mapOf(
+    private fun Item.toMap(): Map<String, Any> = mapOf(
         "item_id" to item_id,
         "item_name" to item_name,
         "item_type" to item_type,
@@ -15,7 +17,7 @@ class ItemRepository {
         "item_description" to item_description
     )
 
-    fun getItems(callback: (List<Item>) -> Unit) {
+    override fun getItems(callback: (List<Item>) -> Unit) {
         database.child("item").get().addOnSuccessListener { snapshot ->
             val itemList = snapshot.children.mapNotNull { it.getValue(Item::class.java) }
             callback(itemList)
@@ -24,19 +26,19 @@ class ItemRepository {
         }
     }
 
-    fun deleteItem(item: Item, callback: (Boolean) -> Unit) {
+    override fun deleteItem(item: Item, callback: (Boolean) -> Unit) {
         database.child("item").child(item.item_id).removeValue()
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
-    fun addItem(item: Item, callback: (Boolean) -> Unit) {
+    override fun addItem(item: Item, callback: (Boolean) -> Unit) {
         database.child("item").child(item.item_id).setValue(item.toMap())
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
-    fun itemExists(itemId: String, callback: (Boolean) -> Unit) {
+    override fun itemExists(itemId: String, callback: (Boolean) -> Unit) {
         database.child("item").child(itemId).get().addOnSuccessListener { snapshot ->
             callback(snapshot.exists())
         }.addOnFailureListener {
@@ -44,13 +46,13 @@ class ItemRepository {
         }
     }
 
-    fun updateItem(item: Item, callback: (Boolean) -> Unit) {
+    override fun updateItem(item: Item, callback: (Boolean) -> Unit) {
         database.child("item").child(item.item_id).setValue(item.toMap())
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
-    fun updateItemStatus(itemId: String, newStatus: String, callback: (Boolean) -> Unit) {
+    override fun updateItemStatus(itemId: String, newStatus: String, callback: (Boolean) -> Unit) {
         database.child("item").child(itemId).child("item_status").setValue(newStatus)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
