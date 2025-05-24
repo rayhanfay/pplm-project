@@ -62,38 +62,54 @@
                 android:focusable="false" />
 
             <LinearLayout
-                android:id="@+id/lyBorrowingHours"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/etStartHours"
+                <AutoCompleteTextView
+                    android:id="@+id/etStartHour"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Start Hours"
-                    android:fontFamily="@font/poppins"
-                    android:focusable="false" />
+                    android:hint="Start Hour"
+                    android:inputType="none"
+                    android:focusable="false"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/etStartMinute"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Start Minute"
+                    android:inputType="none"
+                    android:focusable="false"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" to "
-                    android:fontFamily="@font/poppins"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginHorizontal="8dp" />
+                    android:gravity="center_vertical"/>
 
-                <EditText
-                    android:id="@+id/etEndHours"
+                <AutoCompleteTextView
+                    android:id="@+id/etEndHour"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="End Hours"
-                    android:fontFamily="@font/poppins"
-                    android:focusable="false" />
+                    android:hint="End Hour"
+                    android:inputType="none"
+                    android:focusable="false"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/etEndMinute"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="End Minute"
+                    android:inputType="none"
+                    android:focusable="false"/>
+
             </LinearLayout>
+
 
             <android.widget.Button
                 android:id="@+id/btnBowrowItem"

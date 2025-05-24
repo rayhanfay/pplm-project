@@ -23,6 +23,7 @@ import com.google.firebase.database.*
 import com.pplm.projectinventarisuas.databinding.ActivityBorrowingTimerBinding
 import com.pplm.projectinventarisuas.ui.studentsection.StudentSectionActivity
 import com.pplm.projectinventarisuas.utils.ReminderReceiver
+import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.formatTime
 import com.pplm.projectinventarisuas.utils.timer.TimerService
 import com.pplm.projectinventarisuas.utils.timer.TimerState
@@ -541,22 +542,30 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 if (status == "Returned") {
                     Log.d(TAG_DATABASE, "Item returned - cleaning up and navigating to student section")
 
-                    val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
-                    prefs.edit() { remove("activeBorrowingId") }
-                    prefs.edit() { remove("alarmSet_$borrowingId") }
+                    // Show success dialog before cleaning up
+                    CustomDialog.success(
+                        context = this@BorrowingTimerActivity,
+                        title = "Sukses",
+                        message = "Barang telah berhasil dikembalikan",
+                        onDismiss = {
+                            val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
+                            prefs.edit { remove("activeBorrowingId") }
+                            prefs.edit { remove("alarmSet_$borrowingId") }
 
-                    stopTimerService()
-                    stopLocationMonitoring()
-                    cancelAllNotifications()
+                            stopTimerService()
+                            stopLocationMonitoring()
+                            cancelAllNotifications()
 
-                    val intent = Intent(
-                        this@BorrowingTimerActivity,
-                        StudentSectionActivity::class.java
-                    ).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    }
-                    startActivity(intent)
-                    finish()
+                            val intent = Intent(
+                                this@BorrowingTimerActivity,
+                                StudentSectionActivity::class.java
+                            ).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            }
+                            startActivity(intent)
+                            finish()
+                        }
+                    )
                 }
             }
 
