@@ -1,192 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
     android:layout_gravity="center"
-    android:background="@color/colorCard">
+    android:layout_margin="16dp">
 
-    <!-- Tombol Close -->
-    <ImageView
-        android:id="@+id/btnClose"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_close"
-        android:contentDescription="Close"
-        android:padding="4dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:tint="@android:color/black" />
-
-    <!-- Konten Dialog -->
     <LinearLayout
-        android:id="@+id/containerDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/btnClose"
-        android:layout_marginTop="8dp"
-        android:padding="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <!-- Semua isi detail borrowing seperti yang kamu buat -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Borrowing Code:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-
-        <TextView
-            android:id="@+id/tvBorrowingCode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Date Borrowed -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date Borrowed:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvDateBorrowed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Borrowing Hours -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Borrowing Hours:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:id="@+id/tvStartHours"
-                android:layout_width="0dp"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close"
+                android:padding="4dp"
+                android:src="@drawable/ic_close"
+                app:tint="@android:color/black" />
+
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" to "
-                android:layout_marginHorizontal="8dp"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/poppins" />
-            <TextView
-                android:id="@+id/tvEndHours"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@android:color/black" />
+                android:scrollbars="none"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/containerDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Borrowing Code:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etBorrowingCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="BRW-20230525-001" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Item Name:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etItemName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="Cable HDMI" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Date Borrowed:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etDateBorrowed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="25 May 2023" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Borrowing Hours:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/etStartHours"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_edittext"
+                                android:enabled="false"
+                                android:fontFamily="@font/poppins"
+                                android:padding="10dp"
+                                android:textSize="14sp"
+                                tools:text="09:00 AM" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginHorizontal="8dp"
+                                android:fontFamily="@font/poppins"
+                                android:text=" to " />
+
+                            <EditText
+                                android:id="@+id/etEndHours"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_edittext"
+                                android:enabled="false"
+                                android:fontFamily="@font/poppins"
+                                android:padding="10dp"
+                                android:textSize="14sp"
+                                tools:text="05:00 PM" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Student Name:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etStudentName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="John Doe" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Admin Name:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etAdminName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="Jane Smith" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Last Location:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etLastLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="Lab A" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Return Time:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etReturnTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="25 May 2023, 04:30 PM" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Status:"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@drawable/rounded_edittext"
+                            android:enabled="false"
+                            android:fontFamily="@font/poppins"
+                            android:padding="10dp"
+                            android:textSize="14sp"
+                            tools:text="Borrowed" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <android.widget.Button
+                            android:id="@+id/btnEdit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_edit"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Edit"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white" />
+
+                        <android.widget.Button
+                            android:id="@+id/btnSave"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_primary"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Save"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
-
-        <!-- Student Name -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Student Name:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvStudentName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Admin Name -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Admin Name:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvAdminName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Last Location -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Last Location:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvLastLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Return Time -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Return Time:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvReturnTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Status -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Status:"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:fontFamily="@font/poppins"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp" />
     </LinearLayout>
-</RelativeLayout>
+</androidx.cardview.widget.CardView>

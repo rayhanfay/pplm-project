@@ -1,9 +1,11 @@
 package com.pplm.projectinventarisuas.data.repository
 
+import android.util.Log
 import com.pplm.projectinventarisuas.data.dao.BorrowingDao
 import com.pplm.projectinventarisuas.data.database.DatabaseProvider
 import com.pplm.projectinventarisuas.data.model.Borrowing
 import com.pplm.projectinventarisuas.data.model.Item
+import java.util.concurrent.atomic.AtomicInteger
 
 class BorrowingRepository : BorrowingDao {
 
@@ -12,47 +14,109 @@ class BorrowingRepository : BorrowingDao {
     override fun getBorrowingData(callback: (List<Borrowing>) -> Unit) {
         database.child("borrowing").get().addOnSuccessListener { snapshot ->
             val borrowingList = snapshot.children.mapNotNull { it.getValue(Borrowing::class.java) }
-            fetchUserNames(borrowingList, callback)
+            fetchRelatedData(borrowingList, callback)
         }.addOnFailureListener {
+            Log.e("BorrowingRepo", "Failed to get borrowing data from Firebase", it)
             callback(emptyList())
         }
     }
 
-    private fun fetchUserNames(
+    private fun fetchRelatedData(
         borrowingList: List<Borrowing>,
         callback: (List<Borrowing>) -> Unit
     ) {
-        val updatedBorrowingList = borrowingList.toMutableList()
-        var count = 0
+        if (borrowingList.isEmpty()) {
+            Log.d("BorrowingRepo", "Borrowing list is empty, returning empty list.")
+            callback(emptyList())
+            return
+        }
 
-        for (borrowing in borrowingList) {
-            database.child("admin").child(borrowing.admin_id).get()
+        val totalExpectedOperations = borrowingList.size * 3
+        val completedOperations = AtomicInteger(0)
+
+        val interimBorrowings = mutableMapOf<String, Borrowing>()
+        borrowingList.forEach { borrowing ->
+            interimBorrowings[borrowing.borrowing_id] = borrowing.copy()
+        }
+
+        val checkCompletion = {
+            val currentCompleted =
+                completedOperations.incrementAndGet()
+            Log.d(
+                "BorrowingRepo",
+                "Completed operations: $currentCompleted / $totalExpectedOperations"
+            )
+            if (currentCompleted == totalExpectedOperations) {
+                val finalBorrowingList = borrowingList.map { original ->
+                    interimBorrowings[original.borrowing_id]
+                        ?: original
+                }
+                Log.d(
+                    "BorrowingRepo",
+                    "All operations completed. Calling callback with ${finalBorrowingList.size} items."
+                )
+                callback(finalBorrowingList)
+            }
+        }
+
+        for (originalBorrowing in borrowingList) {
+            val borrowingId = originalBorrowing.borrowing_id
+
+            database.child("admin").child(originalBorrowing.admin_id).get()
                 .addOnSuccessListener { adminSnapshot ->
                     val adminName = adminSnapshot.child("admin_name").value.toString()
-                    val updatedBorrowing = borrowing.copy(admin_name = adminName)
-
-                    database.child("student").child(borrowing.student_id).get()
-                        .addOnSuccessListener { studentSnapshot ->
-                            val studentName = studentSnapshot.child("student_name").value.toString()
-                            val finalBorrowing = updatedBorrowing.copy(student_name = studentName)
-
-                            updatedBorrowingList[count] = finalBorrowing
-                            count++
-
-                            if (count == borrowingList.size) {
-                                callback(updatedBorrowingList)
-                            }
-                        }.addOnFailureListener {
-                            count++
-                            if (count == borrowingList.size) {
-                                callback(updatedBorrowingList)
-                            }
-                        }
-                }.addOnFailureListener {
-                    count++
-                    if (count == borrowingList.size) {
-                        callback(updatedBorrowingList)
+                    synchronized(this) {
+                        interimBorrowings[borrowingId] =
+                            interimBorrowings[borrowingId]!!.copy(admin_name = adminName)
                     }
+                    Log.d("BorrowingRepo", "Admin name fetched for borrowing ID: ${borrowingId}")
+                    checkCompletion()
+                }.addOnFailureListener { e ->
+                    Log.e(
+                        "BorrowingRepo",
+                        "Failed to fetch admin name for borrowing ID: ${borrowingId}",
+                        e
+                    )
+                    checkCompletion()
+                }
+
+            database.child("student").child(originalBorrowing.student_id).get()
+                .addOnSuccessListener { studentSnapshot ->
+                    val studentName = studentSnapshot.child("student_name").value.toString()
+                    synchronized(this) {
+                        interimBorrowings[borrowingId] =
+                            interimBorrowings[borrowingId]!!.copy(student_name = studentName)
+                    }
+                    Log.d("BorrowingRepo", "Student name fetched for borrowing ID: ${borrowingId}")
+                    checkCompletion()
+                }.addOnFailureListener { e ->
+                    Log.e(
+                        "BorrowingRepo",
+                        "Failed to fetch student name for borrowing ID: ${borrowingId}",
+                        e
+                    )
+                    checkCompletion()
+                }
+
+            database.child("item").child(originalBorrowing.item_id).get()
+                .addOnSuccessListener { itemSnapshot ->
+                    val itemName = itemSnapshot.child("item_name").value.toString()
+                    synchronized(this) {
+                        interimBorrowings[borrowingId] =
+                            interimBorrowings[borrowingId]!!.copy(item_name = itemName)
+                    }
+                    Log.d(
+                        "BorrowingRepo",
+                        "Item name fetched for borrowing ID: ${borrowingId}, item: $itemName"
+                    )
+                    checkCompletion()
+                }.addOnFailureListener { e ->
+                    Log.e(
+                        "BorrowingRepo",
+                        "Failed to fetch item name for borrowing ID: ${borrowingId}",
+                        e
+                    )
+                    checkCompletion()
                 }
         }
     }
@@ -61,7 +125,7 @@ class BorrowingRepository : BorrowingDao {
         database.child("borrowing").get().addOnSuccessListener { snapshot ->
             val borrowingList = snapshot.children.mapNotNull { it.getValue(Borrowing::class.java) }
             val filteredList = borrowingList.filter { it.item_id == itemId }
-            callback(filteredList)
+            fetchRelatedData(filteredList, callback)
         }.addOnFailureListener {
             callback(emptyList())
         }
@@ -75,7 +139,7 @@ class BorrowingRepository : BorrowingDao {
         database.child("borrowing").get().addOnSuccessListener { snapshot ->
             val borrowingList = snapshot.children.mapNotNull { it.getValue(Borrowing::class.java) }
             val filteredList = borrowingList.filter { it.item_id == itemId && it.status == status }
-            callback(filteredList)
+            fetchRelatedData(filteredList, callback)
         }.addOnFailureListener {
             callback(emptyList())
         }
@@ -135,6 +199,12 @@ class BorrowingRepository : BorrowingDao {
             .addOnFailureListener {
                 callback(false, it.message)
             }
+    }
+
+    fun updateBorrowing(borrowing: Borrowing, callback: (Boolean) -> Unit) {
+        database.child("borrowing").child(borrowing.borrowing_id).setValue(borrowing)
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
     }
 
     override fun deleteBorrowing(borrowing: Borrowing, callback: (Boolean) -> Unit) {

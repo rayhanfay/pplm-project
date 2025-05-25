@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pplm.projectinventarisuas.data.model.Borrowing
-import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 
 class BorrowingViewModel(private val repository: BorrowingRepository) : ViewModel() {
@@ -55,6 +54,12 @@ class BorrowingViewModel(private val repository: BorrowingRepository) : ViewMode
     fun fetchItemName(itemId: String) {
         repository.fetchItemById(itemId) {
             _itemName.value = it?.item_name ?: "Unknown"
+        }
+    }
+
+    fun updateBorrowing(borrowing: Borrowing) {
+        repository.updateBorrowing(borrowing) { success ->
+            if (success) loadBorrowingData()
         }
     }
 

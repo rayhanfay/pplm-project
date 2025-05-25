@@ -97,12 +97,10 @@ class ItemFragment : Fragment() {
             context = requireContext(),
             title = "Pilih Aksi",
             onView = {
-                // Panggil dialog detail item untuk mode lihat
                 showItemDetailDialog(item, false)
                 isDialogVisible = false
             },
             onEdit = {
-                // Panggil dialog detail item untuk mode edit
                 showItemDetailDialog(item, true)
                 isDialogVisible = false
             },
@@ -113,18 +111,6 @@ class ItemFragment : Fragment() {
                 isDialogVisible = false
             }
         )
-    }
-
-    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
-    private fun viewItem(item: Item) {
-        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
-        showItemDetailDialog(item, false)
-    }
-
-    // Metode ini sekarang akan memanggil ItemDetailDialogFragment
-    private fun editItem(item: Item) {
-        // Tidak lagi menggunakan Intent untuk memulai Activity, langsung tampilkan dialog
-        showItemDetailDialog(item, true)
     }
 
     private fun deleteItem(item: Item) {
@@ -165,9 +151,8 @@ class ItemFragment : Fragment() {
         _binding = null
     }
 
-    // Metode untuk menampilkan ItemDetailDialogFragment
-    fun showItemDetailDialog(item: com.pplm.projectinventarisuas.data.model.Item, isEditMode: Boolean) {
+    fun showItemDetailDialog(item: Item, isEditMode: Boolean) {
         val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
-        dialog.show(childFragmentManager, "ItemDetailDialog") // Gunakan childFragmentManager untuk dialog dari Fragment
+        dialog.show(childFragmentManager, "ItemDetailDialog")
     }
 }

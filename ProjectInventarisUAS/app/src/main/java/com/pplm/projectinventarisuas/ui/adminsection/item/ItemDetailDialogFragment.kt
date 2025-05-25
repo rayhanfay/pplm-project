@@ -14,7 +14,6 @@ import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
-import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.ItemViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
@@ -29,7 +28,6 @@ class ItemDetailDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Set style for the dialog to be fullscreen or as needed
         setStyle(STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog_NoActionBar_MinWidth)
     }
 
@@ -46,31 +44,20 @@ class ItemDetailDialogFragment : DialogFragment() {
 
         setupViewModel()
 
-        // Retrieve item data from arguments
         arguments?.let {
             item = it.getParcelable("item")!!
-            // isEditMode from arguments is only a suggestion, actual edit mode depends on user role
             isEditMode = it.getBoolean("isEditMode", false)
         }
 
         displayItemDetails()
-        // Call setupUserPermission first to determine actual editability and button visibility
         setupUserPermission()
-        setupButtons() // Setup button click listeners after their visibility is determined
+        setupButtons()
     }
 
     private fun setupViewModel() {
         val factory = ViewModelFactory(ItemRepository(), BorrowingRepository(), UserRepository())
         viewModel = ViewModelProvider(this, factory)[ItemViewModel::class.java]
     }
-
-//    private fun setupViewModel() {
-//        val itemRepository = ItemRepository()
-//        val userRepository = UserRepository()
-//        val borrowingRepository = BorrowingRepository()
-//        val factory = ViewModelFactory(requireContext(), itemRepository, userRepository, borrowingRepository)
-//        viewModel = ViewModelProvider(this, factory).get(ItemViewModel::class.java)
-//    }
 
     private fun displayItemDetails() {
         binding.etItemName.setText(item.item_name)
@@ -82,11 +69,9 @@ class ItemDetailDialogFragment : DialogFragment() {
     private fun setupUserPermission() {
         val userRole = getUserRole()
         if (userRole == "admin") {
-            // Admin can edit, so enable fields and show/hide buttons based on initial isEditMode
-            setEditMode(isEditMode) // Use the isEditMode from arguments for admin
+            setEditMode(isEditMode)
         } else {
-            // Student cannot edit, so disable fields and hide edit/save buttons
-            setEditMode(false) // Force disable edit mode for students
+            setEditMode(false)
             binding.btnEdit.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
         }
@@ -118,7 +103,7 @@ class ItemDetailDialogFragment : DialogFragment() {
                 context = requireContext(),
                 message = "Item berhasil diperbarui",
                 onDismiss = {
-                    dismiss() // Close dialog after item successfully updated
+                    dismiss()
                 }
             )
             setEditMode(false)
@@ -144,16 +129,15 @@ class ItemDetailDialogFragment : DialogFragment() {
     }
 
     private fun getUserRole(): String {
-        val sharedPref = requireActivity().getSharedPreferences("LoginSession", AppCompatActivity.MODE_PRIVATE)
+        val sharedPref =
+            requireActivity().getSharedPreferences("LoginSession", AppCompatActivity.MODE_PRIVATE)
         return sharedPref.getString("userRole", "") ?: ""
     }
 
     override fun onStart() {
         super.onStart()
-        // Set rounded corners background for dialog
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
