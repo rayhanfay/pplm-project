@@ -526,7 +526,6 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
         databaseRef = FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId!!)
 
-        // Listen for data changes including deletion
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
@@ -542,20 +541,23 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 if (status == "Returned") {
                     Log.d(TAG_DATABASE, "Item returned - cleaning up and navigating to student section")
 
-                    // Show success dialog before cleaning up
+                    stopTimerService()
+                    stopLocationMonitoring()
+                    cancelAllNotifications()
+
+                    val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
+                    prefs.edit {
+                        remove("activeBorrowingId")
+                        remove("alarmSet_$borrowingId")
+                        apply() // Pastikan perubahan langsung disimpan
+                    }
+
                     CustomDialog.success(
                         context = this@BorrowingTimerActivity,
                         title = "Sukses",
                         message = "Barang telah berhasil dikembalikan",
                         onDismiss = {
-                            val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
-                            prefs.edit { remove("activeBorrowingId") }
-                            prefs.edit { remove("alarmSet_$borrowingId") }
-
-                            stopTimerService()
-                            stopLocationMonitoring()
-                            cancelAllNotifications()
-
+                            // 4. Navigasi ke StudentSectionActivity
                             val intent = Intent(
                                 this@BorrowingTimerActivity,
                                 StudentSectionActivity::class.java
@@ -573,7 +575,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 Log.e(TAG_DATABASE, "Failed to read borrowing status: ${error.message}")
                 Toast.makeText(
                     this@BorrowingTimerActivity,
-                    "Failed to read status",
+                    "Gagal memeriksa status peminjaman",
                     Toast.LENGTH_SHORT
                 ).show()
             }

@@ -97,7 +97,8 @@ class BorrowingItemActivity : AppCompatActivity() {
 
                     startActivity(Intent(this, BorrowingTimerActivity::class.java).apply {
                         putExtra("BORROWING_ID", borrowingId)
-                        putExtra("END_HOUR", binding.etEndHour.text.toString())
+                        val endTime = "${binding.etEndHour.text}:${binding.etEndMinute.text}"
+                        putExtra("END_TIME", endTime)
                     })
                 }
             } else {
