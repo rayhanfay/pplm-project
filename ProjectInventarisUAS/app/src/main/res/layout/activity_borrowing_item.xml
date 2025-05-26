@@ -11,10 +11,9 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:backgroundTint="@color/yellow"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimary"
         android:title="Borrowing Item"
         android:titleTextColor="@android:color/white" />
 
@@ -39,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Item Name"
+                android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
                 android:enabled="false"
                 android:layout_marginTop="16dp" />
@@ -48,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Admin Name"
+                android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
                 android:layout_marginTop="16dp"
                 android:inputType="none" />
@@ -57,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Date Borrowed"
+                android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
                 android:layout_marginTop="16dp"
                 android:focusable="false" />
@@ -72,6 +74,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Start Hour"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_edittext"
                     android:inputType="none"
                     android:focusable="false"/>
 
@@ -81,7 +85,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Start Minute"
-                    android:inputType="none"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_edittext"                    android:inputType="none"
                     android:focusable="false"/>
 
                 <TextView
@@ -96,6 +101,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="End Hour"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_edittext"
                     android:inputType="none"
                     android:focusable="false"/>
 
@@ -105,6 +112,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="End Minute"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_edittext"
                     android:inputType="none"
                     android:focusable="false"/>
 

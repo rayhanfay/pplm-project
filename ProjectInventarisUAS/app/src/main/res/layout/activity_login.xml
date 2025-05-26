@@ -101,6 +101,7 @@
                 android:background="@drawable/bg_button_primary"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Login"
+                android:textSize="16sp"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
