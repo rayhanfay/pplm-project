@@ -15,10 +15,10 @@ import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.pplm.projectinventarisuas.data.model.Borrowing
+import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.databinding.ActivityScanCodeBinding
-import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -131,27 +131,33 @@ class ScanReturnActivity : AppCompatActivity() {
                             )
                         }
 
-                        "On Borrow" -> {
+                        "In Use" -> {
                             updateBorrowingStatusToReturned(it, getCurrentTime())
                         }
                     }
+                } ?: run {
+                    checkItemExists(itemId)
                 }
             } else {
-                checkForBorrowingsOnBorrow(itemId)
+                checkItemExists(itemId)
             }
         }
     }
 
-    private fun checkForBorrowingsOnBorrow(itemId: String) {
-        borrowingRepository.getBorrowingsWithStatus(itemId, "On Borrow") { borrowings ->
-            if (borrowings.isEmpty()) {
+    private fun checkItemExists(itemId: String) {
+        itemRepository.getItemById(itemId) { item ->
+            if (item != null) {
                 CustomDialog.alert(
                     context = this,
-                    message = "Semua barang dengan ID '$itemId' sudah dikembalikan",
+                    message = "Barang dengan ID '$itemId' terdaftar, tetapi tidak sedang dipinjam.",
                     onDismiss = { isProcessing = false }
                 )
             } else {
-                isProcessing = false
+                CustomDialog.alert(
+                    context = this,
+                    message = "Barang dengan ID '$itemId' tidak terdaftar.",
+                    onDismiss = { isProcessing = false }
+                )
             }
         }
     }

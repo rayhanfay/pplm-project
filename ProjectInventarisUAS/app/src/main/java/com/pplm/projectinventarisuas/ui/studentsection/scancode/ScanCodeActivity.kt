@@ -189,7 +189,7 @@ class ScanCodeActivity : AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val hasActiveBorrowing = snapshot.children.any {
-                        it.child("status").getValue(String::class.java) == "On Borrow"
+                        it.child("status").getValue(String::class.java) == "In Use"
                     }
                     onComplete(hasActiveBorrowing)
                 }

@@ -57,4 +57,13 @@ class ItemRepository : ItemDao {
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
+
+    override fun getItemById(itemId: String, callback: (Item?) -> Unit) {
+        database.child("item").child(itemId).get().addOnSuccessListener { snapshot ->
+            val item = snapshot.getValue(Item::class.java)
+            callback(item)
+        }.addOnFailureListener {
+            callback(null)
+        }
+    }
 }

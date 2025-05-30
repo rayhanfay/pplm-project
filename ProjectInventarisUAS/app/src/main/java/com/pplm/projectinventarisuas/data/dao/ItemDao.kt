@@ -9,4 +9,5 @@ interface ItemDao {
     fun itemExists(itemId: String, callback: (Boolean) -> Unit)
     fun updateItem(item: Item, callback: (Boolean) -> Unit)
     fun updateItemStatus(itemId: String, newStatus: String, callback: (Boolean) -> Unit)
+    fun getItemById(itemId: String, callback: (Item?) -> Unit)
 }
