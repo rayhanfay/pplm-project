@@ -42,7 +42,7 @@ class AddItemDialogFragment : DialogFragment() {
         }
 
         binding.btnCancel.setOnClickListener {
-            dismiss()
+            confirmCancel()
         }
     }
 
@@ -70,28 +70,34 @@ class AddItemDialogFragment : DialogFragment() {
                         message = "Item dengan kode '$code' sudah ada",
                     )
                 } else {
-                    val item = Item(
-                        item_id = code,
-                        item_name = name,
-                        item_type = type,
-                        item_status = status,
-                        item_description = description
-                    )
+                    CustomDialog.confirm(
+                        context = requireContext(),
+                        message = "Apakah Anda yakin ingin menambahkan item ini?",
+                        onConfirm = {
+                            val item = Item(
+                                item_id = code,
+                                item_name = name,
+                                item_type = type,
+                                item_status = status,
+                                item_description = description
+                            )
 
-                    viewModel.addItem(item) { success ->
-                        if (success) {
-                            CustomDialog.success(
-                                context = requireContext(),
-                                message = "Item berhasil disimpan",
-                                onDismiss = { dismiss() }
-                            )
-                        } else {
-                            CustomDialog.alert(
-                                context = requireContext(),
-                                message = "Gagal menyimpan item"
-                            )
+                            viewModel.addItem(item) { success ->
+                                if (success) {
+                                    CustomDialog.success(
+                                        context = requireContext(),
+                                        message = "Item berhasil disimpan",
+                                        onDismiss = { dismiss() }
+                                    )
+                                } else {
+                                    CustomDialog.alert(
+                                        context = requireContext(),
+                                        message = "Gagal menyimpan item"
+                                    )
+                                }
+                            }
                         }
-                    }
+                    )
                 }
             }
         }
@@ -103,35 +109,31 @@ class AddItemDialogFragment : DialogFragment() {
         val type = binding.etType.text.toString().trim()
         val description = binding.etDescription.text.toString().trim()
 
-        if (code.isEmpty() && name.isEmpty() && type.isEmpty() && description.isEmpty()) {
+        if (code.isEmpty() || name.isEmpty() || type.isEmpty() || description.isEmpty()) {
             CustomDialog.alert(
                 context = requireContext(),
                 message = "Semua field harus diisi"
             )
             return false
         }
-
-        if (code.isEmpty()) {
-            CustomDialog.alert(context = requireContext(), message = "Kode item harus diisi")
-            return false
-        }
-
-        if (name.isEmpty()) {
-            CustomDialog.alert(context = requireContext(), message = "Nama tool harus diisi")
-            return false
-        }
-
-        if (type.isEmpty()) {
-            CustomDialog.alert(context = requireContext(), message = "Tipe harus diisi")
-            return false
-        }
-
-        if (description.isEmpty()) {
-            CustomDialog.alert(context = requireContext(), message = "Deskripsi harus diisi")
-            return false
-        }
-
         return true
+    }
+
+    private fun confirmCancel() {
+        val code = binding.etItemCode.text.toString().trim()
+        val name = binding.etToolName.text.toString().trim()
+        val type = binding.etType.text.toString().trim()
+        val description = binding.etDescription.text.toString().trim()
+
+        if (code.isNotEmpty() || name.isNotEmpty() || type.isNotEmpty() || description.isNotEmpty()) {
+            CustomDialog.confirm(
+                context = requireContext(),
+                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                onConfirm = { dismiss() }
+            )
+        } else {
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {

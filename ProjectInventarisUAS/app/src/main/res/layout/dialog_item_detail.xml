@@ -23,69 +23,81 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"> <TextView
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Nama Alat"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Nama Alat"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
                     android:fontFamily="@font/poppins"
                     android:padding="10dp"
                     android:textSize="14sp"
-                    android:enabled="false"
-                    android:layout_marginTop="4dp" tools:text="Nama Item" />
+                    tools:text="Nama Item" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"> <TextView
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Jenis Alat"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Jenis Alat"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
                     android:fontFamily="@font/poppins"
                     android:padding="10dp"
                     android:textSize="14sp"
-                    android:enabled="false"
-                    android:layout_marginTop="4dp" tools:text="Jenis Item" />
+                    tools:text="Jenis Item" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"> <TextView
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Status"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Status"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/etItemStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/rounded_edittext"
+                    android:enabled="false"
                     android:fontFamily="@font/poppins"
                     android:padding="10dp"
                     android:textSize="14sp"
-                    android:enabled="false"
-                    android:layout_marginTop="4dp" tools:text="Status Item" />
+                    tools:text="Status Item" />
             </LinearLayout>
 
             <TextView
@@ -103,12 +115,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/rounded_edittext"
+                android:enabled="false"
                 android:fontFamily="@font/poppins"
+                android:gravity="top"
+                android:minLines="3"
                 android:padding="10dp"
                 android:textSize="14sp"
-                android:enabled="false"
-                android:minLines="3"
-                android:gravity="top"
                 tools:text="Deskripsi Item" />
 
             <LinearLayout
@@ -119,11 +131,24 @@
                 android:orientation="horizontal">
 
                 <android.widget.Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_cancle"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
+                <android.widget.Button
                     android:id="@+id/btnEdit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
                     android:background="@drawable/bg_button_edit"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Edit"

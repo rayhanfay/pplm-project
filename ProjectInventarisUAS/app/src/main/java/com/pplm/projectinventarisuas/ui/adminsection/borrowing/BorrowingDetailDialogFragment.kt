@@ -1,6 +1,5 @@
 package com.pplm.projectinventarisuas.ui.adminsection.borrowing
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +25,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: BorrowingViewModel
     private lateinit var borrowing: Borrowing
+    private lateinit var originalBorrowing: Borrowing
     private var isEditMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +52,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
 
         arguments?.let {
             borrowing = it.getParcelable("borrowing")!!
+            originalBorrowing = borrowing.copy()
             isEditMode = it.getBoolean("isEditMode", false)
             Log.d(
                 "BorrowingDetailDialog",
@@ -63,7 +64,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             return
         }
 
-        displayBorrowingDetails()
+        displayBorrowingDetails(borrowing)
         setupUserPermission()
         setupButtons()
     }
@@ -82,6 +83,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             setEditMode(false)
             binding.btnEdit.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
+            binding.btnCancel.visibility = View.GONE
         }
     }
 
@@ -92,6 +94,22 @@ class BorrowingDetailDialogFragment : DialogFragment() {
 
         binding.btnSave.setOnClickListener {
             saveBorrowingDetails()
+        }
+
+        binding.btnCancel.setOnClickListener {
+            confirmCancel()
+        }
+
+        binding.btnClose.setOnClickListener {
+            if (isEditMode && hasUnsavedChanges()) {
+                CustomDialog.confirm(
+                    context = requireContext(),
+                    message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin menutup?",
+                    onConfirm = { dismiss() }
+                )
+            } else {
+                dismiss()
+            }
         }
     }
 
@@ -116,16 +134,23 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             )
             Log.d("BorrowingDetailDialog", "Updating borrowing: $updatedBorrowing")
 
-            viewModel.updateBorrowing(updatedBorrowing)
-            CustomDialog.alert(
+            CustomDialog.confirm(
                 context = requireContext(),
-                message = "Borrowing berhasil diperbarui",
-                onDismiss = {
-                    dismiss()
+                message = "Apakah Anda yakin ingin menyimpan perubahan ini?",
+                onConfirm = {
+                    viewModel.updateBorrowing(updatedBorrowing)
+                    CustomDialog.success(
+                        context = requireContext(),
+                        message = "Borrowing berhasil diperbarui",
+                        onDismiss = {
+                            borrowing = updatedBorrowing
+                            originalBorrowing =
+                                borrowing.copy()
+                            setEditMode(false)
+                        }
+                    )
                 }
             )
-            setEditMode(false)
-            borrowing = updatedBorrowing
         } else {
             CustomDialog.alert(
                 context = requireContext(),
@@ -149,41 +174,34 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             etLastLocation.isEnabled = enabled
             etReturnTime.isEnabled = enabled
             etStatus.isEnabled = enabled
-
-            btnClose.setOnClickListener { dismiss() }
         }
 
         binding.btnEdit.visibility = if (enabled) View.GONE else View.VISIBLE
         binding.btnSave.visibility = if (enabled) View.VISIBLE else View.GONE
+        binding.btnCancel.visibility =
+            if (enabled) View.VISIBLE else View.GONE
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = DialogBorrowingDetailBinding.inflate(layoutInflater)
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setView(binding.root)
-        val dialog = builder.create()
-        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
-        return dialog
+        return super.onCreateDialog(savedInstanceState)
     }
 
-    private fun displayBorrowingDetails() {
+    private fun displayBorrowingDetails(borrowingToDisplay: Borrowing) {
         Log.d(
             "BorrowingDetailDialog",
-            "displayBorrowingDetails called. Borrowing object: $borrowing"
+            "displayBorrowingDetails called. Borrowing object: $borrowingToDisplay"
         )
         with(binding) {
-            etBorrowingCode.setText(borrowing.borrowing_id)
-            etItemName.setText(borrowing.item_name)
-            etDateBorrowed.setText(borrowing.date_borrowed)
-            etStartHours.setText(borrowing.start_hour)
-            etEndHours.setText(borrowing.end_hour)
-            etStudentName.setText(borrowing.student_name)
-            etAdminName.setText(borrowing.admin_name)
-            etLastLocation.setText(borrowing.last_location)
-            etReturnTime.setText(borrowing.return_time)
-            etStatus.setText(borrowing.status)
-
-            btnClose.setOnClickListener { dismiss() }
+            etBorrowingCode.setText(borrowingToDisplay.borrowing_id)
+            etItemName.setText(borrowingToDisplay.item_name)
+            etDateBorrowed.setText(borrowingToDisplay.date_borrowed)
+            etStartHours.setText(borrowingToDisplay.start_hour)
+            etEndHours.setText(borrowingToDisplay.end_hour)
+            etStudentName.setText(borrowingToDisplay.student_name)
+            etAdminName.setText(borrowingToDisplay.admin_name)
+            etLastLocation.setText(borrowingToDisplay.last_location)
+            etReturnTime.setText(borrowingToDisplay.return_time)
+            etStatus.setText(borrowingToDisplay.status)
         }
         Log.d("BorrowingDetailDialog", "Borrowing details displayed on UI.")
     }
@@ -192,6 +210,40 @@ class BorrowingDetailDialogFragment : DialogFragment() {
         val sharedPref =
             requireActivity().getSharedPreferences("LoginSession", AppCompatActivity.MODE_PRIVATE)
         return sharedPref.getString("userRole", "") ?: ""
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        val currentBorrowing = Borrowing(
+            borrowing_id = binding.etBorrowingCode.text.toString(),
+            item_id = borrowing.item_id,
+            student_id = borrowing.student_id,
+            admin_id = borrowing.admin_id,
+            date_borrowed = binding.etDateBorrowed.text.toString(),
+            start_hour = binding.etStartHours.text.toString(),
+            end_hour = binding.etEndHours.text.toString(),
+            last_location = binding.etLastLocation.text.toString(),
+            return_time = binding.etReturnTime.text.toString(),
+            status = binding.etStatus.text.toString(),
+            student_name = binding.etStudentName.text.toString(),
+            admin_name = binding.etAdminName.text.toString(),
+            item_name = borrowing.item_name
+        )
+        return currentBorrowing != originalBorrowing
+    }
+
+    private fun confirmCancel() {
+        if (hasUnsavedChanges()) {
+            CustomDialog.confirm(
+                context = requireContext(),
+                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                onConfirm = {
+                    displayBorrowingDetails(originalBorrowing)
+                    setEditMode(false)
+                }
+            )
+        } else {
+            setEditMode(false)
+        }
     }
 
     override fun onStart() {

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="16dp"
+    android:background="@drawable/dialog_rounded_background"
     android:orientation="vertical"
-    android:background="@color/colorCard"
     android:padding="20dp">
 
     <TextView
@@ -18,58 +18,120 @@
         android:textColor="@android:color/black"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/etItemCode"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Item code"
-        android:inputType="text"
-        android:padding="12dp"
-        android:background="@drawable/bg_edittext_outline"
-        android:textSize="14sp" />
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/etToolName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Tool name"
-        android:inputType="text"
-        android:padding="12dp"
-        android:background="@drawable/bg_edittext_outline"
-        android:textSize="14sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Kode Item"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
 
-    <EditText
-        android:id="@+id/etType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Type"
-        android:inputType="text"
-        android:padding="12dp"
-        android:background="@drawable/bg_edittext_outline"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/etDescription"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="top"
-        android:hint="Description"
-        android:inputType="textMultiLine"
-        android:padding="12dp"
-        android:background="@drawable/bg_edittext_outline"
-        android:textSize="14sp" />
+        <EditText
+            android:id="@+id/etItemCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:fontFamily="@font/poppins"
+            android:hint="Item code"
+            android:inputType="text"
+            android:padding="12dp"
+            android:textSize="14sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Nama Alat"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etToolName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:fontFamily="@font/poppins"
+            android:hint="Tool name"
+            android:inputType="text"
+            android:padding="12dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Tipe"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:fontFamily="@font/poppins"
+            android:hint="Type"
+            android:inputType="text"
+            android:padding="12dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Deskripsi"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:fontFamily="@font/poppins"
+            android:gravity="top"
+            android:hint="Description"
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="end"
         android:orientation="horizontal"
         android:weightSum="2">

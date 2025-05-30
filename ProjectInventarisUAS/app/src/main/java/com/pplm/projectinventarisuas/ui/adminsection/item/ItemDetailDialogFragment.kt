@@ -24,6 +24,7 @@ class ItemDetailDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: ItemViewModel
     private lateinit var item: Item
+    private lateinit var originalItem: Item
     private var isEditMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,10 +47,11 @@ class ItemDetailDialogFragment : DialogFragment() {
 
         arguments?.let {
             item = it.getParcelable("item")!!
+            originalItem = item.copy()
             isEditMode = it.getBoolean("isEditMode", false)
         }
 
-        displayItemDetails()
+        displayItemDetails(item)
         setupUserPermission()
         setupButtons()
     }
@@ -59,11 +61,11 @@ class ItemDetailDialogFragment : DialogFragment() {
         viewModel = ViewModelProvider(this, factory)[ItemViewModel::class.java]
     }
 
-    private fun displayItemDetails() {
-        binding.etItemName.setText(item.item_name)
-        binding.etItemType.setText(item.item_type)
-        binding.etItemStatus.setText(item.item_status)
-        binding.etItemDesciption.setText(item.item_description)
+    private fun displayItemDetails(itemToDisplay: Item) {
+        binding.etItemName.setText(itemToDisplay.item_name)
+        binding.etItemType.setText(itemToDisplay.item_type)
+        binding.etItemStatus.setText(itemToDisplay.item_status)
+        binding.etItemDesciption.setText(itemToDisplay.item_description)
     }
 
     private fun setupUserPermission() {
@@ -74,6 +76,7 @@ class ItemDetailDialogFragment : DialogFragment() {
             setEditMode(false)
             binding.btnEdit.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
+            binding.btnCancel.visibility = View.GONE
         }
     }
 
@@ -84,6 +87,10 @@ class ItemDetailDialogFragment : DialogFragment() {
 
         binding.btnSave.setOnClickListener {
             saveItemDetails()
+        }
+
+        binding.btnCancel.setOnClickListener {
+            confirmCancel()
         }
     }
 
@@ -98,16 +105,22 @@ class ItemDetailDialogFragment : DialogFragment() {
                 item_description = binding.etItemDesciption.text.toString()
             )
 
-            viewModel.updateItem(updatedItem)
-            CustomDialog.alert(
+            CustomDialog.confirm(
                 context = requireContext(),
-                message = "Item berhasil diperbarui",
-                onDismiss = {
-                    dismiss()
+                message = "Apakah Anda yakin ingin menyimpan perubahan?",
+                onConfirm = {
+                    viewModel.updateItem(updatedItem)
+                    CustomDialog.success(
+                        context = requireContext(),
+                        message = "Item berhasil diperbarui",
+                        onDismiss = {
+                            item = updatedItem
+                            originalItem = item.copy()
+                            setEditMode(false)
+                        }
+                    )
                 }
             )
-            setEditMode(false)
-            item = updatedItem
         } else {
             CustomDialog.alert(
                 context = requireContext(),
@@ -126,12 +139,39 @@ class ItemDetailDialogFragment : DialogFragment() {
 
         binding.btnEdit.visibility = if (enabled) View.GONE else View.VISIBLE
         binding.btnSave.visibility = if (enabled) View.VISIBLE else View.GONE
+        binding.btnCancel.visibility = if (enabled) View.VISIBLE else View.GONE
     }
 
     private fun getUserRole(): String {
         val sharedPref =
             requireActivity().getSharedPreferences("LoginSession", AppCompatActivity.MODE_PRIVATE)
         return sharedPref.getString("userRole", "") ?: ""
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        val currentItem = Item(
+            item_id = item.item_id,
+            item_name = binding.etItemName.text.toString(),
+            item_type = binding.etItemType.text.toString(),
+            item_status = binding.etItemStatus.text.toString(),
+            item_description = binding.etItemDesciption.text.toString()
+        )
+        return currentItem != originalItem
+    }
+
+    private fun confirmCancel() {
+        if (hasUnsavedChanges()) {
+            CustomDialog.confirm(
+                context = requireContext(),
+                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                onConfirm = {
+                    displayItemDetails(originalItem)
+                    setEditMode(false)
+                }
+            )
+        } else {
+            setEditMode(false)
+        }
     }
 
     override fun onStart() {
