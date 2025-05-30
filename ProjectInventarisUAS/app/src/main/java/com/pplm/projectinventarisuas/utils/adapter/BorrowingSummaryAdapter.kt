@@ -3,6 +3,7 @@ package com.pplm.projectinventarisuas.utils.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pplm.projectinventarisuas.R
@@ -14,6 +15,8 @@ class BorrowingSummaryAdapter(private val summaryList: List<BorrowingSummary>) :
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvStatus: TextView = view.findViewById(R.id.tvBorrowingStatus)
         val tvCount: TextView = view.findViewById(R.id.tvBorrowingCount)
+        val ivStatusIcon: ImageView =
+            view.findViewById(R.id.ivBorrowingStatusIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,5 +31,13 @@ class BorrowingSummaryAdapter(private val summaryList: List<BorrowingSummary>) :
         val borrowing = summaryList[position]
         holder.tvStatus.text = borrowing.status
         holder.tvCount.text = "${borrowing.count} borrowing"
+
+        when (borrowing.status.lowercase()) {
+            "lost" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_lost)
+            "returned" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_returned)
+            "borrowed" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_borrowed)
+            "late" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_late)
+            else -> holder.ivStatusIcon.setImageResource(R.drawable.ic_default_image)
+        }
     }
 }

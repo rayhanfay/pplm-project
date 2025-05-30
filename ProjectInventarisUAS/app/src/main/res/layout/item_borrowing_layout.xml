@@ -12,58 +12,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorCardList"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_infocus_com"/>
+            android:id="@+id/ivBorrowingItemIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_default_image" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorCardList"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/tvNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="1"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:background="@color/colorCardList"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvBorrowingCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Item Code"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tvItemName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Item"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tvBorrowingCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Item Code"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvBorrowingStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="In use"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tvItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Item"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvBorrowingStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="In use"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
 
-
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

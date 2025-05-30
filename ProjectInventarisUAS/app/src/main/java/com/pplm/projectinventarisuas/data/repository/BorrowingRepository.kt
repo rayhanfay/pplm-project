@@ -40,8 +40,7 @@ class BorrowingRepository : BorrowingDao {
         }
 
         val checkCompletion = {
-            val currentCompleted =
-                completedOperations.incrementAndGet()
+            val currentCompleted = completedOperations.incrementAndGet()
             Log.d(
                 "BorrowingRepo",
                 "Completed operations: $currentCompleted / $totalExpectedOperations"
@@ -101,19 +100,20 @@ class BorrowingRepository : BorrowingDao {
             database.child("item").child(originalBorrowing.item_id).get()
                 .addOnSuccessListener { itemSnapshot ->
                     val itemName = itemSnapshot.child("item_name").value.toString()
+                    val itemType = itemSnapshot.child("item_type").value.toString()
                     synchronized(this) {
                         interimBorrowings[borrowingId] =
-                            interimBorrowings[borrowingId]!!.copy(item_name = itemName)
+                            interimBorrowings[borrowingId]!!.copy(item_name = itemName, item_type = itemType)
                     }
                     Log.d(
                         "BorrowingRepo",
-                        "Item name fetched for borrowing ID: ${borrowingId}, item: $itemName"
+                        "Item name and type fetched for borrowing ID: ${borrowingId}, item: $itemName, type: $itemType"
                     )
                     checkCompletion()
                 }.addOnFailureListener { e ->
                     Log.e(
                         "BorrowingRepo",
-                        "Failed to fetch item name for borrowing ID: ${borrowingId}",
+                        "Failed to fetch item name and type for borrowing ID: ${borrowingId}",
                         e
                     )
                     checkCompletion()

@@ -29,7 +29,7 @@
                 android:fontFamily="@font/poppins_semibold"
                 android:text="Welcome User"
                 android:textColor="@color/white"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/btnLogout"

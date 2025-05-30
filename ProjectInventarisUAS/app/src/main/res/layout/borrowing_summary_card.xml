@@ -9,11 +9,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorCardList"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/ivBorrowingStatusIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_default_borrowing" />
 
         <TextView
             android:id="@+id/tvBorrowingStatus"

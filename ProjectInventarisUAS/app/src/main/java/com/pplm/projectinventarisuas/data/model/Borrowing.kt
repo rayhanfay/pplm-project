@@ -12,6 +12,7 @@ data class Borrowing(
     val student_name: String = "",
     val item_id: String = "",
     val item_name: String = "",
+    val item_type: String = "",
     val date_borrowed: String = "",
     val last_location: String = "",
     val return_time: String = "",
