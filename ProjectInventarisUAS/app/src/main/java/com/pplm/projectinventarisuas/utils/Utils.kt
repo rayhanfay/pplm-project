@@ -14,7 +14,6 @@ import android.location.Location
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -71,7 +70,7 @@ class ReminderReceiver : BroadcastReceiver() {
         const val ACTION_OUT_OF_RANGE = "OUT_OF_RANGE_ACTION"
         const val ACTION_SEND_LOCATION = "SEND_LOCATION_ACTION"
         const val ACTION_SEND_LOCATION_AND_CHECK_LATE =
-            "com.pplm.projectinventarisuas.ACTION_SEND_LOCATION_AND_CHECK_LATE" // New action
+            "com.pplm.projectinventarisuas.ACTION_SEND_LOCATION_AND_CHECK_LATE"
 
         const val REQUEST_CODE_TIME_REMINDER = 100
         const val REQUEST_CODE_OVERDUE_REMINDER = 150
@@ -84,9 +83,9 @@ class ReminderReceiver : BroadcastReceiver() {
         private const val TAG_LOCATION = "LocationAlert"
         private const val TAG_NOTIFICATION = "NotificationManager"
         private const val TAG_DATABASE = "DatabaseUpdate"
+        private const val TAG_PERMISSION = "PermissionCheck"
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         val borrowingId = intent.getStringExtra("BORROWING_ID")
@@ -101,7 +100,14 @@ class ReminderReceiver : BroadcastReceiver() {
 
             ACTION_OUT_OF_RANGE -> {
                 Log.d(TAG_LOCATION, "Processing out of range action")
-                showOutOfRangeNotification(context, borrowingId)
+                if (hasNotificationPermission(context)) {
+                    showOutOfRangeNotification(context, borrowingId)
+                } else {
+                    Log.w(
+                        TAG_PERMISSION,
+                        "Notification permission not available for out of range alert"
+                    )
+                }
             }
 
             ACTION_TIME_REMINDER -> {
@@ -110,7 +116,11 @@ class ReminderReceiver : BroadcastReceiver() {
                     TAG_TIME,
                     "Processing time reminder action - Minutes remaining: $minutesRemaining"
                 )
-                showTimeReminderNotification(context, minutesRemaining)
+                if (hasNotificationPermission(context)) {
+                    showTimeReminderNotification(context, minutesRemaining)
+                } else {
+                    Log.w(TAG_PERMISSION, "Notification permission not available for time reminder")
+                }
             }
 
             ACTION_OVERDUE_REMINDER -> {
@@ -119,12 +129,19 @@ class ReminderReceiver : BroadcastReceiver() {
                     TAG_OVERDUE,
                     "Processing overdue reminder action - Minutes overdue: $minutesOverdue"
                 )
-                showOverdueReminderNotification(context, minutesOverdue)
+                if (hasNotificationPermission(context)) {
+                    showOverdueReminderNotification(context, minutesOverdue)
+                } else {
+                    Log.w(
+                        TAG_PERMISSION,
+                        "Notification permission not available for overdue reminder"
+                    )
+                }
             }
 
-            ACTION_SEND_LOCATION_AND_CHECK_LATE -> { // Handle the new action
+            ACTION_SEND_LOCATION_AND_CHECK_LATE -> {
                 Log.d(TAG_LOCATION, "Processing send location and check late action")
-                sendLastLocation(context, borrowingId) // Still send location
+                sendLastLocation(context, borrowingId)
                 if (borrowingId != null) {
                     checkAndSetLateStatusFromAlarm(context, borrowingId)
                 } else {
@@ -138,52 +155,75 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
+    private fun hasNotificationPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        }
+    }
+
+    private fun hasLocationPermission(context: Context): Boolean {
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        return fineLocationGranted || coarseLocationGranted
+    }
+
     private fun checkAndSetLateStatusFromAlarm(context: Context, borrowingId: String) {
         val databaseRef =
             FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId)
         databaseRef.child("status").get().addOnSuccessListener { dataSnapshot ->
             val currentStatus = dataSnapshot.getValue(String::class.java)
             if (currentStatus != "Returned" && currentStatus != "Late") {
-                // Fetch endHour from database if needed, or pass it via intent if available
-                // For now, assuming endHour is not directly needed for this check, only current status
                 databaseRef.child("status").setValue("Late")
                     .addOnSuccessListener {
                         Log.d(
-                            "ReminderReceiver",
+                            TAG_DATABASE,
                             "Borrowing status successfully updated to 'Late' via alarm for ID: $borrowingId"
                         )
-                        // Show a notification for late status
-                        showNotification(
-                            context = context,
-                            title = "Peringatan Keterlambatan!",
-                            message = "Waktu peminjaman telah habis. Status peminjaman Anda diperbarui menjadi Terlambat.",
-                            notificationId = borrowingId.hashCode() + REQUEST_CODE_OVERDUE_REMINDER,
-                            channelId = OVERDUE_REMINDER_CHANNEL_ID,
-                            channelName = OVERDUE_REMINDER_CHANNEL_NAME,
-                            channelDescription = "Notifikasi untuk barang pinjaman yang terlambat",
-                            priority = NotificationCompat.PRIORITY_MAX,
-                            isOngoing = true,
-                            isLateWarning = true // Indicate it's a late warning for potential UI adjustment
-                        )
+                        if (hasNotificationPermission(context)) {
+                            showNotification(
+                                context = context,
+                                title = "Peringatan Keterlambatan!",
+                                message = "Waktu peminjaman telah habis. Status peminjaman Anda diperbarui menjadi Terlambat.",
+                                notificationId = borrowingId.hashCode() + REQUEST_CODE_OVERDUE_REMINDER,
+                                channelId = OVERDUE_REMINDER_CHANNEL_ID,
+                                channelName = OVERDUE_REMINDER_CHANNEL_NAME,
+                                channelDescription = "Notifikasi untuk barang pinjaman yang terlambat",
+                                priority = NotificationCompat.PRIORITY_HIGH,
+                                isOngoing = true,
+                                isLateWarning = true
+                            )
+                        }
                     }
                     .addOnFailureListener { e ->
                         Log.e(
-                            "ReminderReceiver",
+                            TAG_DATABASE,
                             "Failed to update borrowing status to 'Late' via alarm: ${e.message}"
                         )
                     }
             } else {
                 Log.d(
-                    "ReminderReceiver",
+                    TAG_DATABASE,
                     "Status is already '$currentStatus', no need to update to 'Late'"
                 )
             }
         }.addOnFailureListener { e ->
-            Log.e("ReminderReceiver", "Failed to get current status for late check: ${e.message}")
+            Log.e(TAG_DATABASE, "Failed to get current status for late check: ${e.message}")
         }
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showNotification(
         context: Context,
         title: String,
@@ -194,43 +234,87 @@ class ReminderReceiver : BroadcastReceiver() {
         channelDescription: String,
         priority: Int = NotificationCompat.PRIORITY_HIGH,
         isOngoing: Boolean = false,
-        isLateWarning: Boolean = false // Added for potential specific handling
+        isLateWarning: Boolean = false
     ) {
-        createNotificationChannel(context, channelId, channelName, channelDescription, priority)
+        try {
+            if (!hasNotificationPermission(context)) {
+                Log.w(TAG_PERMISSION, "Cannot show notification - permission not granted")
+                return
+            }
 
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(priority)
-            .setAutoCancel(!isOngoing)
-            .setOngoing(isOngoing)
-            .setCategory(if (isLateWarning) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_REMINDER)
-            .setVibrate(longArrayOf(0, 1000, 500, 1000)) // Standard vibration pattern
-            .setColor(
-                if (isLateWarning) 0xFFFF0000.toInt() else ContextCompat.getColor(
-                    context,
-                    android.R.color.holo_blue_light
+            val importance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                when (priority) {
+                    NotificationCompat.PRIORITY_DEFAULT -> NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationCompat.PRIORITY_LOW -> NotificationManager.IMPORTANCE_LOW
+                    NotificationCompat.PRIORITY_MIN -> NotificationManager.IMPORTANCE_MIN
+                    NotificationCompat.PRIORITY_HIGH -> NotificationManager.IMPORTANCE_HIGH
+                    NotificationCompat.PRIORITY_MAX -> NotificationManager.IMPORTANCE_HIGH
+                    else -> NotificationManager.IMPORTANCE_DEFAULT
+                }
+            } else {
+                NotificationManager.IMPORTANCE_DEFAULT
+            }
+
+            createNotificationChannel(
+                context,
+                channelId,
+                channelName,
+                channelDescription,
+                importance
+            )
+
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(priority)
+                .setAutoCancel(!isOngoing)
+                .setOngoing(isOngoing)
+                .setCategory(if (isLateWarning) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_REMINDER)
+                .setVibrate(longArrayOf(0, 1000, 500, 1000))
+                .setColor(
+                    if (isLateWarning) 0xFFFF0000.toInt() else ContextCompat.getColor(
+                        context,
+                        android.R.color.holo_blue_light
+                    )
                 )
-            ) // Red for late warnings
 
-        // Optional: Add an intent to open the app when notification is tapped
-        val notificationIntent = Intent(
-            context,
-            Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity")
-        )
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            notificationIntent,
+            try {
+                val notificationIntent = Intent(
+                    context,
+                    Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity")
+                )
+                val pendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    notificationIntent,
+                    getPendingIntentFlags()
+                )
+                builder.setContentIntent(pendingIntent)
+            } catch (e: ClassNotFoundException) {
+                Log.w(TAG_NOTIFICATION, "BorrowingTimerActivity class not found: ${e.message}")
+            }
+
+            val notificationManager = NotificationManagerCompat.from(context)
+            if (notificationManager.areNotificationsEnabled()) {
+                notificationManager.notify(notificationId, builder.build())
+                Log.d(
+                    TAG_NOTIFICATION,
+                    "Notification displayed successfully for ID: $notificationId"
+                )
+            } else {
+                Log.w(TAG_NOTIFICATION, "Notifications are disabled for this app")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG_NOTIFICATION, "Failed to show notification: ${e.message}")
+        }
+    }
+
+    private fun getPendingIntentFlags(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        builder.setContentIntent(pendingIntent)
-
-
-        with(NotificationManagerCompat.from(context)) {
-            notify(notificationId, builder.build())
-            Log.d(TAG_NOTIFICATION, "Notification displayed successfully for ID: $notificationId")
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
         }
     }
 
@@ -239,7 +323,7 @@ class ReminderReceiver : BroadcastReceiver() {
         channelId: String,
         channelName: String,
         description: String,
-        importance: Int = NotificationManager.IMPORTANCE_HIGH
+        importance: Int
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.d(TAG_NOTIFICATION, "Creating notification channel: $channelId")
@@ -251,12 +335,20 @@ class ReminderReceiver : BroadcastReceiver() {
             ).apply {
                 this.description = description
                 enableVibration(true)
-                vibrationPattern = if (importance == NotificationManager.IMPORTANCE_MAX) {
+
+                val isHighImportance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    importance >= NotificationManager.IMPORTANCE_HIGH
+                } else {
+                    true
+                }
+
+                vibrationPattern = if (isHighImportance) {
                     longArrayOf(0, 1000, 500, 1000, 500, 1000)
                 } else {
                     longArrayOf(0, 500, 250, 500)
                 }
-                if (importance == NotificationManager.IMPORTANCE_MAX) {
+
+                if (isHighImportance) {
                     setBypassDnd(true)
                     lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
                 }
@@ -270,7 +362,6 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showTimeReminderNotification(context: Context, minutesRemaining: Int) {
         val title = "Pengingat Waktu Peminjaman"
         val message = when (minutesRemaining) {
@@ -291,7 +382,6 @@ class ReminderReceiver : BroadcastReceiver() {
         )
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showOverdueReminderNotification(context: Context, minutesOverdue: Int) {
         val title = "Peringatan Keterlambatan!"
         val message = when (minutesOverdue) {
@@ -309,13 +399,12 @@ class ReminderReceiver : BroadcastReceiver() {
             channelId = OVERDUE_REMINDER_CHANNEL_ID,
             channelName = OVERDUE_REMINDER_CHANNEL_NAME,
             channelDescription = "Notifikasi untuk barang pinjaman yang terlambat",
-            priority = NotificationCompat.PRIORITY_MAX,
+            priority = NotificationCompat.PRIORITY_HIGH,
             isOngoing = true,
             isLateWarning = true
         )
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showOutOfRangeNotification(context: Context, borrowingId: String?) {
         if (borrowingId == null) {
             Log.w(TAG_LOCATION, "Cannot show out of range notification - borrowingId is null")
@@ -364,14 +453,16 @@ class ReminderReceiver : BroadcastReceiver() {
             return
         }
 
+        if (!hasLocationPermission(context)) {
+            Log.w(TAG_PERMISSION, "Location permission not granted")
+            Toast.makeText(context, "Location permission not granted", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         Log.d(TAG_LOCATION, "Attempting to send location for borrowing: $borrowingId")
 
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        try {
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             Log.d(TAG_LOCATION, "Location permission granted, getting last location")
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -388,9 +479,11 @@ class ReminderReceiver : BroadcastReceiver() {
             }.addOnFailureListener { exception ->
                 Log.e(TAG_LOCATION, "Failed to get last location: ${exception.message}")
             }
-        } else {
-            Log.w(TAG_LOCATION, "Location permission not granted")
-            Toast.makeText(context, "Location permission not granted", Toast.LENGTH_SHORT).show()
+        } catch (e: SecurityException) {
+            Log.e(TAG_LOCATION, "Security exception while accessing location: ${e.message}")
+            Toast.makeText(context, "Location access denied", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Log.e(TAG_LOCATION, "Unexpected error while accessing location: ${e.message}")
         }
     }
 
@@ -399,30 +492,35 @@ class ReminderReceiver : BroadcastReceiver() {
         fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient,
         borrowingId: String
     ) {
-        Log.d(TAG_LOCATION, "Requesting single location update for borrowing: $borrowingId")
-
-        val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
-            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, 0
-        ).setMaxUpdates(1).build()
-
-        val singleUpdateCallback = object : com.google.android.gms.location.LocationCallback() {
-            override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
-                val loc = result.lastLocation
-                if (loc != null) {
-                    Log.d(
-                        TAG_LOCATION,
-                        "Single location update received: ${loc.latitude}, ${loc.longitude}"
-                    )
-                    processLocationUpdate(context, loc, borrowingId)
-                } else {
-                    Log.w(TAG_LOCATION, "Single location update returned null")
-                }
-                fusedLocationClient.removeLocationUpdates(this)
-                Log.d(TAG_LOCATION, "Single location update callback removed")
-            }
+        if (!hasLocationPermission(context)) {
+            Log.w(TAG_PERMISSION, "Cannot request location update - permission not granted")
+            return
         }
 
+        Log.d(TAG_LOCATION, "Requesting single location update for borrowing: $borrowingId")
+
         try {
+            val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
+                com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, 0
+            ).setMaxUpdates(1).build()
+
+            val singleUpdateCallback = object : com.google.android.gms.location.LocationCallback() {
+                override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
+                    val loc = result.lastLocation
+                    if (loc != null) {
+                        Log.d(
+                            TAG_LOCATION,
+                            "Single location update received: ${loc.latitude}, ${loc.longitude}"
+                        )
+                        processLocationUpdate(context, loc, borrowingId)
+                    } else {
+                        Log.w(TAG_LOCATION, "Single location update returned null")
+                    }
+                    fusedLocationClient.removeLocationUpdates(this)
+                    Log.d(TAG_LOCATION, "Single location update callback removed")
+                }
+            }
+
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
                 singleUpdateCallback,
@@ -431,6 +529,8 @@ class ReminderReceiver : BroadcastReceiver() {
             Log.d(TAG_LOCATION, "Single location update requested successfully")
         } catch (e: SecurityException) {
             Log.e(TAG_LOCATION, "Security exception during single location update: ${e.message}")
+        } catch (e: Exception) {
+            Log.e(TAG_LOCATION, "Unexpected error during single location update: ${e.message}")
         }
     }
 
@@ -480,7 +580,7 @@ class ReminderReceiver : BroadcastReceiver() {
         borrowingRef.child("out_of_range")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val wasOutOfRange = snapshot.getValue(Boolean::class.java) ?: false
+                    val wasOutOfRange = snapshot.getValue(Boolean::class.java) == true
                     Log.d(
                         TAG_LOCATION,
                         "Previous out_of_range status: $wasOutOfRange for borrowing: $borrowingId"
@@ -518,47 +618,75 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun cancelOutOfRangeNotification(context: Context) {
-        Log.d(TAG_NOTIFICATION, "Cancelling out of range notification")
-        val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.cancel(LOCATION_ALERT_NOTIFICATION_ID)
-        Log.d(TAG_NOTIFICATION, "Out of range notification cancelled successfully")
+        try {
+            Log.d(TAG_NOTIFICATION, "Cancelling out of range notification")
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.cancel(LOCATION_ALERT_NOTIFICATION_ID)
+            Log.d(TAG_NOTIFICATION, "Out of range notification cancelled successfully")
+        } catch (e: Exception) {
+            Log.e(TAG_NOTIFICATION, "Failed to cancel out of range notification: ${e.message}")
+        }
     }
 
     private fun scheduleNextLocationSend(context: Context, borrowingId: String) {
-        val nextTime = System.currentTimeMillis() + (1 * 60 * 1000) // 1 minute from now
+        val nextTime = System.currentTimeMillis() + (1 * 60 * 1000)
         Log.d(
             TAG_LOCATION,
             "Scheduling next location send at $nextTime for borrowing: $borrowingId"
         )
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = ACTION_SEND_LOCATION // Keep this action for periodic location sends
-            putExtra("BORROWING_ID", borrowingId)
-        }
-
-        val requestCode = (borrowingId.hashCode() + REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            requestCode,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
-            Log.d(TAG_LOCATION, "Non-exact alarm scheduled for next location send")
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    nextTime,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
+        try {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, ReminderReceiver::class.java).apply {
+                action = ACTION_SEND_LOCATION
+                putExtra("BORROWING_ID", borrowingId)
             }
-            Log.d(TAG_LOCATION, "Exact alarm scheduled for next location send")
+
+            val requestCode = (borrowingId.hashCode() + REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                getPendingIntentFlags()
+            )
+
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            nextTime,
+                            pendingIntent
+                        )
+                        Log.d(
+                            TAG_LOCATION,
+                            "Exact alarm scheduled for next location send (API 31+)"
+                        )
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
+                        Log.d(
+                            TAG_LOCATION,
+                            "Non-exact alarm scheduled for next location send (API 31+)"
+                        )
+                    }
+                }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        nextTime,
+                        pendingIntent
+                    )
+                    Log.d(TAG_LOCATION, "Exact alarm scheduled for next location send (API 23+)")
+                }
+
+                else -> {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
+                    Log.d(TAG_LOCATION, "Alarm scheduled for next location send (API < 23)")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG_LOCATION, "Failed to schedule next location send: ${e.message}")
         }
     }
 }
