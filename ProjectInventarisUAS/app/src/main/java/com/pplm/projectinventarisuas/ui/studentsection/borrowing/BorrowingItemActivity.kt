@@ -2,15 +2,15 @@ package com.pplm.projectinventarisuas.ui.studentsection.borrowing
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.edit
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
@@ -27,6 +27,12 @@ class BorrowingItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBorrowingItemBinding
     private lateinit var borrowingViewModel: BorrowingViewModel
     private var itemCode: String? = null
+
+    private lateinit var startHourAdapter: ArrayAdapter<String>
+    private lateinit var startMinuteAdapter: ArrayAdapter<String>
+    private lateinit var endHourAdapter: ArrayAdapter<String>
+    private lateinit var endMinuteAdapter: ArrayAdapter<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +70,7 @@ class BorrowingItemActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         borrowingViewModel.itemName.observe(this) { name ->
-            if (name == null || name == "UNKNOWN" || name.isEmpty()) {
+            if (name == null || name.isEmpty()) {
                 CustomDialog.alert(
                     context = this,
                     message = "Item tidak ditemukan atau tidak tersedia"
@@ -115,18 +121,36 @@ class BorrowingItemActivity : AppCompatActivity() {
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val navigationIcon = binding.toolbar.navigationIcon
+        if (navigationIcon != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                navigationIcon.setTint(resources.getColor(android.R.color.white, theme))
+            } else {
+                navigationIcon.setTint(resources.getColor(android.R.color.white))
+            }
+        }
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun setupAdminNameDropdown(names: List<String>) {
         val adapter = ArrayAdapter(
             this,
-            android.R.layout.simple_dropdown_item_1line,
+            R.layout.custom_dropdown_item,
+            R.id.text1,
             names
         )
         binding.etAdminName.setAdapter(adapter)
+        binding.etAdminName.threshold = 0
         binding.etAdminName.setOnClickListener {
             binding.etAdminName.showDropDown()
+        }
+        // Opsional: Untuk mereset dropdown jika fokus hilang
+        binding.etAdminName.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                // Untuk admin, mungkin tidak perlu di-reset, karena pilihan seringkali disimpan
+                // Jika ingin reset tampilan, bisa panggil adapter.filter.filter("") atau adapter.notifyDataSetInvalidated()
+            }
         }
     }
 
@@ -136,6 +160,7 @@ class BorrowingItemActivity : AppCompatActivity() {
             val cal = Calendar.getInstance()
             DatePickerDialog(
                 this,
+                R.style.AppTheme_DatePicker,
                 { _, year, month, day ->
                     binding.etDateBorrowed.setText("$day/${month + 1}/$year")
                 },
@@ -146,77 +171,132 @@ class BorrowingItemActivity : AppCompatActivity() {
         }
     }
 
-
-    //Pemilihan waktu dengan droprown gus
     private fun generateHourOptions(): List<String> {
         return (7..18).map { it.toString().padStart(2, '0') }
     }
-    private fun generateMinuteOptions(): List<String> {
-        return (0..59).map { it.toString().padStart(2, '0') }
+
+    // Fungsi untuk menghasilkan opsi menit berdasarkan jam yang dipilih dan tipe (start/end)
+    private fun generateMinuteOptions(selectedHour: Int, isStart: Boolean): List<String> {
+        return if (isStart) { // Logika untuk waktu MULAI
+            when (selectedHour) {
+                7 -> (30..59).map { it.toString().padStart(2, '0') }
+                18 -> listOf("00")
+                else -> (0..59).map { it.toString().padStart(2, '0') }
+            }
+        } else { // Logika untuk waktu AKHIR
+            when (selectedHour) {
+                7 -> (30..59).map { it.toString().padStart(2, '0') }
+                18 -> listOf("00")
+                else -> (0..59).map { it.toString().padStart(2, '0') }
+            }
+        }
     }
+
     private fun setupTimeDropdowns() {
         val hourOptions = generateHourOptions()
-        val minuteOptions = generateMinuteOptions()
 
-        val hourAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, hourOptions)
-        val minuteAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, minuteOptions)
+        // Inisialisasi adapters dengan semua menit (atau menit default)
+        startHourAdapter =
+            ArrayAdapter(this, R.layout.custom_dropdown_item, R.id.text1, hourOptions)
+        // Awalnya, menit akan menunjukkan semua pilihan (isStart = true, selectedHour = -1)
+        startMinuteAdapter = ArrayAdapter(
+            this,
+            R.layout.custom_dropdown_item,
+            R.id.text1,
+            generateMinuteOptions(-1, true)
+        )
 
-        binding.etStartHour.setAdapter(hourAdapter)
-        binding.etStartMinute.setAdapter(minuteAdapter)
+        endHourAdapter = ArrayAdapter(this, R.layout.custom_dropdown_item, R.id.text1, hourOptions)
+        // Awalnya, menit akan menunjukkan semua pilihan (isStart = false, selectedHour = -1)
+        endMinuteAdapter = ArrayAdapter(
+            this,
+            R.layout.custom_dropdown_item,
+            R.id.text1,
+            generateMinuteOptions(-1, false)
+        )
 
-        binding.etEndHour.setAdapter(hourAdapter)
-        binding.etEndMinute.setAdapter(minuteAdapter)
+        binding.etStartHour.setAdapter(startHourAdapter)
+        binding.etStartMinute.setAdapter(startMinuteAdapter)
 
+        binding.etEndHour.setAdapter(endHourAdapter)
+        binding.etEndMinute.setAdapter(endMinuteAdapter)
+
+        // Mengatur dropDownHeight
+        val dropdownHeightPx = (resources.displayMetrics.density * 200).toInt() // Contoh 200dp
+        binding.etStartHour.dropDownHeight = dropdownHeightPx
+        binding.etStartMinute.dropDownHeight = dropdownHeightPx
+        binding.etEndHour.dropDownHeight = dropdownHeightPx
+        binding.etEndMinute.dropDownHeight = dropdownHeightPx
+
+        binding.etStartHour.threshold = 0
+        binding.etStartMinute.threshold = 0
+        binding.etEndHour.threshold = 0
+        binding.etEndMinute.threshold = 0
+
+        // Listeners for showing dropdowns
         binding.etStartHour.setOnClickListener { binding.etStartHour.showDropDown() }
         binding.etStartMinute.setOnClickListener { binding.etStartMinute.showDropDown() }
         binding.etEndHour.setOnClickListener { binding.etEndHour.showDropDown() }
         binding.etEndMinute.setOnClickListener { binding.etEndMinute.showDropDown() }
+
+        // Logic for filtering minutes based on selected hour for START TIME
+        binding.etStartHour.setOnItemClickListener { parent, _, position, _ ->
+            val selectedHourString = parent.getItemAtPosition(position).toString()
+            val selectedHour = selectedHourString.toIntOrNull() ?: -1
+
+            val filteredMinuteOptions =
+                generateMinuteOptions(selectedHour, true) // Pass true for isStart
+            startMinuteAdapter.clear()
+            startMinuteAdapter.addAll(filteredMinuteOptions)
+            startMinuteAdapter.notifyDataSetChanged()
+
+            // Clear selected minute if it's no longer valid
+            val currentMinute = binding.etStartMinute.text.toString().toIntOrNull() ?: -1
+            if ((selectedHour == 7 && currentMinute < 30) || (selectedHour == 18 && currentMinute != 0)) {
+                binding.etStartMinute.setText("")
+            }
+        }
+
+        // Logic for filtering minutes based on selected hour for END TIME
+        binding.etEndHour.setOnItemClickListener { parent, _, position, _ ->
+            val selectedHourString = parent.getItemAtPosition(position).toString()
+            val selectedHour = selectedHourString.toIntOrNull() ?: -1
+
+            val filteredMinuteOptions =
+                generateMinuteOptions(selectedHour, false) // Pass false for isStart
+            endMinuteAdapter.clear()
+            endMinuteAdapter.addAll(filteredMinuteOptions)
+            endMinuteAdapter.notifyDataSetChanged()
+
+            // Clear selected minute if it's no longer valid
+            val currentMinute = binding.etEndMinute.text.toString().toIntOrNull() ?: -1
+            if ((selectedHour == 7 && currentMinute < 30) || (selectedHour == 18 && currentMinute != 0)) {
+                binding.etEndMinute.setText("")
+            }
+        }
+
+        // Logic to reset minute dropdown when focus is lost (dropdown closes)
+        binding.etStartMinute.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val selectedHour = binding.etStartHour.text.toString().toIntOrNull() ?: -1
+                val currentOptions = generateMinuteOptions(selectedHour, true)
+                startMinuteAdapter.clear()
+                startMinuteAdapter.addAll(currentOptions)
+                startMinuteAdapter.notifyDataSetChanged()
+            }
+        }
+
+        binding.etEndMinute.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val selectedHour = binding.etEndHour.text.toString().toIntOrNull() ?: -1
+                val currentOptions = generateMinuteOptions(selectedHour, false)
+                endMinuteAdapter.clear()
+                endMinuteAdapter.addAll(currentOptions)
+                endMinuteAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
-
-
-//    @SuppressLint("DefaultLocale")
-//    private fun setupTimePickers() {
-//        val timeListener = { field: EditText, isStartHour: Boolean ->
-//            val cal = Calendar.getInstance()
-//            TimePickerDialog(
-//                this,
-//                { _, hour, minute ->
-//                    val totalMinutes = hour * 60 + minute
-//                    val minMinutes = 7 * 60 + 30
-//                    val maxMinutes = 18 * 60
-//
-//                    if (isStartHour) {
-//                        if (totalMinutes in minMinutes..maxMinutes) {
-//                            field.setText(String.format("%02d:%02d", hour, minute))
-//                        } else {
-//                            CustomDialog.alert(
-//                                context = this,
-//                                message = "Jam mulai hanya diperbolehkan antara 07:30 hingga 18:00"
-//                            )
-//                            field.setText("")
-//                        }
-//                    } else {
-//                        if (totalMinutes in minMinutes..maxMinutes) {
-//                            field.setText(String.format("%02d:%02d", hour, minute))
-//                        } else {
-//                            CustomDialog.alert(
-//                                context = this,
-//                                message = "Jam akhir hanya diperbolehkan antara 07:30 hingga 18:00"
-//                            )
-//                            field.setText("")
-//                        }
-//                    }
-//                },
-//                cal.get(Calendar.HOUR_OF_DAY),
-//                cal.get(Calendar.MINUTE),
-//                true
-//            ).show()
-//        }
-//
-//        binding.etStartHours.setOnClickListener { timeListener(binding.etStartHours, true) }
-//        binding.etEndHours.setOnClickListener { timeListener(binding.etEndHours, false) }
-//    }
 
     private fun saveBorrowingData() {
         val itemId = itemCode ?: "UNKNOWN"
@@ -228,13 +308,11 @@ class BorrowingItemActivity : AppCompatActivity() {
             val adminName = binding.etAdminName.text.toString()
             val adminId = borrowingViewModel.getAdminIdByName(adminName) ?: "UNKNOWN"
             val dateBorrowed = binding.etDateBorrowed.text.toString()
-            // Ambil nilai jam dan menit dari masing-masing dropdown
             val startHour = binding.etStartHour.text.toString().padStart(2, '0')
             val startMinute = binding.etStartMinute.text.toString().padStart(2, '0')
             val endHour = binding.etEndHour.text.toString().padStart(2, '0')
             val endMinute = binding.etEndMinute.text.toString().padStart(2, '0')
 
-            // Gabungkan jadi format "HH:mm"
             val startHours = "$startHour:$startMinute"
             val endHours = "$endHour:$endMinute"
 
@@ -263,31 +341,12 @@ class BorrowingItemActivity : AppCompatActivity() {
         val endHour = binding.etEndHour.text.toString().trim()
         val endMinute = binding.etEndMinute.text.toString().trim()
 
-        if (admin.isEmpty() && date.isEmpty() && startHour.isEmpty() && startMinute.isEmpty() && endHour.isEmpty() && endMinute.isEmpty()) {
+        // Perubahan 1: Validasi awal semua field harus diisi
+        if (admin.isEmpty() || date.isEmpty() || startHour.isEmpty() || startMinute.isEmpty() || endHour.isEmpty() || endMinute.isEmpty()) {
             CustomDialog.alert(
                 context = this,
                 message = "Semua field harus diisi"
             )
-            return false
-        }
-
-        if (admin.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Nama admin harus diisi")
-            return false
-        }
-
-        if (date.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Tanggal peminjaman harus diisi")
-            return false
-        }
-
-        if (startHour.isEmpty() || startMinute.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Jam mulai harus diisi lengkap")
-            return false
-        }
-
-        if (endHour.isEmpty() || endMinute.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Jam akhir harus diisi lengkap")
             return false
         }
 
@@ -307,21 +366,56 @@ class BorrowingItemActivity : AppCompatActivity() {
 
         val startTotalMinutes = startHourInt * 60 + startMinuteInt
         val endTotalMinutes = endHourInt * 60 + endMinuteInt
-        val minMinutes = 7 * 60 + 30
-        val maxMinutes = 18 * 60
+        val minBorrowMinutesTotal = 7 * 60 + 30 // 07:30 dalam menit
+        val maxBorrowMinutesTotal = 18 * 60 // 18:00 dalam menit
 
-        if (startTotalMinutes !in minMinutes..maxMinutes) {
-            CustomDialog.alert(context = this, message = "Jam mulai harus antara 07:30 hingga 18:00")
+        // Validasi rentang jam & menit untuk start
+        if (startHourInt == 7 && startMinuteInt < 30) {
+            CustomDialog.alert(context = this, message = "Jam mulai paling cepat 07:30")
+            return false
+        }
+        if (startHourInt == 18 && startMinuteInt != 0) {
+            CustomDialog.alert(
+                context = this,
+                message = "Jam mulai paling lambat 18:00 (hanya 18:00)"
+            )
+            return false
+        }
+        if (startTotalMinutes < minBorrowMinutesTotal || startTotalMinutes > maxBorrowMinutesTotal) {
+            CustomDialog.alert(
+                context = this,
+                message = "Jam mulai harus antara 07:30 hingga 18:00"
+            )
             return false
         }
 
-        if (endTotalMinutes !in minMinutes..maxMinutes) {
-            CustomDialog.alert(context = this, message = "Jam akhir harus antara 07:30 hingga 18:00")
+        // Validasi rentang jam & menit untuk end
+        if (endHourInt == 7 && endMinuteInt < 30) {
+            CustomDialog.alert(context = this, message = "Jam akhir paling cepat 07:30")
+            return false
+        }
+        if (endHourInt == 18 && endMinuteInt != 0) {
+            CustomDialog.alert(
+                context = this,
+                message = "Jam akhir paling lambat 18:00 (hanya 18:00)"
+            )
+            return false
+        }
+        if (endTotalMinutes < minBorrowMinutesTotal || endTotalMinutes > maxBorrowMinutesTotal) {
+            CustomDialog.alert(
+                context = this,
+                message = "Jam akhir harus antara 07:30 hingga 18:00"
+            )
             return false
         }
 
+        // Perubahan 2 & 3: Validasi jam akhir harus lebih dari jam mulai, dan minimal 30 menit
         if (endTotalMinutes <= startTotalMinutes) {
             CustomDialog.alert(context = this, message = "Jam akhir harus lebih dari jam mulai")
+            return false
+        }
+        if (endTotalMinutes - startTotalMinutes < 30) {
+            CustomDialog.alert(context = this, message = "Durasi peminjaman minimal 30 menit")
             return false
         }
 

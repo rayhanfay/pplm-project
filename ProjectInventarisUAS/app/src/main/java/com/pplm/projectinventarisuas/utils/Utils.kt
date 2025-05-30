@@ -70,6 +70,8 @@ class ReminderReceiver : BroadcastReceiver() {
         const val ACTION_OVERDUE_REMINDER = "OVERDUE_REMINDER_ACTION"
         const val ACTION_OUT_OF_RANGE = "OUT_OF_RANGE_ACTION"
         const val ACTION_SEND_LOCATION = "SEND_LOCATION_ACTION"
+        const val ACTION_SEND_LOCATION_AND_CHECK_LATE =
+            "com.pplm.projectinventarisuas.ACTION_SEND_LOCATION_AND_CHECK_LATE" // New action
 
         const val REQUEST_CODE_TIME_REMINDER = 100
         const val REQUEST_CODE_OVERDUE_REMINDER = 150
@@ -96,164 +98,140 @@ class ReminderReceiver : BroadcastReceiver() {
                 Log.d(TAG_LOCATION, "Processing send location action")
                 sendLastLocation(context, borrowingId)
             }
+
             ACTION_OUT_OF_RANGE -> {
                 Log.d(TAG_LOCATION, "Processing out of range action")
                 showOutOfRangeNotification(context, borrowingId)
             }
+
             ACTION_TIME_REMINDER -> {
                 val minutesRemaining = intent.getIntExtra("MINUTES_REMAINING", 0)
-                Log.d(TAG_TIME, "Processing time reminder action - Minutes remaining: $minutesRemaining")
+                Log.d(
+                    TAG_TIME,
+                    "Processing time reminder action - Minutes remaining: $minutesRemaining"
+                )
                 showTimeReminderNotification(context, minutesRemaining)
             }
+
             ACTION_OVERDUE_REMINDER -> {
                 val minutesOverdue = intent.getIntExtra("MINUTES_OVERDUE", 0)
-                Log.d(TAG_OVERDUE, "Processing overdue reminder action - Minutes overdue: $minutesOverdue")
+                Log.d(
+                    TAG_OVERDUE,
+                    "Processing overdue reminder action - Minutes overdue: $minutesOverdue"
+                )
                 showOverdueReminderNotification(context, minutesOverdue)
             }
+
+            ACTION_SEND_LOCATION_AND_CHECK_LATE -> { // Handle the new action
+                Log.d(TAG_LOCATION, "Processing send location and check late action")
+                sendLastLocation(context, borrowingId) // Still send location
+                if (borrowingId != null) {
+                    checkAndSetLateStatusFromAlarm(context, borrowingId)
+                } else {
+                    Log.e(TAG_DATABASE, "Borrowing ID is null for late status check from alarm.")
+                }
+            }
+
             else -> {
                 Log.w(TAG_MAIN, "Unknown action received: $action")
             }
         }
     }
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun showTimeReminderNotification(context: Context, minutesRemaining: Int) {
-        Log.d(TAG_TIME, "Creating time reminder notification for $minutesRemaining minutes remaining")
-
-        createNotificationChannel(
-            context,
-            TIME_REMINDER_CHANNEL_ID,
-            TIME_REMINDER_CHANNEL_NAME,
-            "Notifications for borrowing time reminders"
-        )
-
-        val title = "Pengingat Waktu Peminjaman"
-        val message = when (minutesRemaining) {
-            30 -> "Waktu peminjaman akan berakhir dalam 30 menit!"
-            15 -> "Waktu peminjaman akan berakhir dalam 15 menit!"
-            5 -> "Waktu peminjaman akan berakhir dalam 5 menit!"
-            else -> "Waktu peminjaman akan segera berakhir!"
+    private fun checkAndSetLateStatusFromAlarm(context: Context, borrowingId: String) {
+        val databaseRef =
+            FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId)
+        databaseRef.child("status").get().addOnSuccessListener { dataSnapshot ->
+            val currentStatus = dataSnapshot.getValue(String::class.java)
+            if (currentStatus != "Returned" && currentStatus != "Late") {
+                // Fetch endHour from database if needed, or pass it via intent if available
+                // For now, assuming endHour is not directly needed for this check, only current status
+                databaseRef.child("status").setValue("Late")
+                    .addOnSuccessListener {
+                        Log.d(
+                            "ReminderReceiver",
+                            "Borrowing status successfully updated to 'Late' via alarm for ID: $borrowingId"
+                        )
+                        // Show a notification for late status
+                        showNotification(
+                            context = context,
+                            title = "Peringatan Keterlambatan!",
+                            message = "Waktu peminjaman telah habis. Status peminjaman Anda diperbarui menjadi Terlambat.",
+                            notificationId = borrowingId.hashCode() + REQUEST_CODE_OVERDUE_REMINDER,
+                            channelId = OVERDUE_REMINDER_CHANNEL_ID,
+                            channelName = OVERDUE_REMINDER_CHANNEL_NAME,
+                            channelDescription = "Notifikasi untuk barang pinjaman yang terlambat",
+                            priority = NotificationCompat.PRIORITY_MAX,
+                            isOngoing = true,
+                            isLateWarning = true // Indicate it's a late warning for potential UI adjustment
+                        )
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(
+                            "ReminderReceiver",
+                            "Failed to update borrowing status to 'Late' via alarm: ${e.message}"
+                        )
+                    }
+            } else {
+                Log.d(
+                    "ReminderReceiver",
+                    "Status is already '$currentStatus', no need to update to 'Late'"
+                )
+            }
+        }.addOnFailureListener { e ->
+            Log.e("ReminderReceiver", "Failed to get current status for late check: ${e.message}")
         }
+    }
 
-        val builder = NotificationCompat.Builder(context, TIME_REMINDER_CHANNEL_ID)
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showNotification(
+        context: Context,
+        title: String,
+        message: String,
+        notificationId: Int,
+        channelId: String,
+        channelName: String,
+        channelDescription: String,
+        priority: Int = NotificationCompat.PRIORITY_HIGH,
+        isOngoing: Boolean = false,
+        isLateWarning: Boolean = false // Added for potential specific handling
+    ) {
+        createNotificationChannel(context, channelId, channelName, channelDescription, priority)
+
+        val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentTitle(title)
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setCategory(NotificationCompat.CATEGORY_REMINDER)
-            .setVibrate(longArrayOf(0, 500, 250, 500))
+            .setPriority(priority)
+            .setAutoCancel(!isOngoing)
+            .setOngoing(isOngoing)
+            .setCategory(if (isLateWarning) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_REMINDER)
+            .setVibrate(longArrayOf(0, 1000, 500, 1000)) // Standard vibration pattern
+            .setColor(
+                if (isLateWarning) 0xFFFF0000.toInt() else ContextCompat.getColor(
+                    context,
+                    android.R.color.holo_blue_light
+                )
+            ) // Red for late warnings
 
-        with(NotificationManagerCompat.from(context)) {
-            notify(TIME_REMINDER_NOTIFICATION_ID, builder.build())
-            Log.d(TAG_TIME, "Time reminder notification displayed successfully")
-        }
-    }
-
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun showOverdueReminderNotification(context: Context, minutesOverdue: Int) {
-        Log.d(TAG_OVERDUE, "Creating overdue reminder notification for $minutesOverdue minutes overdue")
-
-        createNotificationChannel(
+        // Optional: Add an intent to open the app when notification is tapped
+        val notificationIntent = Intent(
             context,
-            OVERDUE_REMINDER_CHANNEL_ID,
-            OVERDUE_REMINDER_CHANNEL_NAME,
-            "Notifications for overdue borrowing items",
-            NotificationManager.IMPORTANCE_MAX
+            Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity")
         )
-
-        val title = "Peringatan Keterlambatan!"
-        val message = when (minutesOverdue) {
-            5 -> "Anda terlambat 5 menit mengembalikan barang! Segera kembalikan!"
-            15 -> "Anda terlambat 15 menit mengembalikan barang! Harap segera kembalikan!"
-            30 -> "Anda terlambat 30 menit mengembalikan barang! Segera kembalikan sekarang!"
-            60 -> "Anda terlambat 1 jam mengembalikan barang! Kembalikan sekarang juga!"
-            else -> "Anda terlambat mengembalikan barang! Segera kembalikan!"
-        }
-
-        val notificationIntent = Intent(context, Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity"))
         val pendingIntent = PendingIntent.getActivity(
-            context, 0, notificationIntent,
+            context,
+            0,
+            notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        builder.setContentIntent(pendingIntent)
 
-        val builder = NotificationCompat.Builder(context, OVERDUE_REMINDER_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVibrate(longArrayOf(0, 1000, 500, 1000, 500, 1000))
-            .setColor(0xFFFF0000.toInt()) // Red color for urgent warning
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         with(NotificationManagerCompat.from(context)) {
-            notify(OVERDUE_REMINDER_NOTIFICATION_ID, builder.build())
-            Log.d(TAG_OVERDUE, "Overdue reminder notification displayed successfully")
+            notify(notificationId, builder.build())
+            Log.d(TAG_NOTIFICATION, "Notification displayed successfully for ID: $notificationId")
         }
-    }
-
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun showOutOfRangeNotification(context: Context, borrowingId: String?) {
-        if (borrowingId == null) {
-            Log.w(TAG_LOCATION, "Cannot show out of range notification - borrowingId is null")
-            return
-        }
-
-        Log.d(TAG_LOCATION, "Creating out of range notification for borrowing: $borrowingId")
-
-        createNotificationChannel(
-            context,
-            LOCATION_ALERT_CHANNEL_ID,
-            LOCATION_ALERT_CHANNEL_NAME,
-            "Notifications for location-based alerts and warnings"
-        )
-
-        val notificationIntent = Intent(context, Class.forName("com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity")).apply {
-            putExtra("BORROWING_ID", borrowingId)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
-
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, notificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val builder = NotificationCompat.Builder(context, LOCATION_ALERT_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle("Peringatan Lokasi")
-            .setContentText("Anda berada di luar area yang diperbolehkan. Harap kembali ke lokasi yang ditentukan.")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setVibrate(longArrayOf(0, 1000, 500, 1000))
-            .setColor(0xFFFF0000.toInt()) // Red color for warning
-
-        with(NotificationManagerCompat.from(context)) {
-            notify(LOCATION_ALERT_NOTIFICATION_ID, builder.build())
-            Log.d(TAG_LOCATION, "Out of range notification displayed successfully")
-        }
-
-        updateOutOfRangeStatus(borrowingId, true)
-    }
-
-    private fun updateOutOfRangeStatus(borrowingId: String, isOutOfRange: Boolean) {
-        Log.d(TAG_DATABASE, "Updating out_of_range status to $isOutOfRange for borrowing: $borrowingId")
-
-        val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
-            .child(borrowingId)
-        borrowingRef.child("out_of_range").setValue(isOutOfRange)
-            .addOnSuccessListener {
-                Log.d(TAG_DATABASE, "Successfully updated out_of_range status to $isOutOfRange")
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG_DATABASE, "Failed to update out_of_range status: ${exception.message}")
-            }
     }
 
     private fun createNotificationChannel(
@@ -292,6 +270,94 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showTimeReminderNotification(context: Context, minutesRemaining: Int) {
+        val title = "Pengingat Waktu Peminjaman"
+        val message = when (minutesRemaining) {
+            30 -> "Waktu peminjaman akan berakhir dalam 30 menit!"
+            15 -> "Waktu peminjaman akan berakhir dalam 15 menit!"
+            5 -> "Waktu peminjaman akan berakhir dalam 5 menit!"
+            else -> "Waktu peminjaman akan segera berakhir!"
+        }
+        showNotification(
+            context = context,
+            title = title,
+            message = message,
+            notificationId = TIME_REMINDER_NOTIFICATION_ID,
+            channelId = TIME_REMINDER_CHANNEL_ID,
+            channelName = TIME_REMINDER_CHANNEL_NAME,
+            channelDescription = "Notifikasi untuk pengingat waktu peminjaman",
+            priority = NotificationCompat.PRIORITY_HIGH
+        )
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showOverdueReminderNotification(context: Context, minutesOverdue: Int) {
+        val title = "Peringatan Keterlambatan!"
+        val message = when (minutesOverdue) {
+            5 -> "Anda terlambat 5 menit mengembalikan barang! Segera kembalikan!"
+            15 -> "Anda terlambat 15 menit mengembalikan barang! Harap segera kembalikan!"
+            30 -> "Anda terlambat 30 menit mengembalikan barang! Segera kembalikan sekarang!"
+            60 -> "Anda terlambat 1 jam mengembalikan barang! Kembalikan sekarang juga!"
+            else -> "Anda terlambat mengembalikan barang! Segera kembalikan!"
+        }
+        showNotification(
+            context = context,
+            title = title,
+            message = message,
+            notificationId = OVERDUE_REMINDER_NOTIFICATION_ID,
+            channelId = OVERDUE_REMINDER_CHANNEL_ID,
+            channelName = OVERDUE_REMINDER_CHANNEL_NAME,
+            channelDescription = "Notifikasi untuk barang pinjaman yang terlambat",
+            priority = NotificationCompat.PRIORITY_MAX,
+            isOngoing = true,
+            isLateWarning = true
+        )
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun showOutOfRangeNotification(context: Context, borrowingId: String?) {
+        if (borrowingId == null) {
+            Log.w(TAG_LOCATION, "Cannot show out of range notification - borrowingId is null")
+            return
+        }
+
+        val title = "Peringatan Lokasi"
+        val message =
+            "Anda berada di luar area yang diperbolehkan. Harap kembali ke lokasi yang ditentukan."
+
+        showNotification(
+            context = context,
+            title = title,
+            message = message,
+            notificationId = LOCATION_ALERT_NOTIFICATION_ID,
+            channelId = LOCATION_ALERT_CHANNEL_ID,
+            channelName = LOCATION_ALERT_CHANNEL_NAME,
+            channelDescription = "Notifikasi untuk peringatan berbasis lokasi",
+            priority = NotificationCompat.PRIORITY_HIGH,
+            isOngoing = true,
+            isLateWarning = true
+        )
+        updateOutOfRangeStatus(borrowingId, true)
+    }
+
+    private fun updateOutOfRangeStatus(borrowingId: String, isOutOfRange: Boolean) {
+        Log.d(
+            TAG_DATABASE,
+            "Updating out_of_range status to $isOutOfRange for borrowing: $borrowingId"
+        )
+
+        val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
+            .child(borrowingId)
+        borrowingRef.child("out_of_range").setValue(isOutOfRange)
+            .addOnSuccessListener {
+                Log.d(TAG_DATABASE, "Successfully updated out_of_range status to $isOutOfRange")
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG_DATABASE, "Failed to update out_of_range status: ${exception.message}")
+            }
+    }
+
     private fun sendLastLocation(context: Context, borrowingId: String?) {
         if (borrowingId == null) {
             Log.w(TAG_LOCATION, "Cannot send location - borrowingId is null")
@@ -310,7 +376,10 @@ class ReminderReceiver : BroadcastReceiver() {
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
-                    Log.d(TAG_LOCATION, "Last location obtained: ${location.latitude}, ${location.longitude}")
+                    Log.d(
+                        TAG_LOCATION,
+                        "Last location obtained: ${location.latitude}, ${location.longitude}"
+                    )
                     processLocationUpdate(context, location, borrowingId)
                 } else {
                     Log.w(TAG_LOCATION, "Last location is null, requesting single location update")
@@ -325,7 +394,11 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun requestSingleLocationUpdate(context: Context, fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient, borrowingId: String) {
+    private fun requestSingleLocationUpdate(
+        context: Context,
+        fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient,
+        borrowingId: String
+    ) {
         Log.d(TAG_LOCATION, "Requesting single location update for borrowing: $borrowingId")
 
         val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
@@ -336,7 +409,10 @@ class ReminderReceiver : BroadcastReceiver() {
             override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
                 val loc = result.lastLocation
                 if (loc != null) {
-                    Log.d(TAG_LOCATION, "Single location update received: ${loc.latitude}, ${loc.longitude}")
+                    Log.d(
+                        TAG_LOCATION,
+                        "Single location update received: ${loc.latitude}, ${loc.longitude}"
+                    )
                     processLocationUpdate(context, loc, borrowingId)
                 } else {
                     Log.w(TAG_LOCATION, "Single location update returned null")
@@ -376,7 +452,11 @@ class ReminderReceiver : BroadcastReceiver() {
         scheduleNextLocationSend(context, borrowingId)
     }
 
-    private fun checkDistanceToTarget(context: Context, currentLocation: Location, borrowingId: String) {
+    private fun checkDistanceToTarget(
+        context: Context,
+        currentLocation: Location,
+        borrowingId: String
+    ) {
         val targetLatitude = 0.4801978305934569
         val targetLongitude = 101.37665907336893
         val radiusInMeters = 50.0f
@@ -389,36 +469,52 @@ class ReminderReceiver : BroadcastReceiver() {
         }
 
         val distanceInMeters = currentLocation.distanceTo(targetLocation)
-        Log.d(TAG_LOCATION, "Distance calculated: ${distanceInMeters}m (limit: ${radiusInMeters}m) for borrowing: $borrowingId")
+        Log.d(
+            TAG_LOCATION,
+            "Distance calculated: ${distanceInMeters}m (limit: ${radiusInMeters}m) for borrowing: $borrowingId"
+        )
 
         val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
             .child(borrowingId)
 
-        borrowingRef.child("out_of_range").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val wasOutOfRange = snapshot.getValue(Boolean::class.java) ?: false
-                Log.d(TAG_LOCATION, "Previous out_of_range status: $wasOutOfRange for borrowing: $borrowingId")
+        borrowingRef.child("out_of_range")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val wasOutOfRange = snapshot.getValue(Boolean::class.java) ?: false
+                    Log.d(
+                        TAG_LOCATION,
+                        "Previous out_of_range status: $wasOutOfRange for borrowing: $borrowingId"
+                    )
 
-                if (distanceInMeters > radiusInMeters && !wasOutOfRange) {
-                    Log.w(TAG_LOCATION, "User moved outside radius - triggering out of range notification")
-                    val intent = Intent(context, ReminderReceiver::class.java).apply {
-                        action = ACTION_OUT_OF_RANGE
-                        putExtra("BORROWING_ID", borrowingId)
+                    if (distanceInMeters > radiusInMeters && !wasOutOfRange) {
+                        Log.w(
+                            TAG_LOCATION,
+                            "User moved outside radius - triggering out of range notification"
+                        )
+                        val intent = Intent(context, ReminderReceiver::class.java).apply {
+                            action = ACTION_OUT_OF_RANGE
+                            putExtra("BORROWING_ID", borrowingId)
+                        }
+                        context.sendBroadcast(intent)
+                    } else if (distanceInMeters <= radiusInMeters && wasOutOfRange) {
+                        Log.i(
+                            TAG_LOCATION,
+                            "User returned to permitted radius - cancelling out of range notification"
+                        )
+                        cancelOutOfRangeNotification(context)
+                        updateOutOfRangeStatus(borrowingId, false)
+                    } else {
+                        Log.d(
+                            TAG_LOCATION,
+                            "No change in range status - current: ${distanceInMeters <= radiusInMeters}, previous: ${!wasOutOfRange}"
+                        )
                     }
-                    context.sendBroadcast(intent)
-                } else if (distanceInMeters <= radiusInMeters && wasOutOfRange) {
-                    Log.i(TAG_LOCATION, "User returned to permitted radius - cancelling out of range notification")
-                    cancelOutOfRangeNotification(context)
-                    updateOutOfRangeStatus(borrowingId, false)
-                } else {
-                    Log.d(TAG_LOCATION, "No change in range status - current: ${distanceInMeters <= radiusInMeters}, previous: ${!wasOutOfRange}")
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG_DATABASE, "Failed to read out_of_range status: ${error.message}")
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e(TAG_DATABASE, "Failed to read out_of_range status: ${error.message}")
+                }
+            })
     }
 
     private fun cancelOutOfRangeNotification(context: Context) {
@@ -430,11 +526,14 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun scheduleNextLocationSend(context: Context, borrowingId: String) {
         val nextTime = System.currentTimeMillis() + (1 * 60 * 1000) // 1 minute from now
-        Log.d(TAG_LOCATION, "Scheduling next location send at $nextTime for borrowing: $borrowingId")
+        Log.d(
+            TAG_LOCATION,
+            "Scheduling next location send at $nextTime for borrowing: $borrowingId"
+        )
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = ACTION_SEND_LOCATION
+            action = ACTION_SEND_LOCATION // Keep this action for periodic location sends
             putExtra("BORROWING_ID", borrowingId)
         }
 

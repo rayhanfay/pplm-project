@@ -76,7 +76,11 @@ class BorrowingTimerActivity : AppCompatActivity() {
             startLocationMonitoring()
         } else {
             Log.w(TAG_PERMISSION, "Some location permissions denied: $permissions")
-            Toast.makeText(this, "Location permission required for area monitoring", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Location permission required for area monitoring",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -124,15 +128,26 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     startTimerService()
                     setReminderForBorrowingEnd()
                 } else {
-                    Log.w(TAG_DATABASE, "Borrowing ID does not exist in database, finishing activity")
-                    Toast.makeText(this@BorrowingTimerActivity, "Data peminjaman tidak ditemukan", Toast.LENGTH_SHORT).show()
+                    Log.w(
+                        TAG_DATABASE,
+                        "Borrowing ID does not exist in database, finishing activity"
+                    )
+                    Toast.makeText(
+                        this@BorrowingTimerActivity,
+                        "Data peminjaman tidak ditemukan",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     cleanupAndFinish()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e(TAG_DATABASE, "Failed to check borrowing existence: ${error.message}")
-                Toast.makeText(this@BorrowingTimerActivity, "Gagal memverifikasi data peminjaman", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@BorrowingTimerActivity,
+                    "Gagal memverifikasi data peminjaman",
+                    Toast.LENGTH_SHORT
+                ).show()
                 cleanupAndFinish()
             }
         })
@@ -198,6 +213,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 locationPermissionGranted = true
                 startLocationMonitoring()
             }
+
             else -> {
                 Log.d(TAG_PERMISSION, "Requesting location permissions: $permissionsToRequest")
                 locationPermissionLauncher.launch(permissionsToRequest.toTypedArray())
@@ -221,7 +237,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                Log.d(TAG_LOCATION, "Location update received with ${result.locations.size} locations")
+                Log.d(
+                    TAG_LOCATION,
+                    "Location update received with ${result.locations.size} locations"
+                )
                 for (location in result.locations) {
                     checkUserDistance(location)
                 }
@@ -247,10 +266,16 @@ class BorrowingTimerActivity : AppCompatActivity() {
         }
 
         val distanceInMeters = currentLocation.distanceTo(targetLocation)
-        Log.d(TAG_LOCATION, "Current distance to target: ${distanceInMeters}m (limit: ${radiusInMeters}m)")
+        Log.d(
+            TAG_LOCATION,
+            "Current distance to target: ${distanceInMeters}m (limit: ${radiusInMeters}m)"
+        )
 
         if (distanceInMeters > radiusInMeters && !isOutsideRadius) {
-            Log.w(TAG_LOCATION, "User moved outside permitted radius - triggering out of range alert")
+            Log.w(
+                TAG_LOCATION,
+                "User moved outside permitted radius - triggering out of range alert"
+            )
             isOutsideRadius = true
             showOutOfRangeReminder()
         } else if (distanceInMeters <= radiusInMeters && isOutsideRadius) {
@@ -307,7 +332,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
     private fun checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val isGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            val isGranted = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
             if (!isGranted) {
                 Log.d(TAG_PERMISSION, "Requesting notification permission")
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -353,7 +381,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 putExtra("MINUTES_REMAINING", delay / (60 * 1000))
             }
 
-            val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_TIME_REMINDER + index) and 0xFFFFFFF
+            val requestCode =
+                (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_TIME_REMINDER + index) and 0xFFFFFFF
             val pendingIntent = PendingIntent.getBroadcast(
                 this,
                 requestCode,
@@ -361,7 +390,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            Log.d(TAG_NOTIFICATION, "Scheduling time reminder ${index + 1}/3 at $reminderTime ms (${delay / (60 * 1000)} minutes before end)")
+            Log.d(
+                TAG_NOTIFICATION,
+                "Scheduling time reminder ${index + 1}/3 at $reminderTime ms (${delay / (60 * 1000)} minutes before end)"
+            )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, reminderTime, pendingIntent)
@@ -385,7 +417,12 @@ class BorrowingTimerActivity : AppCompatActivity() {
         Log.d(TAG_NOTIFICATION, "Scheduling overdue notifications")
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val overdueIntervals = listOf(5 * 60 * 1000, 15 * 60 * 1000, 30 * 60 * 1000, 60 * 60 * 1000) // 5min, 15min, 30min, 1hour after end time
+        val overdueIntervals = listOf(
+            5 * 60 * 1000,
+            15 * 60 * 1000,
+            30 * 60 * 1000,
+            60 * 60 * 1000
+        ) // 5min, 15min, 30min, 1hour after end time
 
         overdueIntervals.forEachIndexed { index, delay ->
             val overdueTime = borrowingEndTime + delay
@@ -395,7 +432,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 putExtra("MINUTES_OVERDUE", delay / (60 * 1000))
             }
 
-            val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OVERDUE_REMINDER + index) and 0xFFFFFFF
+            val requestCode =
+                (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OVERDUE_REMINDER + index) and 0xFFFFFFF
             val pendingIntent = PendingIntent.getBroadcast(
                 this,
                 requestCode,
@@ -403,11 +441,17 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            Log.d(TAG_NOTIFICATION, "Scheduling overdue reminder ${index + 1}/4 at $overdueTime ms (${delay / (60 * 1000)} minutes after end)")
+            Log.d(
+                TAG_NOTIFICATION,
+                "Scheduling overdue reminder ${index + 1}/4 at $overdueTime ms (${delay / (60 * 1000)} minutes after end)"
+            )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, overdueTime, pendingIntent)
-                Log.d(TAG_NOTIFICATION, "Non-exact alarm scheduled for overdue reminder ${index + 1}")
+                Log.d(
+                    TAG_NOTIFICATION,
+                    "Non-exact alarm scheduled for overdue reminder ${index + 1}"
+                )
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(
@@ -448,14 +492,14 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
     private fun scheduleLocationSend(borrowingEndTime: Long) {
         val sendLocationTime = borrowingEndTime + (1 * 60 * 1000)
-        Log.d(TAG_NOTIFICATION, "Scheduling location send at $sendLocationTime ms (1 minute after borrowing end)")
+        Log.d(TAG_NOTIFICATION, "Scheduling location send and late status check at $sendLocationTime ms (1 minute after borrowing end)")
 
         val intent = Intent(this, ReminderReceiver::class.java).apply {
-            action = ReminderReceiver.ACTION_SEND_LOCATION
+            action = ReminderReceiver.ACTION_SEND_LOCATION_AND_CHECK_LATE
             putExtra("BORROWING_ID", borrowingId)
         }
 
-        val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF
+        val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF // Reuse or create a new request code
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             requestCode,
@@ -466,7 +510,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, sendLocationTime, pendingIntent)
-            Log.d(TAG_NOTIFICATION, "Non-exact alarm scheduled for location send")
+            Log.d(TAG_NOTIFICATION, "Non-exact alarm scheduled for location send and late status check")
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
@@ -475,7 +519,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     pendingIntent
                 )
             }
-            Log.d(TAG_NOTIFICATION, "Exact alarm scheduled for location send")
+            Log.d(TAG_NOTIFICATION, "Exact alarm scheduled for location send and late status check")
         }
     }
 
@@ -530,7 +574,11 @@ class BorrowingTimerActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
                     Log.w(TAG_DATABASE, "Borrowing data has been deleted from database")
-                    Toast.makeText(this@BorrowingTimerActivity, "Data peminjaman telah dihapus", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@BorrowingTimerActivity,
+                        "Data peminjaman telah dihapus",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     cleanupAndFinish()
                     return
                 }
@@ -539,7 +587,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 Log.d(TAG_DATABASE, "Borrowing status changed to: $status for ID: $borrowingId")
 
                 if (status == "Returned") {
-                    Log.d(TAG_DATABASE, "Item returned - cleaning up and navigating to student section")
+                    Log.d(
+                        TAG_DATABASE,
+                        "Item returned - cleaning up and navigating to student section"
+                    )
 
                     stopTimerService()
                     stopLocationMonitoring()
@@ -549,7 +600,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     prefs.edit {
                         remove("activeBorrowingId")
                         remove("alarmSet_$borrowingId")
-                        apply() // Pastikan perubahan langsung disimpan
+                        apply()
                     }
 
                     CustomDialog.success(
@@ -557,17 +608,19 @@ class BorrowingTimerActivity : AppCompatActivity() {
                         title = "Sukses",
                         message = "Barang telah berhasil dikembalikan",
                         onDismiss = {
-                            // 4. Navigasi ke StudentSectionActivity
                             val intent = Intent(
                                 this@BorrowingTimerActivity,
                                 StudentSectionActivity::class.java
                             ).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             }
                             startActivity(intent)
                             finish()
                         }
                     )
+                } else {
+                    checkAndSetLateStatus(snapshot)
                 }
             }
 
@@ -580,6 +633,36 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 ).show()
             }
         })
+    }
+
+    private fun checkAndSetLateStatus(snapshot: DataSnapshot) {
+        val currentStatus = snapshot.child("status").getValue(String::class.java)
+        if (currentStatus != "Returned" && currentStatus != "Late") {
+            val borrowingEndTime = getBorrowingEndTimeInMillis()
+            val currentTime = System.currentTimeMillis()
+
+            if (currentTime > borrowingEndTime) {
+                Log.d(
+                    TAG_DATABASE,
+                    "Borrowing is overdue. Setting status to 'Late' for ID: $borrowingId"
+                )
+                databaseRef.child("status").setValue("Late")
+                    .addOnSuccessListener {
+                        Log.d(TAG_DATABASE, "Borrowing status successfully updated to 'Late'")
+                        Toast.makeText(
+                            this,
+                            "Waktu peminjaman telah habis. Status diperbarui menjadi Terlambat.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(
+                            TAG_DATABASE,
+                            "Failed to update borrowing status to 'Late': ${e.message}"
+                        )
+                    }
+            }
+        }
     }
 
     private fun stopLocationMonitoring() {
@@ -607,7 +690,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
         reminders.forEachIndexed { index, _ ->
             val intent = Intent(this, ReminderReceiver::class.java)
-            val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_TIME_REMINDER + index) and 0xFFFFFFF
+            val requestCode =
+                (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_TIME_REMINDER + index) and 0xFFFFFFF
             val pendingIntent = PendingIntent.getBroadcast(
                 this,
                 requestCode,
@@ -627,7 +711,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
         overdueIntervals.forEachIndexed { index, _ ->
             val intent = Intent(this, ReminderReceiver::class.java)
-            val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OVERDUE_REMINDER + index) and 0xFFFFFFF
+            val requestCode =
+                (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OVERDUE_REMINDER + index) and 0xFFFFFFF
             val pendingIntent = PendingIntent.getBroadcast(
                 this,
                 requestCode,
@@ -647,7 +732,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
             action = ReminderReceiver.ACTION_SEND_LOCATION
             putExtra("BORROWING_ID", borrowingId)
         }
-        val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF
+        val requestCode =
+            (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             requestCode,

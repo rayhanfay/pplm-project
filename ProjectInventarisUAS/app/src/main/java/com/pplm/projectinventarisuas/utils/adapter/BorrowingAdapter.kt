@@ -42,6 +42,7 @@ class BorrowingAdapter(
                     "proyektor" -> R.drawable.ic_projector_borrowed
                     else -> R.drawable.ic_borrowed
                 }
+
                 "returned" -> when (lowerCaseItemType) {
                     "remote" -> R.drawable.ic_remote_returned
                     "kabel" -> R.drawable.ic_cable_returned
@@ -49,6 +50,7 @@ class BorrowingAdapter(
                     "proyektor" -> R.drawable.ic_projector_returned
                     else -> R.drawable.ic_returned
                 }
+
                 "lost" -> when (lowerCaseItemType) {
                     "remote" -> R.drawable.ic_remote_lost
                     "kabel" -> R.drawable.ic_cable_lost
@@ -56,6 +58,7 @@ class BorrowingAdapter(
                     "proyektor" -> R.drawable.ic_projector_lost
                     else -> R.drawable.ic_lost
                 }
+
                 "late" -> when (lowerCaseItemType) {
                     "remote" -> R.drawable.ic_remote_late
                     "kabel" -> R.drawable.ic_cable_late
@@ -63,6 +66,7 @@ class BorrowingAdapter(
                     "proyektor" -> R.drawable.ic_projector_late
                     else -> R.drawable.ic_late
                 }
+
                 else -> R.drawable.ic_default_image
             }
         }

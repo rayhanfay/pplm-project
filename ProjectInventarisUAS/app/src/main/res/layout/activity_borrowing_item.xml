@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     tools:context=".ui.studentsection.borrowing.BorrowingItemActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,8 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:title="Borrowing Item"
-        android:titleTextColor="@android:color/white" />
+        android:fontFamily="@font/poppins_semibold"
+        app:fontFamily="@font/poppins_semibold"
+        app:title="Borrowing Item"
+        app:titleTextColor="@android:color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,35 +35,64 @@
                 android:layout_height="0dp"
                 android:visibility="gone" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Nama Barang"
+                android:textColor="@color/colorPrimary" />
+
             <EditText
                 android:id="@+id/etItemName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Item Name"
                 android:background="@drawable/rounded_edittext"
-                android:fontFamily="@font/poppins"
                 android:enabled="false"
-                android:layout_marginTop="16dp" />
+                android:fontFamily="@font/poppins"
+                android:hint="Contoh: Proyektor Epson" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Nama Admin"
+                android:textColor="@color/colorPrimary" />
 
             <AutoCompleteTextView
                 android:id="@+id/etAdminName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Admin Name"
                 android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
-                android:layout_marginTop="16dp"
+                android:hint="Masukkan Nama Admin"
                 android:inputType="none" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Tanggal Peminjaman"
+                android:textColor="@color/colorPrimary" />
 
             <EditText
                 android:id="@+id/etDateBorrowed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Date Borrowed"
                 android:background="@drawable/rounded_edittext"
+                android:focusable="false"
                 android:fontFamily="@font/poppins"
+                android:hint="Masukkan Tanggal Peminjaman" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:focusable="false" />
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Waktu Peminjaman"
+                android:textColor="@color/colorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -72,64 +103,68 @@
                     android:id="@+id/etStartHour"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:hint="Start Hour"
-                    android:layout_margin="10dp"
                     android:background="@drawable/rounded_edittext"
-                    android:inputType="none"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:hint="HH"
+                    android:inputType="none" />
 
                 <AutoCompleteTextView
                     android:id="@+id/etStartMinute"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:hint="Start Minute"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/rounded_edittext"                    android:inputType="none"
-                    android:focusable="false"/>
+                    android:background="@drawable/rounded_edittext"
+                    android:focusable="false"
+                    android:hint="MM"
+                    android:inputType="none" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="center_vertical"
                     android:text=" to "
-                    android:gravity="center_vertical"/>
+                    android:textColor="@android:color/black" />
 
                 <AutoCompleteTextView
                     android:id="@+id/etEndHour"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:hint="End Hour"
-                    android:layout_margin="10dp"
                     android:background="@drawable/rounded_edittext"
-                    android:inputType="none"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:hint="HH"
+                    android:inputType="none" />
 
                 <AutoCompleteTextView
                     android:id="@+id/etEndMinute"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:hint="End Minute"
-                    android:layout_margin="10dp"
                     android:background="@drawable/rounded_edittext"
-                    android:inputType="none"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:hint="MM"
+                    android:inputType="none" />
 
             </LinearLayout>
-
 
             <android.widget.Button
                 android:id="@+id/btnBowrowItem"
                 android:layout_width="match_parent"
-                android:textAllCaps="false"
-                android:fontFamily="@font/poppins_semibold"
-                android:textColor="@color/white"
-                android:background="@drawable/bg_button_add"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Borrow Item" />
+                android:background="@drawable/bg_button_add"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Borrow Item"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
