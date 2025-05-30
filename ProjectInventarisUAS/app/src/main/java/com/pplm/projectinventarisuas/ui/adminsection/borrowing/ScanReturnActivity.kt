@@ -3,6 +3,7 @@ package com.pplm.projectinventarisuas.ui.adminsection.borrowing
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Size
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,10 +16,10 @@ import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.pplm.projectinventarisuas.data.model.Borrowing
-import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.databinding.ActivityScanCodeBinding
+import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -29,6 +30,9 @@ class ScanReturnActivity : AppCompatActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val borrowingRepository = BorrowingRepository()
     private val itemRepository = ItemRepository()
+    private var shutdownHandler: Handler? = null
+    private var shutdownRunnable: Runnable? = null
+    private var isDialogShowing = false
     private var isProcessing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +41,7 @@ class ScanReturnActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestPermissionAndStartCamera()
+        startAutoCloseTimer()
     }
 
     private fun requestPermissionAndStartCamera() {
@@ -130,9 +135,11 @@ class ScanReturnActivity : AppCompatActivity() {
                                 onDismiss = { isProcessing = false }
                             )
                         }
-
                         "In Use" -> {
                             updateBorrowingStatusToReturned(it, getCurrentTime())
+                        }
+                        else -> {
+                            checkItemExists(itemId)
                         }
                     }
                 } ?: run {
@@ -200,8 +207,27 @@ class ScanReturnActivity : AppCompatActivity() {
         return format.format(System.currentTimeMillis())
     }
 
+    private fun startAutoCloseTimer() {
+        shutdownHandler = Handler(mainLooper)
+        shutdownRunnable = Runnable {
+            if (!isDialogShowing) {
+                isDialogShowing = true
+                CustomDialog.alert(
+                    context = this,
+                    message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
+                    onDismiss = {
+                        isDialogShowing = false
+                        finish()
+                    }
+                )
+            }
+        }
+        shutdownHandler?.postDelayed(shutdownRunnable!!, 60000)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        shutdownHandler?.removeCallbacks(shutdownRunnable!!)
     }
 }
