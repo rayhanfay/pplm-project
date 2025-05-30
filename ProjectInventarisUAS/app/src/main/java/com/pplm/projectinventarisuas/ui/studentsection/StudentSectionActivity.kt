@@ -30,7 +30,7 @@ class StudentSectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStudentSectionBinding
     private lateinit var viewModel: ItemViewModel
-    private lateinit var adapter: ItemAdapter
+    private lateinit var itemAdapter: ItemAdapter
     private lateinit var summaryAdapter: ItemSummaryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +40,7 @@ class StudentSectionActivity : AppCompatActivity() {
 
         setupSwipeToRefresh()
         setupGreeting()
-        setupRecyclerView()
+        setupRecyclerViews()
         setupViewModel()
         setupSearchBar()
         setupLogoutButton()
@@ -54,12 +54,18 @@ class StudentSectionActivity : AppCompatActivity() {
         binding.tvTitle.text = greeting
     }
 
-    private fun setupRecyclerView() {
-        adapter = ItemAdapter(emptyList()) { selectedItem ->
+    private fun setupRecyclerViews() {
+        itemAdapter = ItemAdapter(emptyList(), onItemClick = { selectedItem ->
             showItemDetailDialog(selectedItem, false)
-        }
+        }, isStudentMode = true)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = itemAdapter
+
+        summaryAdapter = ItemSummaryAdapter(emptyList())
+        binding.rvItemSummary.apply {
+            layoutManager = GridLayoutManager(this@StudentSectionActivity, 2)
+            adapter = summaryAdapter
+        }
     }
 
     private fun setupSearchBar() {
@@ -76,11 +82,7 @@ class StudentSectionActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory)[ItemViewModel::class.java]
 
         viewModel.items.observe(this) { itemList ->
-            adapter = ItemAdapter(itemList) { selectedItem ->
-                showItemDetailDialog(selectedItem, false)
-            }
-            binding.recyclerView.adapter = adapter
-            adapter.notifyDataSetChanged()
+            itemAdapter.updateItems(itemList)
             binding.swipeRefresh.isRefreshing = false
         }
 
@@ -90,11 +92,7 @@ class StudentSectionActivity : AppCompatActivity() {
                 .eachCount()
                 .map { ItemSummary(it.key, it.value) }
 
-            summaryAdapter = ItemSummaryAdapter(summaryMap)
-            binding.rvItemSummary.apply {
-                layoutManager = GridLayoutManager(this@StudentSectionActivity, 2)
-                adapter = summaryAdapter
-            }
+            summaryAdapter.updateItems(summaryMap)
         }
 
         viewModel.loadItemsAvailable()

@@ -56,9 +56,9 @@ class ItemFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ItemAdapter(emptyList()) { selectedItem ->
-            showItemOptionsDialog(selectedItem)
-        }
+        adapter = ItemAdapter(emptyList(), onItemClick = { selectedItem ->
+            showItemDetailDialog(selectedItem, false)
+        }, isStudentMode = false)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
     }
