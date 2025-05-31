@@ -33,7 +33,7 @@ class ItemAdapter(
             when (item.item_type.lowercase()) {
                 "remote" -> binding.ivItemIcon.setImageResource(R.drawable.ic_remote)
                 "kabel" -> binding.ivItemIcon.setImageResource(R.drawable.ic_cable)
-                "extension" -> binding.ivItemIcon.setImageResource(R.drawable.ic_extension)
+                "ekstensi" -> binding.ivItemIcon.setImageResource(R.drawable.ic_extension)
                 "proyektor" -> binding.ivItemIcon.setImageResource(R.drawable.ic_projector)
                 else -> binding.ivItemIcon.setImageResource(R.drawable.ic_default_image)
             }

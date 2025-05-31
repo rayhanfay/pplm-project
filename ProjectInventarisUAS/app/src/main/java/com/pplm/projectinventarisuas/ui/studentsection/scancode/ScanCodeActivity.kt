@@ -171,7 +171,7 @@ class ScanCodeActivity : AppCompatActivity() {
 
     private fun checkExistingBorrowing(itemId: String, onComplete: (Boolean) -> Unit) {
         borrowingRepository.getBorrowingByItemId(itemId) { borrowings ->
-            val hasActiveBorrowing = borrowings.any { it.status == "In Use" }
+            val hasActiveBorrowing = borrowings.any { it.status == "Sedang Digunakan" }
             onComplete(hasActiveBorrowing)
         }
     }

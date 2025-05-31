@@ -35,7 +35,7 @@ class ItemSummaryAdapter(private var summaryList: List<ItemSummary>) :
         when (item.type.lowercase()) {
             "remote" -> holder.ivItemImage.setImageResource(R.drawable.ic_remote)
             "kabel" -> holder.ivItemImage.setImageResource(R.drawable.ic_cable)
-            "extension" -> holder.ivItemImage.setImageResource(R.drawable.ic_extension)
+            "ekstensi" -> holder.ivItemImage.setImageResource(R.drawable.ic_extension)
             "proyektor" -> holder.ivItemImage.setImageResource(R.drawable.ic_projector)
             else -> holder.ivItemImage.setImageResource(R.drawable.ic_default_image)
         }

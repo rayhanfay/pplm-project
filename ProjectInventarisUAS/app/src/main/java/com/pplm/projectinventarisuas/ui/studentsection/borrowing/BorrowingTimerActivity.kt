@@ -618,7 +618,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     "Status peminjaman berubah menjadi: $status untuk ID: $borrowingId"
                 )
 
-                if (status == "Returned") {
+                if (status == "Dikembalikan") {
                     Log.d(
                         TAG_DATABASE,
                         "Item dikembalikan - membersihkan dan menavigasi ke bagian siswa"
@@ -669,7 +669,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
     private fun checkAndSetLateStatus(snapshot: DataSnapshot) {
         val currentStatus = snapshot.child("status").getValue(String::class.java)
-        if (currentStatus != "Returned" && currentStatus != "Late") {
+        if (currentStatus != "Dikembalikan" && currentStatus != "Terlambat") {
             val borrowingEndTime = getBorrowingEndTimeInMillis()
             val currentTime = System.currentTimeMillis()
 

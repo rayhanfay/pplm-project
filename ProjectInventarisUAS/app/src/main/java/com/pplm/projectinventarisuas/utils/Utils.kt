@@ -189,8 +189,8 @@ class ReminderReceiver : BroadcastReceiver() {
             FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId)
         databaseRef.child("status").get().addOnSuccessListener { dataSnapshot ->
             val currentStatus = dataSnapshot.getValue(String::class.java)
-            if (currentStatus != "Returned" && currentStatus != "Late") {
-                databaseRef.child("status").setValue("Late")
+            if (currentStatus != "Dikembalikan" && currentStatus != "Terlambat") {
+                databaseRef.child("status").setValue("Terlambat")
                     .addOnSuccessListener {
                         Log.d(
                             TAG_DATABASE,

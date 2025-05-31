@@ -129,14 +129,14 @@ class ScanReturnActivity : AppCompatActivity() {
                 val latestBorrowing = borrowings.maxByOrNull { it.date_borrowed }
                 latestBorrowing?.let {
                     when (it.status) {
-                        "Returned" -> {
+                        "Dikembalikan" -> {
                             CustomDialog.alert(
                                 context = this,
                                 message = getString(R.string.return_success),
                                 onDismiss = { isProcessing = false }
                             )
                         }
-                        "In Use" -> {
+                        "Sedang Digunakan" -> {
                             updateBorrowingStatusToReturned(it, getCurrentTime())
                         }
                         else -> {
@@ -173,12 +173,12 @@ class ScanReturnActivity : AppCompatActivity() {
     private fun updateBorrowingStatusToReturned(borrowing: Borrowing, returnTime: String) {
         borrowingRepository.updateBorrowingStatus(
             borrowing.borrowing_id,
-            "Returned",
+            "Dikembalikan ",
             returnTime
         ) { success ->
             if (success) {
                 val itemId = borrowing.item_id
-                itemRepository.updateItemStatus(itemId, "Available") { itemUpdated ->
+                itemRepository.updateItemStatus(itemId, "Tersedia") { itemUpdated ->
                     if (itemUpdated) {
                         CustomDialog.alert(
                             context = this,

@@ -61,7 +61,7 @@ class AddItemDialogFragment : DialogFragment() {
             val name = binding.etToolName.text.toString().trim()
             val type = binding.etType.text.toString().trim()
             val description = binding.etDescription.text.toString().trim()
-            val status = "Available"
+            val status = "Tersedia"
 
             viewModel.itemExists(code) { exists ->
                 if (exists) {

@@ -33,10 +33,10 @@ class BorrowingSummaryAdapter(private val summaryList: List<BorrowingSummary>) :
         holder.tvCount.text = "${borrowing.count} borrowing"
 
         when (borrowing.status.lowercase()) {
-            "lost" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_lost)
-            "returned" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_returned)
-            "borrowed" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_borrowed)
-            "late" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_late)
+            "hilang" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_lost)
+            "dikembalikan" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_returned)
+            "dipinjam" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_borrowed)
+            "terlambat" -> holder.ivStatusIcon.setImageResource(R.drawable.ic_late)
             else -> holder.ivStatusIcon.setImageResource(R.drawable.ic_default_image)
         }
     }

@@ -21,8 +21,8 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
             allItems.clear()
             allItems.addAll(itemList)
 
-            _items.value = itemList.filter { it.item_status == "Available" }
-            _summaryItems.value = itemList.filter { it.item_status == "Available" }
+            _items.value = itemList.filter { it.item_status == "Tersedia" }
+            _summaryItems.value = itemList.filter { it.item_status == "Tersedia" }
         }
     }
 
@@ -38,7 +38,7 @@ class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
 
     fun searchItemsAvailable(query: String) {
         val filtered = allItems.filter { item ->
-            item.item_status.equals("Available", true) && (
+            item.item_status.equals("Tersedia", true) && (
                     item.item_name.contains(query, ignoreCase = true) ||
                             item.item_type.contains(query, ignoreCase = true) ||
                             item.item_id.contains(query, ignoreCase = true)
