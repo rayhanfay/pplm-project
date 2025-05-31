@@ -31,7 +31,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog_NoActionBar_MinWidth)
-        Log.d("BorrowingDetailDialog", "onCreate called.")
+        Log.d("BorrowingDetailDialog", "onCreate dipanggil.")
     }
 
     override fun onCreateView(
@@ -46,7 +46,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("BorrowingDetailDialog", "onViewCreated called.")
+        Log.d("BorrowingDetailDialog", "onViewCreated dipanggil.")
 
         setupViewModel()
 
@@ -56,10 +56,10 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             isEditMode = it.getBoolean("isEditMode", false)
             Log.d(
                 "BorrowingDetailDialog",
-                "Arguments received. Borrowing ID: ${borrowing.borrowing_id}, isEditMode: $isEditMode"
+                "Argumen diterima. ID Peminjaman: ${borrowing.borrowing_id}, isEditMode: $isEditMode"
             )
         } ?: run {
-            Log.e("BorrowingDetailDialog", "Arguments are null! Borrowing object missing.")
+            Log.e("BorrowingDetailDialog", "Argumen null! Objek peminjaman tidak ada.")
             dismiss()
             return
         }
@@ -70,7 +70,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     }
 
     private fun setupViewModel() {
-        Log.d("BorrowingDetailDialog", "setupViewModel called.")
+        Log.d("BorrowingDetailDialog", "setupViewModel dipanggil.")
         val factory = ViewModelFactory(ItemRepository(), BorrowingRepository(), UserRepository())
         viewModel = ViewModelProvider(this, factory)[BorrowingViewModel::class.java]
     }
@@ -114,7 +114,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     }
 
     private fun saveBorrowingDetails() {
-        Log.d("BorrowingDetailDialog", "saveBorrowingDetails called.")
+        Log.d("BorrowingDetailDialog", "saveBorrowingDetails dipanggil.")
         val userRole = getUserRole()
         if (userRole == "admin") {
             val updatedBorrowing = Borrowing(
@@ -132,7 +132,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
                 admin_name = binding.etAdminName.text.toString(),
                 item_name = borrowing.item_name
             )
-            Log.d("BorrowingDetailDialog", "Updating borrowing: $updatedBorrowing")
+            Log.d("BorrowingDetailDialog", "Memperbarui peminjaman: $updatedBorrowing")
 
             CustomDialog.confirm(
                 context = requireContext(),
@@ -160,7 +160,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     }
 
     private fun setEditMode(enabled: Boolean) {
-        Log.d("BorrowingDetailDialog", "setEditMode called with enabled: $enabled")
+        Log.d("BorrowingDetailDialog", "setEditMode dipanggil dengan enabled: $enabled")
         isEditMode = enabled
 
         with(binding) {
@@ -189,7 +189,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
     private fun displayBorrowingDetails(borrowingToDisplay: Borrowing) {
         Log.d(
             "BorrowingDetailDialog",
-            "displayBorrowingDetails called. Borrowing object: $borrowingToDisplay"
+            "displayBorrowingDetails dipanggil. Objek peminjaman: $borrowingToDisplay"
         )
         with(binding) {
             etBorrowingCode.setText(borrowingToDisplay.borrowing_id)
@@ -203,7 +203,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             etReturnTime.setText(borrowingToDisplay.return_time)
             etStatus.setText(borrowingToDisplay.status)
         }
-        Log.d("BorrowingDetailDialog", "Borrowing details displayed on UI.")
+        Log.d("BorrowingDetailDialog", "Detail peminjaman ditampilkan di UI.")
     }
 
     private fun getUserRole(): String {
@@ -255,12 +255,12 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             )
             setBackgroundDrawableResource(R.drawable.dialog_rounded_background)
         }
-        Log.d("BorrowingDetailDialog", "onStart called.")
+        Log.d("BorrowingDetailDialog", "onStart dipanggil.")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("BorrowingDetailDialog", "onDestroyView called.")
+        Log.d("BorrowingDetailDialog", "onDestroyView dipanggil.")
         _binding = null
     }
 
@@ -276,7 +276,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             fragment.arguments = args
             Log.d(
                 "BorrowingDetailDialog",
-                "newInstance called for borrowing ID: ${borrowing.borrowing_id}"
+                "newInstance dipanggil untuk ID peminjaman: ${borrowing.borrowing_id}"
             )
             return fragment
         }

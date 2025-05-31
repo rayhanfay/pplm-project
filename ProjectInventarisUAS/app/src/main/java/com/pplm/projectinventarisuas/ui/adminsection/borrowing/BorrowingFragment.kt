@@ -37,13 +37,13 @@ class BorrowingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBorrowingBinding.inflate(inflater, container, false)
-        Log.d("BorrowingFragment", "onCreateView called.")
+        Log.d("BorrowingFragment", "onCreateView dipanggil.")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("BorrowingFragment", "onViewCreated called.")
+        Log.d("BorrowingFragment", "onViewCreated dipanggil.")
 
         setupViewModel()
         setupRecyclerView()
@@ -60,17 +60,17 @@ class BorrowingFragment : Fragment() {
     }
 
     private fun setupSwipeRefresh() {
-        Log.d("BorrowingFragment", "setupSwipeRefresh called.")
+        Log.d("BorrowingFragment", "setupSwipeRefresh dipanggil.")
         binding.swipeRefreshLayout.setOnRefreshListener {
             Log.d(
                 "BorrowingFragment",
-                "Swipe refresh triggered. Loading data..."
+                "Refresh swipe terpicu. Memuat data..."
             )
             viewModel.loadBorrowingData()
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            Log.d("BorrowingFragment", "isLoading observed: $isLoading")
+            Log.d("BorrowingFragment", "isLoading diamati: $isLoading")
             binding.swipeRefreshLayout.isRefreshing = isLoading
         }
     }
@@ -79,7 +79,7 @@ class BorrowingFragment : Fragment() {
         if (isDialogVisible) return
         Log.d(
             "BorrowingFragment",
-            "Showing options for borrowing ID: ${borrowing.borrowing_id}"
+            "Menampilkan opsi untuk ID peminjaman: ${borrowing.borrowing_id}"
         )
 
         isDialogVisible = true
@@ -89,7 +89,7 @@ class BorrowingFragment : Fragment() {
             onView = {
                 Log.d(
                     "BorrowingFragment",
-                    "Option: View, Borrowing ID: ${borrowing.borrowing_id}"
+                    "Opsi: Lihat, ID Peminjaman: ${borrowing.borrowing_id}"
                 )
                 showBorrowingDetailDialog(borrowing, false)
                 isDialogVisible = false
@@ -97,7 +97,7 @@ class BorrowingFragment : Fragment() {
             onEdit = {
                 Log.d(
                     "BorrowingFragment",
-                    "Option: Edit, Borrowing ID: ${borrowing.borrowing_id}"
+                    "Opsi: Edit, ID Peminjaman: ${borrowing.borrowing_id}"
                 )
                 showBorrowingDetailDialog(borrowing, true)
                 isDialogVisible = false
@@ -105,7 +105,7 @@ class BorrowingFragment : Fragment() {
             onDelete = {
                 Log.d(
                     "BorrowingFragment",
-                    "Option: Delete, Borrowing ID: ${borrowing.borrowing_id}"
+                    "Opsi: Hapus, ID Peminjaman: ${borrowing.borrowing_id}"
                 )
                 deleteBorrowing(borrowing)
             },
@@ -138,7 +138,7 @@ class BorrowingFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setupViewModel() {
-        Log.d("BorrowingFragment", "setupViewModel called.")
+        Log.d("BorrowingFragment", "setupViewModel dipanggil.")
         val borrowingRepository = BorrowingRepository()
         val userRepository = UserRepository()
         val itemRepository = ItemRepository()
@@ -149,12 +149,12 @@ class BorrowingFragment : Fragment() {
         viewModel.borrowingList.observe(viewLifecycleOwner) { borrowingList ->
             Log.d(
                 "BorrowingFragment",
-                "borrowingList observed. List size: ${borrowingList.size}"
+                "borrowingList diamati. Ukuran daftar: ${borrowingList.size}"
             )
             if (borrowingList.isEmpty()) {
                 Log.d(
                     "BorrowingFragment",
-                    "Borrowing list is empty in observer."
+                    "Daftar peminjaman kosong di observer."
                 )
             }
             adapter = BorrowingAdapter(borrowingList) { selectedBorrowing ->
@@ -166,7 +166,7 @@ class BorrowingFragment : Fragment() {
         viewModel.summaryBorrowingStatus.observe(viewLifecycleOwner) { itemList ->
             Log.d(
                 "BorrowingFragment",
-                "summaryBorrowingStatus observed. List size: ${itemList.size}"
+                "summaryBorrowingStatus diamati. Ukuran daftar: ${itemList.size}"
             )
             val summaryMap = itemList
                 .groupingBy { it.status }
@@ -178,20 +178,20 @@ class BorrowingFragment : Fragment() {
             binding.rvBorrowingSummary.adapter = summaryAdapter
         }
 
-        Log.d("BorrowingFragment", "Calling viewModel.loadBorrowingData().")
+        Log.d("BorrowingFragment", "Memanggil viewModel.loadBorrowingData().")
         viewModel.loadBorrowingData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("BorrowingFragment", "onDestroyView called.")
+        Log.d("BorrowingFragment", "onDestroyView dipanggil.")
         _binding = null
     }
 
     fun showBorrowingDetailDialog(borrowing: Borrowing, isEditMode: Boolean) {
         Log.d(
             "BorrowingFragment",
-            "Attempting to show dialog for borrowing ID: ${borrowing.borrowing_id}, Edit Mode: $isEditMode"
+            "Mencoba menampilkan dialog untuk ID peminjaman: ${borrowing.borrowing_id}, Mode Edit: $isEditMode"
         )
         val dialog = BorrowingDetailDialogFragment.newInstance(borrowing, isEditMode)
         dialog.show(childFragmentManager, "BorrowingDetailDialog")

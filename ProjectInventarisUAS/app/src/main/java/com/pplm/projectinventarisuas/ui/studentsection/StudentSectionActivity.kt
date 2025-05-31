@@ -99,10 +99,6 @@ class StudentSectionActivity : AppCompatActivity() {
         viewModel.loadItemsAvailable()
     }
 
-    private fun viewItem(item: Item) {
-        showItemDetailDialog(item, false)
-    }
-
     private fun setupScanCodeButton() {
         binding.fabScanCode.setOnClickListener {
             startActivity(Intent(this, ScanCodeActivity::class.java))

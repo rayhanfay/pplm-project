@@ -8,9 +8,7 @@ import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.ActivityAdminSectionBinding
 import com.pplm.projectinventarisuas.ui.adminsection.borrowing.BorrowingFragment
 import com.pplm.projectinventarisuas.ui.adminsection.borrowing.ScanReturnActivity
-import com.pplm.projectinventarisuas.ui.adminsection.item.AddItemActivity
 import com.pplm.projectinventarisuas.ui.adminsection.item.AddItemDialogFragment
-import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment
 import com.pplm.projectinventarisuas.ui.adminsection.item.ItemFragment
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
@@ -75,8 +73,6 @@ class AdminSectionActivity : AppCompatActivity() {
         binding.fabAddItem.setOnClickListener {
             val dialog = AddItemDialogFragment()
             dialog.show(supportFragmentManager, "AddItemDialog")
-//            val intent = Intent(this, AddItemActivity::class.java)
-//            startActivity(intent)
         }
 
         binding.fabScanReturn.setOnClickListener {

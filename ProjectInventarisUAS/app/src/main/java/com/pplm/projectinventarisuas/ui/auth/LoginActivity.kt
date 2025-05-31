@@ -3,10 +3,9 @@ package com.pplm.projectinventarisuas.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.util.Log // Import kelas Log
+import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -43,9 +42,8 @@ class LoginActivity : AppCompatActivity() {
             val username = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            // Log input username dan password sebelum validasi
             Log.d("LoginActivity", "Input Username: $username")
-            Log.d("LoginActivity", "Input Password (raw): $password") // Jangan log password di produksi! Ini hanya untuk debugging.
+            Log.d("LoginActivity", "Input Password (raw): $password")
 
             var isValid = true
 
@@ -67,7 +65,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
             CustomDialog.showLoading(this, "Sedang login...")
-            // Log data yang akan dikirim ke ViewModel
             Log.d("LoginActivity", "Mengirim data login ke ViewModel: Username=$username")
             viewModel.login(username, password)
         }
@@ -105,7 +102,6 @@ class LoginActivity : AppCompatActivity() {
     private fun setupObserver() {
         viewModel.user.observe(this) { user ->
             CustomDialog.dismissLoading()
-            // Log hasil observasi dari ViewModel
             Log.d("LoginActivity", "Menerima hasil login dari ViewModel. User: $user")
 
             if (user != null) {
@@ -116,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
                     putBoolean("isLoggedIn", true)
                     putString("userRole", user.role)
                     putString("userName", user.name)
-                    Log.e("Auth", "User Name: ${user.name}") // Log ini sudah ada
+                    Log.e("Auth", "User Name: ${user.name}")
                     user.id?.let { putString("studentId", it) }
                     apply()
                     Log.d("LoginActivity", "Session disimpan: isLoggedIn=true, userRole=${user.role}, userName=${user.name}, studentId=${user.id}")

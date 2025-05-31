@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.pplm.projectinventarisuas.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -44,10 +45,10 @@ fun getGreetingWithName(fullName: String): String {
     val name = fullName.split(" ").first().replaceFirstChar { it.uppercase() }
 
     return when (hour) {
-        in 4..10 -> "Good Morning $name"
-        in 11..14 -> "Good Afternoon $name"
-        in 15..18 -> "Good Evening $name"
-        else -> "Good Night $name"
+        in 4..10 -> "Selamat Pagi $name"
+        in 11..14 -> "Selamat Siang $name"
+        in 15..18 -> "Selamat Sore $name"
+        else -> "Selamat Malam $name"
     }
 }
 
@@ -55,11 +56,11 @@ class ReminderReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TIME_REMINDER_CHANNEL_ID = "time_reminder_channel"
-        private const val TIME_REMINDER_CHANNEL_NAME = "Time Reminders"
+        private const val TIME_REMINDER_CHANNEL_NAME = "Pengingat Waktu"
         private const val OVERDUE_REMINDER_CHANNEL_ID = "overdue_reminder_channel"
-        private const val OVERDUE_REMINDER_CHANNEL_NAME = "Overdue Reminders"
+        private const val OVERDUE_REMINDER_CHANNEL_NAME = "Pengingat Keterlambatan"
         private const val LOCATION_ALERT_CHANNEL_ID = "location_alert_channel"
-        private const val LOCATION_ALERT_CHANNEL_NAME = "Location Alerts"
+        private const val LOCATION_ALERT_CHANNEL_NAME = "Peringatan Lokasi"
 
         private const val TIME_REMINDER_NOTIFICATION_ID = 1001
         private const val OVERDUE_REMINDER_NOTIFICATION_ID = 1002
@@ -90,22 +91,22 @@ class ReminderReceiver : BroadcastReceiver() {
         val action = intent.action
         val borrowingId = intent.getStringExtra("BORROWING_ID")
 
-        Log.d(TAG_MAIN, "onReceive triggered - Action: $action, BorrowingID: $borrowingId")
+        Log.d(TAG_MAIN, "onReceive dipicu - Aksi: $action, ID Peminjaman: $borrowingId")
 
         when (action) {
             ACTION_SEND_LOCATION -> {
-                Log.d(TAG_LOCATION, "Processing send location action")
+                Log.d(TAG_LOCATION, "Memproses aksi pengiriman lokasi")
                 sendLastLocation(context, borrowingId)
             }
 
             ACTION_OUT_OF_RANGE -> {
-                Log.d(TAG_LOCATION, "Processing out of range action")
+                Log.d(TAG_LOCATION, "Memproses aksi di luar jangkauan")
                 if (hasNotificationPermission(context)) {
                     showOutOfRangeNotification(context, borrowingId)
                 } else {
                     Log.w(
                         TAG_PERMISSION,
-                        "Notification permission not available for out of range alert"
+                        "Izin notifikasi tidak tersedia untuk peringatan di luar jangkauan"
                     )
                 }
             }
@@ -114,12 +115,12 @@ class ReminderReceiver : BroadcastReceiver() {
                 val minutesRemaining = intent.getIntExtra("MINUTES_REMAINING", 0)
                 Log.d(
                     TAG_TIME,
-                    "Processing time reminder action - Minutes remaining: $minutesRemaining"
+                    "Memproses aksi pengingat waktu - Sisa menit: $minutesRemaining"
                 )
                 if (hasNotificationPermission(context)) {
                     showTimeReminderNotification(context, minutesRemaining)
                 } else {
-                    Log.w(TAG_PERMISSION, "Notification permission not available for time reminder")
+                    Log.w(TAG_PERMISSION, "Izin notifikasi tidak tersedia untuk pengingat waktu")
                 }
             }
 
@@ -127,30 +128,33 @@ class ReminderReceiver : BroadcastReceiver() {
                 val minutesOverdue = intent.getIntExtra("MINUTES_OVERDUE", 0)
                 Log.d(
                     TAG_OVERDUE,
-                    "Processing overdue reminder action - Minutes overdue: $minutesOverdue"
+                    "Memproses aksi pengingat keterlambatan - Menit terlambat: $minutesOverdue"
                 )
                 if (hasNotificationPermission(context)) {
                     showOverdueReminderNotification(context, minutesOverdue)
                 } else {
                     Log.w(
                         TAG_PERMISSION,
-                        "Notification permission not available for overdue reminder"
+                        "Izin notifikasi tidak tersedia untuk pengingat keterlambatan"
                     )
                 }
             }
 
             ACTION_SEND_LOCATION_AND_CHECK_LATE -> {
-                Log.d(TAG_LOCATION, "Processing send location and check late action")
+                Log.d(TAG_LOCATION, "Memproses aksi pengiriman lokasi dan pemeriksaan terlambat")
                 sendLastLocation(context, borrowingId)
                 if (borrowingId != null) {
                     checkAndSetLateStatusFromAlarm(context, borrowingId)
                 } else {
-                    Log.e(TAG_DATABASE, "Borrowing ID is null for late status check from alarm.")
+                    Log.e(
+                        TAG_DATABASE,
+                        "ID Peminjaman null untuk pemeriksaan status terlambat dari alarm."
+                    )
                 }
             }
 
             else -> {
-                Log.w(TAG_MAIN, "Unknown action received: $action")
+                Log.w(TAG_MAIN, "Aksi tidak dikenal diterima: $action")
             }
         }
     }
@@ -190,13 +194,13 @@ class ReminderReceiver : BroadcastReceiver() {
                     .addOnSuccessListener {
                         Log.d(
                             TAG_DATABASE,
-                            "Borrowing status successfully updated to 'Late' via alarm for ID: $borrowingId"
+                            "Status peminjaman berhasil diperbarui menjadi 'Terlambat' melalui alarm untuk ID: $borrowingId"
                         )
                         if (hasNotificationPermission(context)) {
                             showNotification(
                                 context = context,
-                                title = "Peringatan Keterlambatan!",
-                                message = "Waktu peminjaman telah habis. Status peminjaman Anda diperbarui menjadi Terlambat.",
+                                title = context.getString(R.string.overdue_warning_title),
+                                message = context.getString(R.string.borrowing_time_over_late_status),
                                 notificationId = borrowingId.hashCode() + REQUEST_CODE_OVERDUE_REMINDER,
                                 channelId = OVERDUE_REMINDER_CHANNEL_ID,
                                 channelName = OVERDUE_REMINDER_CHANNEL_NAME,
@@ -210,17 +214,20 @@ class ReminderReceiver : BroadcastReceiver() {
                     .addOnFailureListener { e ->
                         Log.e(
                             TAG_DATABASE,
-                            "Failed to update borrowing status to 'Late' via alarm: ${e.message}"
+                            "Gagal memperbarui status peminjaman menjadi 'Terlambat' melalui alarm: ${e.message}"
                         )
                     }
             } else {
                 Log.d(
                     TAG_DATABASE,
-                    "Status is already '$currentStatus', no need to update to 'Late'"
+                    "Status sudah '$currentStatus', tidak perlu memperbarui menjadi 'Terlambat'"
                 )
             }
         }.addOnFailureListener { e ->
-            Log.e(TAG_DATABASE, "Failed to get current status for late check: ${e.message}")
+            Log.e(
+                TAG_DATABASE,
+                "Gagal mendapatkan status saat ini untuk pemeriksaan keterlambatan: ${e.message}"
+            )
         }
     }
 
@@ -238,7 +245,7 @@ class ReminderReceiver : BroadcastReceiver() {
     ) {
         try {
             if (!hasNotificationPermission(context)) {
-                Log.w(TAG_PERMISSION, "Cannot show notification - permission not granted")
+                Log.w(TAG_PERMISSION, "Tidak dapat menampilkan notifikasi - izin tidak diberikan")
                 return
             }
 
@@ -292,7 +299,10 @@ class ReminderReceiver : BroadcastReceiver() {
                 )
                 builder.setContentIntent(pendingIntent)
             } catch (e: ClassNotFoundException) {
-                Log.w(TAG_NOTIFICATION, "BorrowingTimerActivity class not found: ${e.message}")
+                Log.w(
+                    TAG_NOTIFICATION,
+                    "Kelas BorrowingTimerActivity tidak ditemukan: ${e.message}"
+                )
             }
 
             val notificationManager = NotificationManagerCompat.from(context)
@@ -300,13 +310,13 @@ class ReminderReceiver : BroadcastReceiver() {
                 notificationManager.notify(notificationId, builder.build())
                 Log.d(
                     TAG_NOTIFICATION,
-                    "Notification displayed successfully for ID: $notificationId"
+                    "Notifikasi berhasil ditampilkan untuk ID: $notificationId"
                 )
             } else {
-                Log.w(TAG_NOTIFICATION, "Notifications are disabled for this app")
+                Log.w(TAG_NOTIFICATION, "Notifikasi dinonaktifkan untuk aplikasi ini")
             }
         } catch (e: Exception) {
-            Log.e(TAG_NOTIFICATION, "Failed to show notification: ${e.message}")
+            Log.e(TAG_NOTIFICATION, "Gagal menampilkan notifikasi: ${e.message}")
         }
     }
 
@@ -326,7 +336,7 @@ class ReminderReceiver : BroadcastReceiver() {
         importance: Int
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.d(TAG_NOTIFICATION, "Creating notification channel: $channelId")
+            Log.d(TAG_NOTIFICATION, "Membuat saluran notifikasi: $channelId")
 
             val channel = NotificationChannel(
                 channelId,
@@ -356,19 +366,19 @@ class ReminderReceiver : BroadcastReceiver() {
 
             val manager = context.getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
-            Log.d(TAG_NOTIFICATION, "Notification channel created successfully: $channelId")
+            Log.d(TAG_NOTIFICATION, "Saluran notifikasi berhasil dibuat: $channelId")
         } else {
-            Log.d(TAG_NOTIFICATION, "Notification channel not required for Android version < O")
+            Log.d(TAG_NOTIFICATION, "Saluran notifikasi tidak diperlukan untuk Android versi < O")
         }
     }
 
     private fun showTimeReminderNotification(context: Context, minutesRemaining: Int) {
-        val title = "Pengingat Waktu Peminjaman"
+        val title = context.getString(R.string.time_reminder_title)
         val message = when (minutesRemaining) {
-            30 -> "Waktu peminjaman akan berakhir dalam 30 menit!"
-            15 -> "Waktu peminjaman akan berakhir dalam 15 menit!"
-            5 -> "Waktu peminjaman akan berakhir dalam 5 menit!"
-            else -> "Waktu peminjaman akan segera berakhir!"
+            30 -> context.getString(R.string.time_reminder_30_min)
+            15 -> context.getString(R.string.time_reminder_15_min)
+            5 -> context.getString(R.string.time_reminder_5_min)
+            else -> context.getString(R.string.time_reminder_soon)
         }
         showNotification(
             context = context,
@@ -383,13 +393,13 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun showOverdueReminderNotification(context: Context, minutesOverdue: Int) {
-        val title = "Peringatan Keterlambatan!"
+        val title = context.getString(R.string.overdue_warning_title)
         val message = when (minutesOverdue) {
-            5 -> "Anda terlambat 5 menit mengembalikan barang! Segera kembalikan!"
-            15 -> "Anda terlambat 15 menit mengembalikan barang! Harap segera kembalikan!"
-            30 -> "Anda terlambat 30 menit mengembalikan barang! Segera kembalikan sekarang!"
-            60 -> "Anda terlambat 1 jam mengembalikan barang! Kembalikan sekarang juga!"
-            else -> "Anda terlambat mengembalikan barang! Segera kembalikan!"
+            5 -> context.getString(R.string.overdue_5_min)
+            15 -> context.getString(R.string.overdue_15_min)
+            30 -> context.getString(R.string.overdue_30_min)
+            60 -> context.getString(R.string.overdue_60_min)
+            else -> context.getString(R.string.overdue_generic)
         }
         showNotification(
             context = context,
@@ -407,13 +417,15 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun showOutOfRangeNotification(context: Context, borrowingId: String?) {
         if (borrowingId == null) {
-            Log.w(TAG_LOCATION, "Cannot show out of range notification - borrowingId is null")
+            Log.w(
+                TAG_LOCATION,
+                "Tidak dapat menampilkan notifikasi di luar jangkauan - borrowingId null"
+            )
             return
         }
 
-        val title = "Peringatan Lokasi"
-        val message =
-            "Anda berada di luar area yang diperbolehkan. Harap kembali ke lokasi yang ditentukan."
+        val title = context.getString(R.string.location_alert_title)
+        val message = context.getString(R.string.location_out_of_range_message)
 
         showNotification(
             context = context,
@@ -433,57 +445,68 @@ class ReminderReceiver : BroadcastReceiver() {
     private fun updateOutOfRangeStatus(borrowingId: String, isOutOfRange: Boolean) {
         Log.d(
             TAG_DATABASE,
-            "Updating out_of_range status to $isOutOfRange for borrowing: $borrowingId"
+            "Memperbarui status out_of_range menjadi $isOutOfRange untuk peminjaman: $borrowingId"
         )
 
         val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
             .child(borrowingId)
         borrowingRef.child("out_of_range").setValue(isOutOfRange)
             .addOnSuccessListener {
-                Log.d(TAG_DATABASE, "Successfully updated out_of_range status to $isOutOfRange")
+                Log.d(
+                    TAG_DATABASE,
+                    "Berhasil memperbarui status out_of_range menjadi $isOutOfRange"
+                )
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG_DATABASE, "Failed to update out_of_range status: ${exception.message}")
+                Log.e(TAG_DATABASE, "Gagal memperbarui status out_of_range: ${exception.message}")
             }
     }
 
     private fun sendLastLocation(context: Context, borrowingId: String?) {
         if (borrowingId == null) {
-            Log.w(TAG_LOCATION, "Cannot send location - borrowingId is null")
+            Log.w(TAG_LOCATION, "Tidak dapat mengirim lokasi - borrowingId null")
             return
         }
 
         if (!hasLocationPermission(context)) {
-            Log.w(TAG_PERMISSION, "Location permission not granted")
-            Toast.makeText(context, "Location permission not granted", Toast.LENGTH_SHORT).show()
+            Log.w(TAG_PERMISSION, context.getString(R.string.location_permission_not_granted))
+            Toast.makeText(
+                context,
+                context.getString(R.string.location_permission_not_granted),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
-        Log.d(TAG_LOCATION, "Attempting to send location for borrowing: $borrowingId")
+        Log.d(TAG_LOCATION, "Mencoba mengirim lokasi untuk peminjaman: $borrowingId")
 
         try {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-            Log.d(TAG_LOCATION, "Location permission granted, getting last location")
+            Log.d(TAG_LOCATION, "Izin lokasi diberikan, mendapatkan lokasi terakhir")
 
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     Log.d(
                         TAG_LOCATION,
-                        "Last location obtained: ${location.latitude}, ${location.longitude}"
+                        "Lokasi terakhir diperoleh: ${location.latitude}, ${location.longitude}"
                     )
                     processLocationUpdate(context, location, borrowingId)
                 } else {
-                    Log.w(TAG_LOCATION, "Last location is null, requesting single location update")
+                    Log.w(TAG_LOCATION, "Lokasi terakhir null, meminta pembaruan lokasi tunggal")
                     requestSingleLocationUpdate(context, fusedLocationClient, borrowingId)
                 }
             }.addOnFailureListener { exception ->
-                Log.e(TAG_LOCATION, "Failed to get last location: ${exception.message}")
+                Log.e(TAG_LOCATION, "Gagal mendapatkan lokasi terakhir: ${exception.message}")
             }
         } catch (e: SecurityException) {
-            Log.e(TAG_LOCATION, "Security exception while accessing location: ${e.message}")
-            Toast.makeText(context, "Location access denied", Toast.LENGTH_SHORT).show()
+            Log.e(TAG_LOCATION, "Pengecualian keamanan saat mengakses lokasi: ${e.message}")
+            Toast.makeText(
+                context,
+                context.getString(R.string.location_access_denied),
+                Toast.LENGTH_SHORT
+            ).show()
         } catch (e: Exception) {
-            Log.e(TAG_LOCATION, "Unexpected error while accessing location: ${e.message}")
+            Log.e(TAG_LOCATION, "Kesalahan tak terduga saat mengakses lokasi: ${e.message}")
         }
     }
 
@@ -493,11 +516,11 @@ class ReminderReceiver : BroadcastReceiver() {
         borrowingId: String
     ) {
         if (!hasLocationPermission(context)) {
-            Log.w(TAG_PERMISSION, "Cannot request location update - permission not granted")
+            Log.w(TAG_PERMISSION, "Tidak dapat meminta pembaruan lokasi - izin tidak diberikan")
             return
         }
 
-        Log.d(TAG_LOCATION, "Requesting single location update for borrowing: $borrowingId")
+        Log.d(TAG_LOCATION, "Meminta pembaruan lokasi tunggal untuk peminjaman: $borrowingId")
 
         try {
             val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
@@ -510,14 +533,14 @@ class ReminderReceiver : BroadcastReceiver() {
                     if (loc != null) {
                         Log.d(
                             TAG_LOCATION,
-                            "Single location update received: ${loc.latitude}, ${loc.longitude}"
+                            "Pembaruan lokasi tunggal diterima: ${loc.latitude}, ${loc.longitude}"
                         )
                         processLocationUpdate(context, loc, borrowingId)
                     } else {
-                        Log.w(TAG_LOCATION, "Single location update returned null")
+                        Log.w(TAG_LOCATION, "Pembaruan lokasi tunggal mengembalikan null")
                     }
                     fusedLocationClient.removeLocationUpdates(this)
-                    Log.d(TAG_LOCATION, "Single location update callback removed")
+                    Log.d(TAG_LOCATION, "Callback pembaruan lokasi tunggal dihapus")
                 }
             }
 
@@ -526,26 +549,32 @@ class ReminderReceiver : BroadcastReceiver() {
                 singleUpdateCallback,
                 null
             )
-            Log.d(TAG_LOCATION, "Single location update requested successfully")
+            Log.d(TAG_LOCATION, "Permintaan pembaruan lokasi tunggal berhasil")
         } catch (e: SecurityException) {
-            Log.e(TAG_LOCATION, "Security exception during single location update: ${e.message}")
+            Log.e(
+                TAG_LOCATION,
+                "Pengecualian keamanan selama pembaruan lokasi tunggal: ${e.message}"
+            )
         } catch (e: Exception) {
-            Log.e(TAG_LOCATION, "Unexpected error during single location update: ${e.message}")
+            Log.e(
+                TAG_LOCATION,
+                "Kesalahan tak terduga selama pembaruan lokasi tunggal: ${e.message}"
+            )
         }
     }
 
     private fun processLocationUpdate(context: Context, location: Location, borrowingId: String) {
         val latLng = "${location.latitude},${location.longitude}"
-        Log.d(TAG_LOCATION, "Processing location update: $latLng for borrowing: $borrowingId")
+        Log.d(TAG_LOCATION, "Memproses pembaruan lokasi: $latLng untuk peminjaman: $borrowingId")
 
         val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
             .child(borrowingId)
         borrowingRef.child("last_location").setValue(latLng)
             .addOnSuccessListener {
-                Log.d(TAG_DATABASE, "Location successfully saved to database: $latLng")
+                Log.d(TAG_DATABASE, "Lokasi berhasil disimpan ke database: $latLng")
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG_DATABASE, "Failed to save location to database: ${exception.message}")
+                Log.e(TAG_DATABASE, "Gagal menyimpan lokasi ke database: ${exception.message}")
             }
 
         checkDistanceToTarget(context, location, borrowingId)
@@ -561,7 +590,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val targetLongitude = 101.37665907336893
         val radiusInMeters = 50.0f
 
-        Log.d(TAG_LOCATION, "Checking distance to target for borrowing: $borrowingId")
+        Log.d(TAG_LOCATION, "Memeriksa jarak ke target untuk peminjaman: $borrowingId")
 
         val targetLocation = Location("Target").apply {
             latitude = targetLatitude
@@ -571,7 +600,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val distanceInMeters = currentLocation.distanceTo(targetLocation)
         Log.d(
             TAG_LOCATION,
-            "Distance calculated: ${distanceInMeters}m (limit: ${radiusInMeters}m) for borrowing: $borrowingId"
+            "Jarak terhitung: ${distanceInMeters}m (batas: ${radiusInMeters}m) untuk peminjaman: $borrowingId"
         )
 
         val borrowingRef = FirebaseDatabase.getInstance().getReference("borrowing")
@@ -583,13 +612,13 @@ class ReminderReceiver : BroadcastReceiver() {
                     val wasOutOfRange = snapshot.getValue(Boolean::class.java) == true
                     Log.d(
                         TAG_LOCATION,
-                        "Previous out_of_range status: $wasOutOfRange for borrowing: $borrowingId"
+                        "Status out_of_range sebelumnya: $wasOutOfRange untuk peminjaman: $borrowingId"
                     )
 
                     if (distanceInMeters > radiusInMeters && !wasOutOfRange) {
                         Log.w(
                             TAG_LOCATION,
-                            "User moved outside radius - triggering out of range notification"
+                            "Pengguna bergerak di luar radius - memicu notifikasi di luar jangkauan"
                         )
                         val intent = Intent(context, ReminderReceiver::class.java).apply {
                             action = ACTION_OUT_OF_RANGE
@@ -599,32 +628,32 @@ class ReminderReceiver : BroadcastReceiver() {
                     } else if (distanceInMeters <= radiusInMeters && wasOutOfRange) {
                         Log.i(
                             TAG_LOCATION,
-                            "User returned to permitted radius - cancelling out of range notification"
+                            "Pengguna kembali ke radius yang diizinkan - membatalkan notifikasi di luar jangkauan"
                         )
                         cancelOutOfRangeNotification(context)
                         updateOutOfRangeStatus(borrowingId, false)
                     } else {
                         Log.d(
                             TAG_LOCATION,
-                            "No change in range status - current: ${distanceInMeters <= radiusInMeters}, previous: ${!wasOutOfRange}"
+                            "Tidak ada perubahan status jangkauan - saat ini: ${distanceInMeters <= radiusInMeters}, sebelumnya: ${!wasOutOfRange}"
                         )
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e(TAG_DATABASE, "Failed to read out_of_range status: ${error.message}")
+                    Log.e(TAG_DATABASE, "Gagal membaca status out_of_range: ${error.message}")
                 }
             })
     }
 
     private fun cancelOutOfRangeNotification(context: Context) {
         try {
-            Log.d(TAG_NOTIFICATION, "Cancelling out of range notification")
+            Log.d(TAG_NOTIFICATION, "Membatalkan notifikasi di luar jangkauan")
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.cancel(LOCATION_ALERT_NOTIFICATION_ID)
-            Log.d(TAG_NOTIFICATION, "Out of range notification cancelled successfully")
+            Log.d(TAG_NOTIFICATION, "Notifikasi di luar jangkauan berhasil dibatalkan")
         } catch (e: Exception) {
-            Log.e(TAG_NOTIFICATION, "Failed to cancel out of range notification: ${e.message}")
+            Log.e(TAG_NOTIFICATION, "Gagal membatalkan notifikasi di luar jangkauan: ${e.message}")
         }
     }
 
@@ -632,7 +661,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val nextTime = System.currentTimeMillis() + (1 * 60 * 1000)
         Log.d(
             TAG_LOCATION,
-            "Scheduling next location send at $nextTime for borrowing: $borrowingId"
+            "Menjadwalkan pengiriman lokasi berikutnya pada $nextTime untuk peminjaman: $borrowingId"
         )
 
         try {
@@ -660,13 +689,13 @@ class ReminderReceiver : BroadcastReceiver() {
                         )
                         Log.d(
                             TAG_LOCATION,
-                            "Exact alarm scheduled for next location send (API 31+)"
+                            "Alarm tepat dijadwalkan untuk pengiriman lokasi berikutnya (API 31+)"
                         )
                     } else {
                         alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
                         Log.d(
                             TAG_LOCATION,
-                            "Non-exact alarm scheduled for next location send (API 31+)"
+                            "Alarm non-tepat dijadwalkan untuk pengiriman lokasi berikutnya (API 31+)"
                         )
                     }
                 }
@@ -677,16 +706,22 @@ class ReminderReceiver : BroadcastReceiver() {
                         nextTime,
                         pendingIntent
                     )
-                    Log.d(TAG_LOCATION, "Exact alarm scheduled for next location send (API 23+)")
+                    Log.d(
+                        TAG_LOCATION,
+                        "Alarm tepat dijadwalkan untuk pengiriman lokasi berikutnya (API 23+)"
+                    )
                 }
 
                 else -> {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, nextTime, pendingIntent)
-                    Log.d(TAG_LOCATION, "Alarm scheduled for next location send (API < 23)")
+                    Log.d(
+                        TAG_LOCATION,
+                        "Alarm dijadwalkan untuk pengiriman lokasi berikutnya (API < 23)"
+                    )
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG_LOCATION, "Failed to schedule next location send: ${e.message}")
+            Log.e(TAG_LOCATION, "Gagal menjadwalkan pengiriman lokasi berikutnya: ${e.message}")
         }
     }
 }

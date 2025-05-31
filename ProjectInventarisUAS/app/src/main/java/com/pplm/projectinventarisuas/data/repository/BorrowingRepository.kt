@@ -16,7 +16,7 @@ class BorrowingRepository : BorrowingDao {
             val borrowingList = snapshot.children.mapNotNull { it.getValue(Borrowing::class.java) }
             fetchRelatedData(borrowingList, callback)
         }.addOnFailureListener {
-            Log.e("BorrowingRepo", "Failed to get borrowing data from Firebase", it)
+            Log.e("BorrowingRepo", "Gagal mendapatkan data peminjaman dari Firebase", it)
             callback(emptyList())
         }
     }
@@ -26,7 +26,7 @@ class BorrowingRepository : BorrowingDao {
         callback: (List<Borrowing>) -> Unit
     ) {
         if (borrowingList.isEmpty()) {
-            Log.d("BorrowingRepo", "Borrowing list is empty, returning empty list.")
+            Log.d("BorrowingRepo", "Daftar peminjaman kosong, mengembalikan daftar kosong.")
             callback(emptyList())
             return
         }
@@ -43,7 +43,7 @@ class BorrowingRepository : BorrowingDao {
             val currentCompleted = completedOperations.incrementAndGet()
             Log.d(
                 "BorrowingRepo",
-                "Completed operations: $currentCompleted / $totalExpectedOperations"
+                "Operasi selesai: $currentCompleted / $totalExpectedOperations"
             )
             if (currentCompleted == totalExpectedOperations) {
                 val finalBorrowingList = borrowingList.map { original ->
@@ -52,7 +52,7 @@ class BorrowingRepository : BorrowingDao {
                 }
                 Log.d(
                     "BorrowingRepo",
-                    "All operations completed. Calling callback with ${finalBorrowingList.size} items."
+                    "Semua operasi selesai. Memanggil callback dengan ${finalBorrowingList.size} item."
                 )
                 callback(finalBorrowingList)
             }
@@ -68,12 +68,12 @@ class BorrowingRepository : BorrowingDao {
                         interimBorrowings[borrowingId] =
                             interimBorrowings[borrowingId]!!.copy(admin_name = adminName)
                     }
-                    Log.d("BorrowingRepo", "Admin name fetched for borrowing ID: ${borrowingId}")
+                    Log.d("BorrowingRepo", "Nama admin diambil untuk ID peminjaman: ${borrowingId}")
                     checkCompletion()
                 }.addOnFailureListener { e ->
                     Log.e(
                         "BorrowingRepo",
-                        "Failed to fetch admin name for borrowing ID: ${borrowingId}",
+                        "Gagal mengambil nama admin untuk ID peminjaman: ${borrowingId}",
                         e
                     )
                     checkCompletion()
@@ -86,12 +86,12 @@ class BorrowingRepository : BorrowingDao {
                         interimBorrowings[borrowingId] =
                             interimBorrowings[borrowingId]!!.copy(student_name = studentName)
                     }
-                    Log.d("BorrowingRepo", "Student name fetched for borrowing ID: ${borrowingId}")
+                    Log.d("BorrowingRepo", "Nama siswa diambil untuk ID peminjaman: ${borrowingId}")
                     checkCompletion()
                 }.addOnFailureListener { e ->
                     Log.e(
                         "BorrowingRepo",
-                        "Failed to fetch student name for borrowing ID: ${borrowingId}",
+                        "Gagal mengambil nama siswa untuk ID peminjaman: ${borrowingId}",
                         e
                     )
                     checkCompletion()
@@ -107,13 +107,13 @@ class BorrowingRepository : BorrowingDao {
                     }
                     Log.d(
                         "BorrowingRepo",
-                        "Item name and type fetched for borrowing ID: ${borrowingId}, item: $itemName, type: $itemType"
+                        "Nama dan tipe item diambil untuk ID peminjaman: ${borrowingId}, item: $itemName, tipe: $itemType"
                     )
                     checkCompletion()
                 }.addOnFailureListener { e ->
                     Log.e(
                         "BorrowingRepo",
-                        "Failed to fetch item name and type for borrowing ID: ${borrowingId}",
+                        "Gagal mengambil nama dan tipe item untuk ID peminjaman: ${borrowingId}",
                         e
                     )
                     checkCompletion()
@@ -187,10 +187,10 @@ class BorrowingRepository : BorrowingDao {
         itemId: String,
         callback: (Boolean, String?) -> Unit
     ) {
-        val borrowingId = borrowingData["borrowing_id"] ?: return callback(false, "Invalid ID")
+        val borrowingId = borrowingData["borrowing_id"] ?: return callback(false, "ID tidak valid")
         database.child("borrowing").child(borrowingId).setValue(borrowingData)
             .addOnSuccessListener {
-                database.child("item").child(itemId).child("item_status").setValue("In Use")
+                database.child("item").child(itemId).child("item_status").setValue("Sedang Digunakan")
                     .addOnSuccessListener {
                         callback(true, null)
                     }

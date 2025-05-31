@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.model.ItemSummary
 
-class ItemSummaryAdapter(private var summaryList: List<ItemSummary>) : // Ubah menjadi var
+class ItemSummaryAdapter(private var summaryList: List<ItemSummary>) :
     RecyclerView.Adapter<ItemSummaryAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

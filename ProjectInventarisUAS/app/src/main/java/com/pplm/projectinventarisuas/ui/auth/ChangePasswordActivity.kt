@@ -3,7 +3,6 @@ package com.pplm.projectinventarisuas.ui.auth
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
@@ -25,7 +24,6 @@ class ChangePasswordActivity : AppCompatActivity() {
     private lateinit var viewModel: UserViewModel
     private lateinit var userId: String
     private lateinit var userRole: String
-    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +35,8 @@ class ChangePasswordActivity : AppCompatActivity() {
         userId = intent.getStringExtra("userId") ?: ""
         userRole = intent.getStringExtra("userRole") ?: ""
 
-        Log.e("Auth", "User  ID: $userId")
-        Log.e("Auth", "User  Role: $userRole")
+        Log.e("Auth", "User ID: $userId")
+        Log.e("Auth", "User Role: $userRole")
 
         setupButtonSave()
         setupShowPassword()
@@ -104,30 +102,30 @@ class ChangePasswordActivity : AppCompatActivity() {
             var isValid = true
 
             if (newPassword.length < 8) {
-                binding.etNewPassword.error = "Password minimal 8 karakter"
+                binding.etNewPassword.error = getString(R.string.password_min_length_error)
                 isValid = false
             }
 
             if (newPassword.isEmpty()) {
-                binding.etNewPassword.error = "Password baru tidak boleh kosong"
+                binding.etNewPassword.error = getString(R.string.new_password_empty_error)
                 isValid = false
             }
 
             if (confirmPassword.isEmpty()) {
-                binding.etConfirmNewPassword.error = "Konfirmasi password tidak boleh kosong"
+                binding.etConfirmNewPassword.error = getString(R.string.confirm_password_empty_error)
                 isValid = false
             }
 
             if (!isValid) return@setOnClickListener
 
             if (newPassword != confirmPassword) {
-                binding.etConfirmNewPassword.error = "Konfirmasi tidak cocok dengan password baru"
+                binding.etConfirmNewPassword.error = getString(R.string.confirm_password_mismatch_error)
                 return@setOnClickListener
             }
 
             viewModel.isPasswordSameAsCurrent(userId, userRole, newPassword) { isSame ->
                 if (isSame) {
-                    CustomDialog.alert(this, "Password Tidak Berubah!!","Password baru tidak boleh sama dengan yang lama")
+                    CustomDialog.alert(this, getString(R.string.password_unchanged_title), getString(R.string.password_unchanged_message))
                 } else {
                     viewModel.changePassword(userId, userRole, newPassword)
                 }

@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +19,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
 import com.google.firebase.database.*
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.ActivityBorrowingTimerBinding
 import com.pplm.projectinventarisuas.ui.studentsection.StudentSectionActivity
 import com.pplm.projectinventarisuas.utils.ReminderReceiver
@@ -60,10 +60,14 @@ class BorrowingTimerActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Log.d(TAG_PERMISSION, "Notification permission granted")
+            Log.d(TAG_PERMISSION, "Izin notifikasi diberikan")
         } else {
-            Log.w(TAG_PERMISSION, "Notification permission denied")
-            Toast.makeText(this, "Permission denied for notifications", Toast.LENGTH_SHORT).show()
+            Log.w(TAG_PERMISSION, "Izin notifikasi ditolak")
+            CustomDialog.alert(
+                this,
+                getString(R.string.permission_denied_title),
+                getString(R.string.notification_permission_denied)
+            )
         }
     }
 
@@ -72,21 +76,21 @@ class BorrowingTimerActivity : AppCompatActivity() {
     ) { permissions ->
         locationPermissionGranted = permissions.entries.all { it.value }
         if (locationPermissionGranted) {
-            Log.d(TAG_PERMISSION, "All location permissions granted")
+            Log.d(TAG_PERMISSION, "Semua izin lokasi diberikan")
             startLocationMonitoring()
         } else {
-            Log.w(TAG_PERMISSION, "Some location permissions denied: $permissions")
-            Toast.makeText(
+            Log.w(TAG_PERMISSION, "Beberapa izin lokasi ditolak: $permissions")
+            CustomDialog.alert(
                 this,
-                "Location permission required for area monitoring",
-                Toast.LENGTH_SHORT
-            ).show()
+                getString(R.string.permission_required_title),
+                getString(R.string.location_permission_required)
+            )
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG_MAIN, "onCreate: Activity started")
+        Log.d(TAG_MAIN, "onCreate: Aktivitas dimulai")
 
         binding = ActivityBorrowingTimerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -97,32 +101,34 @@ class BorrowingTimerActivity : AppCompatActivity() {
         Log.d(TAG_MAIN, "onCreate: borrowingId=$borrowingId, endHour=$endHour")
 
         if (borrowingId == null) {
-            Log.e(TAG_MAIN, "onCreate: Borrowing ID is null, finishing activity")
-            Toast.makeText(this, "Borrowing ID not found", Toast.LENGTH_SHORT).show()
+            Log.e(TAG_MAIN, "onCreate: ID Peminjaman null, mengakhiri aktivitas")
+            CustomDialog.alert(
+                this,
+                getString(R.string.error_title),
+                getString(R.string.borrowing_id_not_found)
+            )
             finish()
             return
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         geofenceClient = LocationServices.getGeofencingClient(this)
-        Log.d(TAG_LOCATION, "Location services initialized")
+        Log.d(TAG_LOCATION, "Layanan lokasi diinisialisasi")
 
         preventBackNavigation()
         checkAndRequestPermissions()
 
-        // Check if borrowing exists first, then proceed with other initialization
         checkBorrowingExists()
     }
 
     private fun checkBorrowingExists() {
-        Log.d(TAG_DATABASE, "Checking if borrowing ID exists: $borrowingId")
+        Log.d(TAG_DATABASE, "Memeriksa apakah ID peminjaman ada: $borrowingId")
 
         databaseRef = FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId!!)
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    Log.d(TAG_DATABASE, "Borrowing ID exists, proceeding with initialization")
-                    // Proceed with normal initialization
+                    Log.d(TAG_DATABASE, "ID Peminjaman ada, melanjutkan inisialisasi normal")
                     observeTimerState()
                     observeBorrowingStatus()
                     startTimerService()
@@ -130,31 +136,33 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 } else {
                     Log.w(
                         TAG_DATABASE,
-                        "Borrowing ID does not exist in database, finishing activity"
+                        "ID Peminjaman tidak ada di database, mengakhiri aktivitas"
                     )
-                    Toast.makeText(
+                    CustomDialog.alert(
                         this@BorrowingTimerActivity,
-                        "Data peminjaman tidak ditemukan",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    cleanupAndFinish()
+                        getString(R.string.error_title),
+                        getString(R.string.borrowing_data_not_found)
+                    ) {
+                        cleanupAndFinish()
+                    }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG_DATABASE, "Failed to check borrowing existence: ${error.message}")
-                Toast.makeText(
+                Log.e(TAG_DATABASE, "Gagal memeriksa keberadaan peminjaman: ${error.message}")
+                CustomDialog.alert(
                     this@BorrowingTimerActivity,
-                    "Gagal memverifikasi data peminjaman",
-                    Toast.LENGTH_SHORT
-                ).show()
-                cleanupAndFinish()
+                    getString(R.string.error_title),
+                    getString(R.string.failed_to_verify_borrowing_data)
+                ) {
+                    cleanupAndFinish()
+                }
             }
         })
     }
 
     private fun cleanupAndFinish() {
-        Log.d(TAG_MAIN, "Cleaning up and finishing activity")
+        Log.d(TAG_MAIN, "Membersihkan dan mengakhiri aktivitas")
 
         val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
         prefs.edit() {
@@ -174,14 +182,14 @@ class BorrowingTimerActivity : AppCompatActivity() {
     }
 
     private fun checkAndRequestPermissions() {
-        Log.d(TAG_PERMISSION, "Starting permission checks")
+        Log.d(TAG_PERMISSION, "Memulai pemeriksaan izin")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!hasExactAlarmPermission()) {
-                Log.d(TAG_PERMISSION, "Exact alarm permission not granted, requesting")
+                Log.d(TAG_PERMISSION, "Izin alarm tepat tidak diberikan, meminta izin")
                 requestExactAlarmPermission()
             } else {
-                Log.d(TAG_PERMISSION, "Exact alarm permission already granted")
+                Log.d(TAG_PERMISSION, "Izin alarm tepat sudah diberikan")
             }
         }
         checkNotificationPermission()
@@ -189,7 +197,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
     }
 
     private fun checkLocationPermission() {
-        Log.d(TAG_PERMISSION, "Checking location permissions")
+        Log.d(TAG_PERMISSION, "Memeriksa izin lokasi")
 
         val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
         val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
@@ -202,20 +210,20 @@ class BorrowingTimerActivity : AppCompatActivity() {
         val permissionsToRequest = mutableListOf(fineLocationPermission, coarseLocationPermission)
         backgroundLocationPermission?.let {
             permissionsToRequest.add(it)
-            Log.d(TAG_PERMISSION, "Background location permission added to request list")
+            Log.d(TAG_PERMISSION, "Izin lokasi latar belakang ditambahkan ke daftar permintaan")
         }
 
         when {
             permissionsToRequest.all {
                 ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
             } -> {
-                Log.d(TAG_PERMISSION, "All location permissions already granted")
+                Log.d(TAG_PERMISSION, "Semua izin lokasi sudah diberikan")
                 locationPermissionGranted = true
                 startLocationMonitoring()
             }
 
             else -> {
-                Log.d(TAG_PERMISSION, "Requesting location permissions: $permissionsToRequest")
+                Log.d(TAG_PERMISSION, "Meminta izin lokasi: $permissionsToRequest")
                 locationPermissionLauncher.launch(permissionsToRequest.toTypedArray())
             }
         }
@@ -223,11 +231,11 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
     private fun startLocationMonitoring() {
         if (!locationPermissionGranted) {
-            Log.w(TAG_LOCATION, "Cannot start location monitoring - permission not granted")
+            Log.w(TAG_LOCATION, "Tidak dapat memulai pemantauan lokasi - izin tidak diberikan")
             return
         }
 
-        Log.d(TAG_LOCATION, "Starting location monitoring")
+        Log.d(TAG_LOCATION, "Memulai pemantauan lokasi")
 
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
             .setWaitForAccurateLocation(false)
@@ -239,7 +247,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
             override fun onLocationResult(result: LocationResult) {
                 Log.d(
                     TAG_LOCATION,
-                    "Location update received with ${result.locations.size} locations"
+                    "Pembaruan lokasi diterima dengan ${result.locations.size} lokasi"
                 )
                 for (location in result.locations) {
                     checkUserDistance(location)
@@ -253,9 +261,9 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 locationCallback,
                 Looper.getMainLooper()
             )
-            Log.d(TAG_LOCATION, "Location updates requested successfully")
+            Log.d(TAG_LOCATION, "Permintaan pembaruan lokasi berhasil")
         } catch (e: SecurityException) {
-            Log.e(TAG_LOCATION, "Security exception when requesting location updates: ${e.message}")
+            Log.e(TAG_LOCATION, "Pengecualian keamanan saat meminta pembaruan lokasi: ${e.message}")
         }
     }
 
@@ -268,31 +276,35 @@ class BorrowingTimerActivity : AppCompatActivity() {
         val distanceInMeters = currentLocation.distanceTo(targetLocation)
         Log.d(
             TAG_LOCATION,
-            "Current distance to target: ${distanceInMeters}m (limit: ${radiusInMeters}m)"
+            "Jarak saat ini ke target: ${distanceInMeters}m (batas: ${radiusInMeters}m)"
         )
 
         if (distanceInMeters > radiusInMeters && !isOutsideRadius) {
             Log.w(
                 TAG_LOCATION,
-                "User moved outside permitted radius - triggering out of range alert"
+                "Pengguna bergerak di luar radius yang diizinkan - memicu peringatan di luar jangkauan"
             )
             isOutsideRadius = true
             showOutOfRangeReminder()
         } else if (distanceInMeters <= radiusInMeters && isOutsideRadius) {
-            Log.i(TAG_LOCATION, "User returned to permitted radius")
+            Log.i(TAG_LOCATION, "Pengguna kembali ke radius yang diizinkan")
             isOutsideRadius = false
         }
     }
 
     private fun showOutOfRangeReminder() {
-        Log.d(TAG_NOTIFICATION, "Sending out of range notification for borrowing: $borrowingId")
+        Log.d(
+            TAG_NOTIFICATION,
+            "Mengirim notifikasi di luar jangkauan untuk peminjaman: $borrowingId"
+        )
 
         val intent = Intent(this, ReminderReceiver::class.java).apply {
             action = ReminderReceiver.ACTION_OUT_OF_RANGE
             putExtra("BORROWING_ID", borrowingId)
         }
 
-        val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OUT_OF_RANGE) and 0xFFFFFFF
+        val requestCode =
+            (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_OUT_OF_RANGE) and 0xFFFFFFF
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             requestCode,
@@ -302,15 +314,15 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
         try {
             pendingIntent.send()
-            Log.d(TAG_NOTIFICATION, "Out of range notification sent successfully")
+            Log.d(TAG_NOTIFICATION, "Notifikasi di luar jangkauan berhasil dikirim")
         } catch (e: PendingIntent.CanceledException) {
-            Log.e(TAG_NOTIFICATION, "Failed to send out of range notification: ${e.message}")
+            Log.e(TAG_NOTIFICATION, "Gagal mengirim notifikasi di luar jangkauan: ${e.message}")
         }
     }
 
     private fun requestExactAlarmPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Log.d(TAG_PERMISSION, "Requesting exact alarm permission")
+            Log.d(TAG_PERMISSION, "Meminta izin alarm tepat")
             val intent = Intent().apply {
                 action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
             }
@@ -322,10 +334,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val canSchedule = alarmManager.canScheduleExactAlarms()
-            Log.d(TAG_PERMISSION, "Exact alarm permission status: $canSchedule")
+            Log.d(TAG_PERMISSION, "Status izin alarm tepat: $canSchedule")
             canSchedule
         } else {
-            Log.d(TAG_PERMISSION, "Exact alarm permission not required for this Android version")
+            Log.d(TAG_PERMISSION, "Izin alarm tepat tidak diperlukan untuk versi Android ini")
             true
         }
     }
@@ -337,38 +349,41 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
             if (!isGranted) {
-                Log.d(TAG_PERMISSION, "Requesting notification permission")
+                Log.d(TAG_PERMISSION, "Meminta izin notifikasi")
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
-                Log.d(TAG_PERMISSION, "Notification permission already granted")
+                Log.d(TAG_PERMISSION, "Izin notifikasi sudah diberikan")
             }
         } else {
-            Log.d(TAG_PERMISSION, "Notification permission not required for this Android version")
+            Log.d(TAG_PERMISSION, "Izin notifikasi tidak diperlukan untuk versi Android ini")
         }
     }
 
     private fun setReminderForBorrowingEnd() {
-        Log.d(TAG_NOTIFICATION, "Setting up borrowing end reminders for ID: $borrowingId")
+        Log.d(TAG_NOTIFICATION, "Menyiapkan pengingat akhir peminjaman untuk ID: $borrowingId")
 
         val borrowingEndTime = getBorrowingEndTimeInMillis()
         val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
         val alarmSetKey = "alarmSet_$borrowingId"
 
         if (prefs.getBoolean(alarmSetKey, false)) {
-            Log.d(TAG_NOTIFICATION, "Reminders already set for borrowing: $borrowingId")
+            Log.d(TAG_NOTIFICATION, "Pengingat sudah diatur untuk peminjaman: $borrowingId")
             return
         }
 
         scheduleReminderNotifications(borrowingEndTime)
-        scheduleOverdueNotifications(borrowingEndTime) // New function for overdue notifications
+        scheduleOverdueNotifications(borrowingEndTime)
         scheduleLocationSend(borrowingEndTime)
         prefs.edit().putBoolean(alarmSetKey, true).apply()
 
-        Log.d(TAG_NOTIFICATION, "All reminders scheduled successfully for borrowing: $borrowingId")
+        Log.d(
+            TAG_NOTIFICATION,
+            "Semua pengingat berhasil dijadwalkan untuk peminjaman: $borrowingId"
+        )
     }
 
     private fun scheduleReminderNotifications(borrowingEndTime: Long) {
-        Log.d(TAG_NOTIFICATION, "Scheduling reminder notifications")
+        Log.d(TAG_NOTIFICATION, "Menjadwalkan notifikasi pengingat")
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val reminders = listOf(30 * 60 * 1000, 15 * 60 * 1000, 5 * 60 * 1000)
@@ -392,12 +407,12 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
             Log.d(
                 TAG_NOTIFICATION,
-                "Scheduling time reminder ${index + 1}/3 at $reminderTime ms (${delay / (60 * 1000)} minutes before end)"
+                "Menjadwalkan pengingat waktu ${index + 1}/3 pada $reminderTime ms (${delay / (60 * 1000)} menit sebelum berakhir)"
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, reminderTime, pendingIntent)
-                Log.d(TAG_NOTIFICATION, "Non-exact alarm scheduled for reminder ${index + 1}")
+                Log.d(TAG_NOTIFICATION, "Alarm non-tepat dijadwalkan untuk pengingat ${index + 1}")
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(
@@ -408,13 +423,13 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 } else {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, reminderTime, pendingIntent)
                 }
-                Log.d(TAG_NOTIFICATION, "Exact alarm scheduled for reminder ${index + 1}")
+                Log.d(TAG_NOTIFICATION, "Alarm tepat dijadwalkan untuk pengingat ${index + 1}")
             }
         }
     }
 
     private fun scheduleOverdueNotifications(borrowingEndTime: Long) {
-        Log.d(TAG_NOTIFICATION, "Scheduling overdue notifications")
+        Log.d(TAG_NOTIFICATION, "Menjadwalkan notifikasi keterlambatan")
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val overdueIntervals = listOf(
@@ -443,14 +458,14 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
             Log.d(
                 TAG_NOTIFICATION,
-                "Scheduling overdue reminder ${index + 1}/4 at $overdueTime ms (${delay / (60 * 1000)} minutes after end)"
+                "Menjadwalkan pengingat keterlambatan ${index + 1}/4 pada $overdueTime ms (${delay / (60 * 1000)} menit setelah berakhir)"
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, overdueTime, pendingIntent)
                 Log.d(
                     TAG_NOTIFICATION,
-                    "Non-exact alarm scheduled for overdue reminder ${index + 1}"
+                    "Alarm non-tepat dijadwalkan untuk pengingat keterlambatan ${index + 1}"
                 )
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -462,14 +477,17 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 } else {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, overdueTime, pendingIntent)
                 }
-                Log.d(TAG_NOTIFICATION, "Exact alarm scheduled for overdue reminder ${index + 1}")
+                Log.d(
+                    TAG_NOTIFICATION,
+                    "Alarm tepat dijadwalkan untuk pengingat keterlambatan ${index + 1}"
+                )
             }
         }
     }
 
     private fun getBorrowingEndTimeInMillis(): Long {
         val calendar = Calendar.getInstance()
-        Log.d(TAG_NOTIFICATION, "Calculating borrowing end time from endHour: $endHour")
+        Log.d(TAG_NOTIFICATION, "Menghitung waktu akhir peminjaman dari endHour: $endHour")
 
         if (!endHour.isNullOrEmpty()) {
             val parts = endHour!!.split(":")
@@ -480,26 +498,30 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
                 calendar.set(Calendar.MILLISECOND, 0)
-                Log.d(TAG_NOTIFICATION, "Borrowing end time set to: ${calendar.time}")
+                Log.d(TAG_NOTIFICATION, "Waktu akhir peminjaman diatur ke: ${calendar.time}")
             } else {
-                Log.w(TAG_NOTIFICATION, "Invalid endHour format: $endHour")
+                Log.w(TAG_NOTIFICATION, "Format endHour tidak valid: $endHour")
             }
         } else {
-            Log.w(TAG_NOTIFICATION, "endHour is null or empty")
+            Log.w(TAG_NOTIFICATION, "endHour adalah null atau kosong")
         }
         return calendar.timeInMillis
     }
 
     private fun scheduleLocationSend(borrowingEndTime: Long) {
         val sendLocationTime = borrowingEndTime + (1 * 60 * 1000)
-        Log.d(TAG_NOTIFICATION, "Scheduling location send and late status check at $sendLocationTime ms (1 minute after borrowing end)")
+        Log.d(
+            TAG_NOTIFICATION,
+            "Menjadwalkan pengiriman lokasi dan pemeriksaan status terlambat pada $sendLocationTime ms (1 menit setelah berakhirnya peminjaman)"
+        )
 
         val intent = Intent(this, ReminderReceiver::class.java).apply {
             action = ReminderReceiver.ACTION_SEND_LOCATION_AND_CHECK_LATE
             putExtra("BORROWING_ID", borrowingId)
         }
 
-        val requestCode = (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF // Reuse or create a new request code
+        val requestCode =
+            (borrowingId.hashCode() + ReminderReceiver.REQUEST_CODE_LOCATION_SEND) and 0xFFFFFFF // Reuse or create a new request code
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             requestCode,
@@ -510,7 +532,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, sendLocationTime, pendingIntent)
-            Log.d(TAG_NOTIFICATION, "Non-exact alarm scheduled for location send and late status check")
+            Log.d(
+                TAG_NOTIFICATION,
+                "Alarm non-tepat dijadwalkan untuk pengiriman lokasi dan pemeriksaan status terlambat"
+            )
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
@@ -519,26 +544,29 @@ class BorrowingTimerActivity : AppCompatActivity() {
                     pendingIntent
                 )
             }
-            Log.d(TAG_NOTIFICATION, "Exact alarm scheduled for location send and late status check")
+            Log.d(
+                TAG_NOTIFICATION,
+                "Alarm tepat dijadwalkan untuk pengiriman lokasi dan pemeriksaan status terlambat"
+            )
         }
     }
 
     private fun startTimerService() {
-        Log.d(TAG_TIMER, "Starting TimerService")
+        Log.d(TAG_TIMER, "Memulai TimerService")
         val intent = Intent(this, TimerService::class.java).apply {
             action = TimerService.ACTION_START
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)
-            Log.d(TAG_TIMER, "TimerService started as foreground service")
+            Log.d(TAG_TIMER, "TimerService dimulai sebagai foreground service")
         } else {
             startService(intent)
-            Log.d(TAG_TIMER, "TimerService started as regular service")
+            Log.d(TAG_TIMER, "TimerService dimulai sebagai layanan biasa")
         }
     }
 
     private fun stopTimerService() {
-        Log.d(TAG_TIMER, "Stopping TimerService")
+        Log.d(TAG_TIMER, "Menghentikan TimerService")
         val intent = Intent(this, TimerService::class.java).apply {
             action = TimerService.ACTION_STOP
         }
@@ -546,14 +574,14 @@ class BorrowingTimerActivity : AppCompatActivity() {
     }
 
     private fun observeTimerState() {
-        Log.d(TAG_TIMER, "Setting up timer state observation")
+        Log.d(TAG_TIMER, "Menyiapkan pengamatan status timer")
 
         lifecycleScope.launch {
             TimerState.timeInSeconds.collectLatest { seconds ->
                 val formatted = formatTime(seconds)
                 binding.tvTimer.text = formatted
-                if (seconds % 60 == 0) { // Log every minute
-                    Log.d(TAG_TIMER, "Timer updated: $formatted")
+                if (seconds % 60 == 0) { // Log setiap menit
+                    Log.d(TAG_TIMER, "Timer diperbarui: $formatted")
                 }
             }
         }
@@ -562,34 +590,38 @@ class BorrowingTimerActivity : AppCompatActivity() {
             action = TimerService.ACTION_UPDATE
         }
         startService(updateIntent)
-        Log.d(TAG_TIMER, "Timer update request sent")
+        Log.d(TAG_TIMER, "Permintaan pembaruan timer dikirim")
     }
 
     private fun observeBorrowingStatus() {
-        Log.d(TAG_DATABASE, "Setting up borrowing status observation for ID: $borrowingId")
+        Log.d(TAG_DATABASE, "Menyiapkan pengamatan status peminjaman untuk ID: $borrowingId")
 
         databaseRef = FirebaseDatabase.getInstance().getReference("borrowing").child(borrowingId!!)
 
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
-                    Log.w(TAG_DATABASE, "Borrowing data has been deleted from database")
-                    Toast.makeText(
+                    Log.w(TAG_DATABASE, "Data peminjaman telah dihapus dari database")
+                    CustomDialog.alert(
                         this@BorrowingTimerActivity,
-                        "Data peminjaman telah dihapus",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    cleanupAndFinish()
+                        getString(R.string.data_deleted_title),
+                        getString(R.string.borrowing_data_deleted)
+                    ) {
+                        cleanupAndFinish()
+                    }
                     return
                 }
 
                 val status = snapshot.child("status").getValue(String::class.java)
-                Log.d(TAG_DATABASE, "Borrowing status changed to: $status for ID: $borrowingId")
+                Log.d(
+                    TAG_DATABASE,
+                    "Status peminjaman berubah menjadi: $status untuk ID: $borrowingId"
+                )
 
                 if (status == "Returned") {
                     Log.d(
                         TAG_DATABASE,
-                        "Item returned - cleaning up and navigating to student section"
+                        "Item dikembalikan - membersihkan dan menavigasi ke bagian siswa"
                     )
 
                     stopTimerService()
@@ -605,8 +637,8 @@ class BorrowingTimerActivity : AppCompatActivity() {
 
                     CustomDialog.success(
                         context = this@BorrowingTimerActivity,
-                        title = "Sukses",
-                        message = "Barang telah berhasil dikembalikan",
+                        title = getString(R.string.success_title),
+                        message = getString(R.string.item_returned_successfully),
                         onDismiss = {
                             val intent = Intent(
                                 this@BorrowingTimerActivity,
@@ -625,12 +657,12 @@ class BorrowingTimerActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG_DATABASE, "Failed to read borrowing status: ${error.message}")
-                Toast.makeText(
+                Log.e(TAG_DATABASE, "Gagal membaca status peminjaman: ${error.message}")
+                CustomDialog.alert(
                     this@BorrowingTimerActivity,
-                    "Gagal memeriksa status peminjaman",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    getString(R.string.error_title),
+                    getString(R.string.failed_to_check_borrowing_status)
+                )
             }
         })
     }
@@ -644,21 +676,21 @@ class BorrowingTimerActivity : AppCompatActivity() {
             if (currentTime > borrowingEndTime) {
                 Log.d(
                     TAG_DATABASE,
-                    "Borrowing is overdue. Setting status to 'Late' for ID: $borrowingId"
+                    "Peminjaman terlambat. Mengatur status menjadi 'Late' untuk ID: $borrowingId"
                 )
                 databaseRef.child("status").setValue("Late")
                     .addOnSuccessListener {
-                        Log.d(TAG_DATABASE, "Borrowing status successfully updated to 'Late'")
-                        Toast.makeText(
+                        Log.d(TAG_DATABASE, "Status peminjaman berhasil diperbarui menjadi 'Late'")
+                        CustomDialog.alert(
                             this,
-                            "Waktu peminjaman telah habis. Status diperbarui menjadi Terlambat.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                            getString(R.string.late_status_title),
+                            getString(R.string.borrowing_time_over_late_status)
+                        )
                     }
                     .addOnFailureListener { e ->
                         Log.e(
                             TAG_DATABASE,
-                            "Failed to update borrowing status to 'Late': ${e.message}"
+                            "Gagal memperbarui status peminjaman menjadi 'Late': ${e.message}"
                         )
                     }
             }
@@ -669,10 +701,10 @@ class BorrowingTimerActivity : AppCompatActivity() {
         try {
             if (::locationCallback.isInitialized) {
                 fusedLocationClient.removeLocationUpdates(locationCallback)
-                Log.d(TAG_LOCATION, "Location monitoring stopped successfully")
+                Log.d(TAG_LOCATION, "Pemantauan lokasi berhasil dihentikan")
             }
         } catch (e: Exception) {
-            Log.e(TAG_LOCATION, "Error stopping location updates: ${e.message}")
+            Log.e(TAG_LOCATION, "Kesalahan menghentikan pembaruan lokasi: ${e.message}")
         }
     }
 
@@ -683,7 +715,7 @@ class BorrowingTimerActivity : AppCompatActivity() {
     }
 
     private fun cancelReminderNotifications() {
-        Log.d(TAG_NOTIFICATION, "Cancelling reminder notifications for borrowing: $borrowingId")
+        Log.d(TAG_NOTIFICATION, "Membatalkan notifikasi pengingat untuk peminjaman: $borrowingId")
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val reminders = listOf(30 * 60 * 1000, 15 * 60 * 1000, 5 * 60 * 1000)
@@ -699,12 +731,15 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             alarmManager.cancel(pendingIntent)
-            Log.d(TAG_NOTIFICATION, "Cancelled time reminder ${index + 1}/3")
+            Log.d(TAG_NOTIFICATION, "Pengingat waktu ${index + 1}/3 dibatalkan")
         }
     }
 
     private fun cancelOverdueNotifications() {
-        Log.d(TAG_NOTIFICATION, "Cancelling overdue notifications for borrowing: $borrowingId")
+        Log.d(
+            TAG_NOTIFICATION,
+            "Membatalkan notifikasi keterlambatan untuk peminjaman: $borrowingId"
+        )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val overdueIntervals = listOf(5 * 60 * 1000, 15 * 60 * 1000, 30 * 60 * 1000, 60 * 60 * 1000)
@@ -720,12 +755,15 @@ class BorrowingTimerActivity : AppCompatActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             alarmManager.cancel(pendingIntent)
-            Log.d(TAG_NOTIFICATION, "Cancelled overdue reminder ${index + 1}/4")
+            Log.d(TAG_NOTIFICATION, "Pengingat keterlambatan ${index + 1}/4 dibatalkan")
         }
     }
 
     private fun cancelLocationSend() {
-        Log.d(TAG_NOTIFICATION, "Cancelling location send alarm for borrowing: $borrowingId")
+        Log.d(
+            TAG_NOTIFICATION,
+            "Membatalkan alarm pengiriman lokasi untuk peminjaman: $borrowingId"
+        )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, ReminderReceiver::class.java).apply {
@@ -741,26 +779,26 @@ class BorrowingTimerActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntent)
-        Log.d(TAG_NOTIFICATION, "Location send alarm cancelled")
+        Log.d(TAG_NOTIFICATION, "Alarm pengiriman lokasi dibatalkan")
     }
 
     private fun preventBackNavigation() {
-        Log.d(TAG_MAIN, "Setting up back navigation prevention")
+        Log.d(TAG_MAIN, "Menyiapkan pencegahan navigasi kembali")
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.d(TAG_MAIN, "Back navigation blocked - borrowing session active")
-                Toast.makeText(
+                Log.d(TAG_MAIN, "Navigasi kembali diblokir - sesi peminjaman aktif")
+                CustomDialog.alert(
                     this@BorrowingTimerActivity,
-                    "You cannot leave until the item is returned",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    getString(R.string.blocked_action_title),
+                    getString(R.string.cannot_leave_until_returned)
+                )
             }
         })
     }
 
     override fun onDestroy() {
-        Log.d(TAG_MAIN, "onDestroy: Cleaning up resources")
+        Log.d(TAG_MAIN, "onDestroy: Membersihkan sumber daya")
         super.onDestroy()
         stopLocationMonitoring()
     }

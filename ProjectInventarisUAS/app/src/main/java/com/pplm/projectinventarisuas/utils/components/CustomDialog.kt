@@ -1,15 +1,12 @@
 package com.pplm.projectinventarisuas.utils.components
 
 import android.app.AlertDialog
-import android.app.Dialog // Import Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.Gravity // Import Gravity
+import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View // Import View
-import android.view.ViewGroup // Import ViewGroup for LayoutParams
-import android.view.Window // Import Window
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.pplm.projectinventarisuas.R

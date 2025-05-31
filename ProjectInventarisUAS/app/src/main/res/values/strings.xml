@@ -182,4 +182,53 @@
     <string name="error_min_duration">Durasi peminjaman minimal 30 menit</string>
     <string name="borrowing">Peminjaman</string>
     <string name="item">Barang</string>
+
+    <!--  Change Password  -->
+    <string name="password_min_length_error">Password minimal 8 karakter</string>
+    <string name="new_password_empty_error">Password baru tidak boleh kosong</string>
+    <string name="confirm_password_empty_error">Konfirmasi password tidak boleh kosong</string>
+    <string name="confirm_password_mismatch_error">Konfirmasi tidak cocok dengan password baru</string>
+    <string name="password_unchanged_title">Password Tidak Berubah!</string>
+    <string name="password_unchanged_message">Password baru tidak boleh sama dengan yang lama</string>
+
+    <!--  Borrowing Timer  -->
+    <string name="permission_denied_title">Izin Ditolak</string>
+    <string name="notification_permission_denied">Izin ditolak untuk notifikasi.</string>
+    <string name="permission_required_title">Izin Diperlukan</string>
+    <string name="location_permission_required">Izin lokasi diperlukan untuk pemantauan area.</string>
+    <string name="error_title">Error</string>
+    <string name="borrowing_id_not_found">ID Peminjaman tidak ditemukan.</string>
+    <string name="borrowing_data_not_found">Data peminjaman tidak ditemukan.</string>
+    <string name="failed_to_verify_borrowing_data">Gagal memverifikasi data peminjaman.</string>
+    <string name="data_deleted_title">Data Dihapus</string>
+    <string name="borrowing_data_deleted">Data peminjaman telah dihapus.</string>
+    <string name="success_title">Sukses</string>
+    <string name="item_returned_successfully">Barang telah berhasil dikembalikan.</string>
+    <string name="failed_to_check_borrowing_status">Gagal memeriksa status peminjaman.</string>
+    <string name="late_status_title">Status Terlambat</string>
+    <string name="borrowing_time_over_late_status">Waktu peminjaman telah habis. Status diperbarui menjadi Terlambat.</string>
+    <string name="blocked_action_title">Tindakan Diblokir</string>
+    <string name="cannot_leave_until_returned">Anda tidak dapat meninggalkan halaman ini sampai barang dikembalikan.</string>
+
+    <!--  Utils  -->
+    <string name="good_morning">Selamat Pagi</string>
+    <string name="good_afternoon">Selamat Siang</string>
+    <string name="good_evening">Selamat Sore</string>
+    <string name="good_night">Selamat Malam</string>
+    <string name="time_reminder_title">Pengingat Waktu Peminjaman!</string>
+    <string name="time_reminder_30_min">Waktu peminjaman akan berakhir dalam 30 menit!</string>
+    <string name="time_reminder_15_min">Waktu peminjaman akan berakhir dalam 15 menit!</string>
+    <string name="time_reminder_5_min">Waktu peminjaman akan berakhir dalam 5 menit!</string>
+    <string name="time_reminder_soon">Waktu peminjaman akan segera berakhir!</string>
+    <string name="overdue_warning_title">Peringatan Keterlambatan!</string>
+    <string name="overdue_5_min">Anda terlambat 5 menit mengembalikan barang! Segera kembalikan!</string>
+    <string name="overdue_15_min">Anda terlambat 15 menit mengembalikan barang! Harap segera kembalikan!</string>
+    <string name="overdue_30_min">Anda terlambat 30 menit mengembalikan barang! Segera kembalikan sekarang!</string>
+    <string name="overdue_60_min">Anda terlambat 1 jam mengembalikan barang! Kembalikan sekarang juga!</string>
+    <string name="overdue_generic">Anda terlambat mengembalikan barang! Segera kembalikan!</string>
+    <string name="location_alert_title">Peringatan Lokasi</string>
+    <string name="location_out_of_range_message">Anda berada di luar area yang diperbolehkan. Harap kembali ke lokasi yang ditentukan.</string>
+    <string name="notification_permission_not_available">Izin notifikasi tidak tersedia.</string>
+    <string name="location_permission_not_granted">Izin lokasi tidak diberikan.</string>
+    <string name="location_access_denied">Akses lokasi ditolak.</string>
 </resources>
