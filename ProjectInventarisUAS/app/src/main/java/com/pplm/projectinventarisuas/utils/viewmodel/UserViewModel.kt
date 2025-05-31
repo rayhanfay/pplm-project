@@ -14,6 +14,9 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     private val _passwordChangeResult = MutableLiveData<Boolean>()
     val passwordChangeResult: LiveData<Boolean> get() = _passwordChangeResult
 
+    private val _phoneNumberChangeResult = MutableLiveData<Boolean>()
+    val phoneNumberChangeResult: LiveData<Boolean> = _phoneNumberChangeResult
+
     private val _currentPassword = MutableLiveData<String?>()
     val currentPassword: LiveData<String?> get() = _currentPassword
 
@@ -30,6 +33,12 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         repository.changePassword(userId, userRole, newPassword) { success ->
             Log.d("UserViewModel", "Hasil changePassword dari Repository: $success")
             _passwordChangeResult.postValue(success)
+        }
+    }
+
+    fun updatePhoneNumber(userId: String, userRole: String, phoneNumber: String) {
+        repository.updatePhoneNumber(userId, userRole, phoneNumber) { success ->
+            _phoneNumberChangeResult.postValue(success)
         }
     }
 

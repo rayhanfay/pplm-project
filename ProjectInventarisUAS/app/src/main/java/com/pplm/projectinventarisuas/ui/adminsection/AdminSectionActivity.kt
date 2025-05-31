@@ -10,6 +10,7 @@ import com.pplm.projectinventarisuas.ui.adminsection.borrowing.BorrowingFragment
 import com.pplm.projectinventarisuas.ui.adminsection.borrowing.ScanReturnActivity
 import com.pplm.projectinventarisuas.ui.adminsection.item.AddItemDialogFragment
 import com.pplm.projectinventarisuas.ui.adminsection.item.ItemFragment
+import com.pplm.projectinventarisuas.ui.auth.ChangePhoneNumberActivity
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.getGreetingWithName
@@ -23,11 +24,35 @@ class AdminSectionActivity : AppCompatActivity() {
         binding = ActivityAdminSectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkPhoneNumberSet()
         setupGreeting()
         setupDefaultFragment()
         setupBottomNavigation()
         setupFabButtons()
         setupLogoutButton()
+    }
+
+    private fun checkPhoneNumberSet() {
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        val userRole = sharedPref.getString("userRole", "")
+        val userId = sharedPref.getString("studentId", "")
+        val userName = sharedPref.getString("userName", "") ?: ""
+        val isPhoneNumberSet = sharedPref.getBoolean("isPhoneNumberSet", false)
+
+        if (userRole == "admin" && !isPhoneNumberSet) {
+            CustomDialog.alert(
+                context = this,
+                title = getString(R.string.need_phone_number),
+                message = getString(R.string.phone_number_required)
+            ) {
+                val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                intent.putExtra("userId", userId)
+                intent.putExtra("userRole", userRole)
+                intent.putExtra("userName", userName)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 
     private fun setupGreeting() {
@@ -71,13 +96,17 @@ class AdminSectionActivity : AppCompatActivity() {
 
     private fun setupFabButtons() {
         binding.fabAddItem.setOnClickListener {
-            val dialog = AddItemDialogFragment()
-            dialog.show(supportFragmentManager, "AddItemDialog")
+            checkPhoneNumberAndProceed {
+                val dialog = AddItemDialogFragment()
+                dialog.show(supportFragmentManager, "AddItemDialog")
+            }
         }
 
         binding.fabScanReturn.setOnClickListener {
-            val intent = Intent(this, ScanReturnActivity::class.java)
-            startActivity(intent)
+            checkPhoneNumberAndProceed {
+                val intent = Intent(this, ScanReturnActivity::class.java)
+                startActivity(intent)
+            }
         }
     }
 
@@ -94,6 +123,30 @@ class AdminSectionActivity : AppCompatActivity() {
                     finish()
                 }
             )
+        }
+    }
+
+    private fun checkPhoneNumberAndProceed(onProceed: () -> Unit) {
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        val userRole = sharedPref.getString("userRole", "")
+        val isPhoneNumberSet = sharedPref.getBoolean("isPhoneNumberSet", false)
+        val userId = sharedPref.getString("studentId", "")
+        val userName = sharedPref.getString("userName", "") ?: ""
+
+        if (userRole == "admin" && !isPhoneNumberSet) {
+            CustomDialog.alert(
+                context = this,
+                title = getString(R.string.need_phone_number),
+                message = getString(R.string.phone_number_required)
+            ) {
+                val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                intent.putExtra("userId", userId)
+                intent.putExtra("userRole", userRole)
+                intent.putExtra("userName", userName)
+                startActivity(intent)
+            }
+        } else {
+            onProceed()
         }
     }
 }

@@ -38,6 +38,10 @@ class UserRepository : UserDao {
                     val studentName = student.child("student_name").value.toString()
                     val isPasswordChanged =
                         student.child("isPasswordChanged").value as? Boolean ?: false
+                    // >>>>>> AWAL PENEMPATAN KODE BARU UNTUK STUDENT <<<<<<
+                    val isPhoneNumberSet = student.child("isPhoneNumberSet").value as? Boolean ?: false // Ambil nilai ini
+                    // >>>>>> AKHIR PENEMPATAN KODE BARU UNTUK STUDENT <<<<<<
+
                     Log.d(
                         "UserRepository",
                         "Membandingkan siswa: DB Username=$studentUsername, DB Password=$studentPassword"
@@ -52,7 +56,8 @@ class UserRepository : UserDao {
                                 "student",
                                 studentName,
                                 studentId,
-                                isPasswordChanged = isPasswordChanged
+                                isPasswordChanged = isPasswordChanged,
+                                isPhoneNumberSet = isPhoneNumberSet // Sertakan isPhoneNumberSet
                             )
                         )
                         return@addOnSuccessListener
@@ -73,7 +78,7 @@ class UserRepository : UserDao {
         val hashedPassword = hashPassword(password)
         Log.d(
             "UserRepository",
-            "Mencoba login untuk Username: $username, Hashed Password: ${hashedPassword.take(5)}..." // Amankan log
+            "Mencoba login untuk Username: $username, Hashed Password: ${hashedPassword.take(5)}..."
         )
 
         database.child("admin").get().addOnSuccessListener { adminSnapshot ->
@@ -89,6 +94,10 @@ class UserRepository : UserDao {
                     val adminName = admin.child("admin_name").value.toString()
                     val isPasswordChanged =
                         admin.child("isPasswordChanged").value as? Boolean ?: false
+                    // >>>>>> AWAL PENEMPATAN KODE BARU UNTUK ADMIN <<<<<<
+                    val isPhoneNumberSet = admin.child("isPhoneNumberSet").value as? Boolean ?: false // Ambil nilai ini
+                    // >>>>>> AKHIR PENEMPATAN KODE BARU UNTUK ADMIN <<<<<<
+
                     Log.d(
                         "UserRepository",
                         "Membandingkan admin: DB Username=$adminUsername, DB Password=${
@@ -107,7 +116,8 @@ class UserRepository : UserDao {
                                 "admin",
                                 adminName,
                                 adminId,
-                                isPasswordChanged = isPasswordChanged
+                                isPasswordChanged = isPasswordChanged,
+                                isPhoneNumberSet = isPhoneNumberSet // Sertakan isPhoneNumberSet
                             )
                         )
                         return@addOnSuccessListener
@@ -117,6 +127,7 @@ class UserRepository : UserDao {
             } else {
                 Log.w("UserRepository", "Path admin tidak ada atau kosong.")
             }
+            // Penting: Pastikan Anda memanggil checkStudentLogin di sini jika login admin gagal.
             checkStudentLogin(username, hashedPassword, callback)
 
         }.addOnFailureListener { exception ->
@@ -248,5 +259,35 @@ class UserRepository : UserDao {
                 callback(false)
             }
         }
+    }
+
+    fun updatePhoneNumber( // Ini adalah fungsi baru yang Anda tambahkan sebelumnya
+        userId: String,
+        userRole: String,
+        phoneNumber: String,
+        callback: (Boolean) -> Unit
+    ) {
+        val userRef = database.child(userRole).child(userId)
+        Log.d("UserRepository", "Memperbarui nomor telepon untuk User ID: $userId, Peran: $userRole")
+
+        // Perhatikan bagian ini disesuaikan dengan struktur database Anda
+        // Jika Anda ingin nama field 'phone_number' saja seperti contoh Firebase Anda,
+        // gunakan "phone_number" to phoneNumber
+        // Jika Anda ingin sesuai dengan peran (admin_phone_number, student_phone_number),
+        // gunakan "${userRole}_phone_number" to phoneNumber
+        val updates = hashMapOf<String, Any>(
+            "phone_number" to phoneNumber, // Menggunakan "phone_number" sesuai contoh database Anda
+            "isPhoneNumberSet" to true
+        )
+
+        userRef.updateChildren(updates)
+            .addOnSuccessListener {
+                Log.d("UserRepository", "Nomor telepon dan status isPhoneNumberSet berhasil diperbarui.")
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.e("UserRepository", "Gagal memperbarui nomor telepon: ${e.message}", e)
+                callback(false)
+            }
     }
 }

@@ -244,4 +244,17 @@
     <string name="notification_permission_not_available">Izin notifikasi tidak tersedia.</string>
     <string name="location_permission_not_granted">Izin lokasi tidak diberikan.</string>
     <string name="location_access_denied">Akses lokasi ditolak.</string>
+
+    <!-- Change Phone Number-->
+    <string name="need_phone_number">Nomor Telepon Diperlukan</string>
+    <string name="first_login_phone_number">Mohon lengkapi nomor telepon Anda untuk melanjutkan.</string>
+    <string name="change_phone_number_title">Halo %1$s, Ganti Nomor Telepon Anda</string>
+    <string name="change_phone_number_title_placeholder">Ganti Nomor Telepon</string>
+    <string name="hint_phone_number">Nomor Telepon</string>
+    <string name="phone_number_empty_error">Nomor telepon tidak boleh kosong</string>
+    <string name="phone_number_invalid_error">Format nomor telepon tidak valid</string>
+    <string name="phone_number_update_success">Nomor telepon berhasil diperbarui!</string>
+    <string name="phone_number_update_failed">Gagal memperbarui nomor telepon.</string>
+    <string name="phone_number_required">Untuk melanjutkan, anda harus mengisi nomor telepon Anda</string>
+    <string name="phone_number_required_for_scan">Anda harus mengisi nomor telepon Anda untuk melakukan proses scan</string>
 </resources>

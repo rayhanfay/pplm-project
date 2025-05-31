@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.pplm.projectinventarisuas.ui.adminsection.AdminSectionActivity
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.databinding.ActivitySplashScreenBinding
+import com.pplm.projectinventarisuas.ui.adminsection.AdminSectionActivity
 import com.pplm.projectinventarisuas.ui.studentsection.StudentSectionActivity
 import com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingTimerActivity
 import com.pplm.projectinventarisuas.ui.welcome.WelcomeActivity

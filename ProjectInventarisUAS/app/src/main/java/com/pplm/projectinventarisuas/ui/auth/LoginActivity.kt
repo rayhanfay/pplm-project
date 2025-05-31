@@ -77,13 +77,15 @@ class LoginActivity : AppCompatActivity() {
                 if (event.rawX >= (binding.etPassword.right - binding.etPassword.compoundDrawables[2].bounds.width())) {
                     isPasswordVisible = !isPasswordVisible
                     if (isPasswordVisible) {
-                        binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                        binding.etPassword.transformationMethod =
+                            HideReturnsTransformationMethod.getInstance()
                         binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye, 0
                         )
                         Log.d("LoginActivity", "Password terlihat.")
                     } else {
-                        binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                        binding.etPassword.transformationMethod =
+                            PasswordTransformationMethod.getInstance()
                         binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
                             0, 0, R.drawable.ic_eye_closed, 0
                         )
@@ -105,7 +107,10 @@ class LoginActivity : AppCompatActivity() {
             Log.d("LoginActivity", "Menerima hasil login dari ViewModel. User: $user")
 
             if (user != null) {
-                Log.d("LoginActivity", "Login berhasil untuk peran: ${user.role}, ID: ${user.id}, Nama: ${user.name}, Password Changed: ${user.isPasswordChanged}")
+                Log.d(
+                    "LoginActivity",
+                    "Login berhasil untuk peran: ${user.role}, ID: ${user.id}, Nama: ${user.name}, Password Changed: ${user.isPasswordChanged}, Phone Number Set: ${user.isPhoneNumberSet}"
+                )
 
                 val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
                 with(sharedPref.edit()) {
@@ -114,12 +119,19 @@ class LoginActivity : AppCompatActivity() {
                     putString("userName", user.name)
                     Log.e("Auth", "User Name: ${user.name}")
                     user.id?.let { putString("studentId", it) }
+                    putBoolean("isPhoneNumberSet", user.isPhoneNumberSet)
                     apply()
-                    Log.d("LoginActivity", "Session disimpan: isLoggedIn=true, userRole=${user.role}, userName=${user.name}, studentId=${user.id}")
+                    Log.d(
+                        "LoginActivity",
+                        "Session disimpan: isLoggedIn=true, userRole=${user.role}, userName=${user.name}, studentId=${user.id}, isPhoneNumberSet=${user.isPhoneNumberSet}"
+                    )
                 }
 
                 if (!user.isPasswordChanged) {
-                    Log.d("LoginActivity", "Mengarahkan ke ChangePasswordActivity karena password belum diubah.")
+                    Log.d(
+                        "LoginActivity",
+                        "Mengarahkan ke ChangePasswordActivity karena password belum diubah."
+                    )
                     CustomDialog.alert(
                         context = this,
                         title = getString(R.string.need_change_password),
@@ -128,7 +140,32 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this, ChangePasswordActivity::class.java)
                         intent.putExtra("userId", user.id)
                         intent.putExtra("userRole", user.role)
-                        Log.d("LoginActivity", "Mengirim userId=${user.id} dan userRole=${user.role} ke ChangePasswordActivity.")
+                        intent.putExtra("userName", user.name)
+                        Log.d(
+                            "LoginActivity",
+                            "Mengirim userId=${user.id} dan userRole=${user.role} ke ChangePasswordActivity."
+                        )
+                        startActivity(intent)
+                        finish()
+                    }
+                } else if (!user.isPhoneNumberSet) {
+                    Log.d(
+                        "LoginActivity",
+                        "Mengarahkan ke ChangePhoneNumberActivity karena nomor telepon belum disetel."
+                    )
+                    CustomDialog.alert(
+                        context = this,
+                        title = getString(R.string.need_phone_number),
+                        message = getString(R.string.first_login_phone_number)
+                    ) {
+                        val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                        intent.putExtra("userId", user.id)
+                        intent.putExtra("userRole", user.role)
+                        intent.putExtra("userName", user.name)
+                        Log.d(
+                            "LoginActivity",
+                            "Mengirim userId=${user.id} dan userRole=${user.role} ke ChangePhoneNumberActivity."
+                        )
                         startActivity(intent)
                         finish()
                     }
@@ -139,7 +176,10 @@ class LoginActivity : AppCompatActivity() {
                         else -> null
                     }
                     intent?.let {
-                        Log.d("LoginActivity", "Login berhasil, mengarahkan ke ${user.role} section.")
+                        Log.d(
+                            "LoginActivity",
+                            "Login berhasil, mengarahkan ke ${user.role} section."
+                        )
                         CustomDialog.success(
                             context = this,
                             title = getString(R.string.login_success),

@@ -18,6 +18,7 @@ import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.ActivityStudentSectionBinding
 import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment
+import com.pplm.projectinventarisuas.ui.auth.ChangePhoneNumberActivity
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
 import com.pplm.projectinventarisuas.utils.adapter.ItemAdapter
@@ -39,6 +40,7 @@ class StudentSectionActivity : AppCompatActivity() {
         binding = ActivityStudentSectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkPhoneNumberSet()
         setupSwipeToRefresh()
         setupGreeting()
         setupRecyclerViews()
@@ -46,6 +48,29 @@ class StudentSectionActivity : AppCompatActivity() {
         setupSearchBar()
         setupLogoutButton()
         setupScanCodeButton()
+    }
+
+    private fun checkPhoneNumberSet() {
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        val userRole = sharedPref.getString("userRole", "") ?: ""
+        val userId = sharedPref.getString("studentId", "")
+        val userName = sharedPref.getString("userName", "") ?: ""
+        val isPhoneNumberSet = sharedPref.getBoolean("isPhoneNumberSet", false)
+
+        if (userRole == "student" && !isPhoneNumberSet) {
+            CustomDialog.alert(
+                context = this,
+                title = getString(R.string.need_phone_number),
+                message = getString(R.string.phone_number_required)
+            ) {
+                val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                intent.putExtra("userId", userId)
+                intent.putExtra("userRole", userRole)
+                intent.putExtra("userName", userName)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 
     private fun setupGreeting() {
@@ -101,7 +126,9 @@ class StudentSectionActivity : AppCompatActivity() {
 
     private fun setupScanCodeButton() {
         binding.fabScanCode.setOnClickListener {
-            startActivity(Intent(this, ScanCodeActivity::class.java))
+            checkPhoneNumberAndProceed {
+                startActivity(Intent(this, ScanCodeActivity::class.java))
+            }
         }
     }
 
@@ -135,11 +162,43 @@ class StudentSectionActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadItemsAvailable()
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        val isPhoneNumberSet = sharedPref.getBoolean("isPhoneNumberSet", false)
+        val userRole = sharedPref.getString("userRole", "") ?: ""
+
+        if (userRole != "student" || isPhoneNumberSet) {
+            viewModel.loadItemsAvailable()
+        }
     }
 
     fun showItemDetailDialog(item: Item, isEditMode: Boolean) {
-        val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
-        dialog.show(supportFragmentManager, "ItemDetailDialog")
+        checkPhoneNumberAndProceed {
+            val dialog = ItemDetailDialogFragment.newInstance(item, isEditMode)
+            dialog.show(supportFragmentManager, "ItemDetailDialog")
+        }
+    }
+
+    private fun checkPhoneNumberAndProceed(onProceed: () -> Unit) {
+        val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+        val userRole = sharedPref.getString("userRole", "") ?: ""
+        val isPhoneNumberSet = sharedPref.getBoolean("isPhoneNumberSet", false)
+        val userId = sharedPref.getString("studentId", "")
+        val userName = sharedPref.getString("userName", "") ?: ""
+
+        if (userRole == "student" && !isPhoneNumberSet) {
+            CustomDialog.alert(
+                context = this,
+                title = getString(R.string.need_phone_number),
+                message = getString(R.string.phone_number_required)
+            ) {
+                val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                intent.putExtra("userId", userId)
+                intent.putExtra("userRole", userRole)
+                intent.putExtra("userName", userName)
+                startActivity(intent)
+            }
+        } else {
+            onProceed()
+        }
     }
 }

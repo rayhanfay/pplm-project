@@ -141,12 +141,10 @@ class ChangePasswordActivity : AppCompatActivity() {
                     title = getString(R.string.title_change_password),
                     message = getString(R.string.success_change_password)
                 ) {
-                    val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
-                    with(sharedPref.edit()) {
-                        putBoolean("isLoggedIn", false)
-                        apply()
-                    }
-                    val intent = Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                    intent.putExtra("userId", userId)
+                    intent.putExtra("userRole", userRole)
+                    intent.putExtra("userName", intent.getStringExtra("userName"))
                     startActivity(intent)
                     finish()
                 }
