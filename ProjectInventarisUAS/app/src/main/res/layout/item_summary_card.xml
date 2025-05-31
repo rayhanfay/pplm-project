@@ -35,7 +35,7 @@
                 android:id="@+id/tvItemType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Type A"
+                android:text="@string/type_a"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -44,7 +44,7 @@
                 android:id="@+id/tvItemCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5 Items"
+                android:text="@string/items_count"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
         </LinearLayout>

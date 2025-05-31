@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Welcome User"
+                android:text="@string/welcome_user"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -64,7 +64,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:text="Item Type"
+                        android:text="@string/item_type"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="16dp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:text="All Item"
+                        android:text="@string/all_items"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -94,7 +94,7 @@
                         android:layout_marginHorizontal="16dp"
                         android:layout_marginBottom="16dp"
                         android:background="@drawable/rounded_edittext"
-                        android:hint="Search..."
+                        android:hint="@string/search"
                         android:inputType="text"
                         android:maxLines="1"
                         android:padding="12dp" />
@@ -118,7 +118,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:backgroundTint="@color/colorPrimary"
-        android:contentDescription="Scan Code"
+        android:contentDescription="@string/scan_return"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:src="@drawable/ic_scan_barcode"

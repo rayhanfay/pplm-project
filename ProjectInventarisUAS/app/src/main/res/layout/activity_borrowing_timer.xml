@@ -34,7 +34,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Timer"
+                android:text="@string/timer_title"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins_semibold"
                 android:textSize="24sp"
@@ -63,7 +63,7 @@
                 android:id="@+id/tvJudulDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Perhatian !"
+                android:text="@string/attention"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins_semibold"
                 android:textSize="16sp"/>
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text="Mohon kembalikan alat sesudah digunakan, dan jangan membawa alat keluar area kampus!"
+                android:text="@string/return_reminder"
                 android:textColor="@color/white"
                 android:fontFamily="@font/poppins"
                 android:textSize="12sp"/>

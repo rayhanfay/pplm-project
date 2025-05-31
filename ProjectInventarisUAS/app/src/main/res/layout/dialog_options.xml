@@ -22,7 +22,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Pilih Opsi!"
+            android:text="@string/select_option"
             android:textAlignment="center"
             android:textSize="24sp" />
 
@@ -35,7 +35,7 @@
             android:layout_marginBottom="12dp"
             android:background="@drawable/bg_button_primary"
             android:fontFamily="@font/poppins_semibold"
-            android:text="View"
+            android:text="@string/view"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
 
@@ -48,7 +48,7 @@
             android:layout_marginBottom="12dp"
             android:background="@drawable/bg_button_edit"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Edit"
+            android:text="@string/edit"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
 
@@ -61,7 +61,7 @@
             android:layout_marginBottom="12dp"
             android:background="@drawable/bg_button_cancle"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Delete"
+            android:text="@string/delete"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
     </LinearLayout>

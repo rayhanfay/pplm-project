@@ -44,7 +44,7 @@
                 android:id="@+id/tvItemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Item Name"
+                android:text="@string/item_name"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -53,7 +53,7 @@
                 android:id="@+id/tvBorrowingCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Borrowing Code"
+                android:text="@string/borrowing_code"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
@@ -61,7 +61,7 @@
                 android:id="@+id/tvBorrowingStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="In use"
+                android:text="@string/in_use"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 

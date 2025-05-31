@@ -23,7 +23,7 @@
             android:id="@+id/etItemName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Item Name"
+            android:hint="@string/item_name"
             android:background="@drawable/rounded_edittext"
             android:fontFamily="@font/poppins"
             android:enabled="false"
@@ -33,7 +33,7 @@
             android:id="@+id/etAdminName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Admin Name"
+            android:hint="@string/enter_admin_name"
             android:background="@drawable/rounded_edittext"
             android:fontFamily="@font/poppins"
             android:layout_marginTop="16dp"
@@ -43,7 +43,7 @@
             android:id="@+id/etDateBorrowed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date Borrowed"
+            android:hint="@string/enter_borrow_date"
             android:background="@drawable/rounded_edittext"
             android:fontFamily="@font/poppins"
             android:layout_marginTop="16dp"
@@ -61,7 +61,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Start Hours"
+                android:hint="@string/start_hours"
                 android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
                 android:focusable="false" />
@@ -69,7 +69,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" to "
+                android:text="@string/to"
                 android:fontFamily="@font/poppins"
                 android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="8dp" />
@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="End Hours"
+                android:hint="@string/end_hours"
                 android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
                 android:focusable="false" />
@@ -94,6 +94,6 @@
             android:background="@drawable/bg_button_primary"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Borrow Item" />
+            android:text="@string/borrow_item" />
     </LinearLayout>
 </LinearLayout>

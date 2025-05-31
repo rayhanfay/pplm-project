@@ -33,7 +33,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Confirmation"
+                android:text="@string/warning"
                 android:textAlignment="center"
                 android:textSize="24sp" />
 
@@ -45,7 +45,7 @@
                 android:layout_marginTop="11dp"
                 android:layout_marginBottom="20dp"
                 android:fontFamily="@font/poppins"
-                android:text="Confirmation message goes here"
+                android:text="@string/warning_message"
                 android:textAlignment="center"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -64,7 +64,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_button_cancle"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="No"
+                android:text="@string/no"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
@@ -76,7 +76,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_button_primary"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Yes"
+                android:text="@string/yes"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
         </LinearLayout>

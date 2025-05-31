@@ -26,7 +26,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="end"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Close"
+                android:contentDescription="@string/close"
                 android:padding="4dp"
                 android:src="@drawable/ic_close"
                 app:tint="@android:color/black" />
@@ -53,7 +53,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Borrowing Code:"
+                            android:text="@string/borrowing_code"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -74,7 +74,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Item Name:"
+                            android:text="@string/item_name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -95,7 +95,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Date Borrowed:"
+                            android:text="@string/date_borrowed"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -116,7 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Borrowing Hours:"
+                            android:text="@string/borrowing_hours"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -145,7 +145,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginHorizontal="8dp"
                                 android:fontFamily="@font/poppins"
-                                android:text=" to "
+                                android:text="@string/to"
                                 android:textColor="@color/black" />
 
                             <EditText
@@ -165,7 +165,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Student Name:"
+                            android:text="@string/student_name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -186,7 +186,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Admin Name:"
+                            android:text="@string/admin_name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -207,7 +207,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Last Location:"
+                            android:text="@string/last_location"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -228,7 +228,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Return Time:"
+                            android:text="@string/return_time"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -249,7 +249,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Status:"
+                            android:text="@string/status"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -282,7 +282,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_button_cancle"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Cancel"
+                            android:text="@string/tv_cancel"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:visibility="gone" />
@@ -295,7 +295,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_button_edit"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Edit"
+                            android:text="@string/edit"
                             android:textAllCaps="false"
                             android:textColor="@color/white" />
 
@@ -306,7 +306,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_button_primary"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="Save"
+                            android:text="@string/save"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:visibility="gone" />

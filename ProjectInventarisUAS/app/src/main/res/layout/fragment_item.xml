@@ -29,7 +29,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Item Type"
+                    android:text="@string/item_type"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="All Item"
+                    android:text="@string/all_items"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="Search..."
+                    android:hint="@string/search"
                     android:inputType="text"
                     android:maxLines="1"
                     android:padding="12dp" />

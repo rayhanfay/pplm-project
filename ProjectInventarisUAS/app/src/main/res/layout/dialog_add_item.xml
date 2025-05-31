@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/poppins_semibold"
-        android:text="Add Item"
+        android:text="@string/add_item"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="24sp" />
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Kode Item"
+            android:text="@string/item_code"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -39,7 +39,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_edittext_outline"
             android:fontFamily="@font/poppins"
-            android:hint="Item code"
+            android:hint="@string/item_code"
             android:inputType="text"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Nama Alat"
+            android:text="@string/item_name"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -66,7 +66,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_edittext_outline"
             android:fontFamily="@font/poppins"
-            android:hint="Tool name"
+            android:hint="@string/tool_name"
             android:inputType="text"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Tipe"
+            android:text="@string/item_type"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -93,7 +93,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_edittext_outline"
             android:fontFamily="@font/poppins"
-            android:hint="Type"
+            android:hint="@string/type_a"
             android:inputType="text"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -109,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Deskripsi"
+            android:text="@string/description"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -121,7 +121,7 @@
             android:background="@drawable/bg_edittext_outline"
             android:fontFamily="@font/poppins"
             android:gravity="top"
-            android:hint="Description"
+            android:hint="@string/description"
             android:inputType="textMultiLine"
             android:padding="12dp"
             android:textSize="14sp" />
@@ -144,7 +144,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_button_cancle"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
 
@@ -156,7 +156,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_button_primary"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Add"
+            android:text="@string/add"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
     </LinearLayout>

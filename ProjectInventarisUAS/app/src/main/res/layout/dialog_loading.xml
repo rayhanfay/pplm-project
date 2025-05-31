@@ -40,7 +40,7 @@
             android:layout_marginTop="12dp"
             android:layout_weight="1"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Memproses..."
+            android:text="@string/processing"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 

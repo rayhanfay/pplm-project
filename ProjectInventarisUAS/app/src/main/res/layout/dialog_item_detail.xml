@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Nama Alat"
+                    android:text="@string/item_name"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Jenis Alat"
+                    android:text="@string/item_type"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Status"
+                    android:text="@string/status"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Deskripsi"
+                android:text="@string/description"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
@@ -138,7 +138,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_button_cancle"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Cancel"
+                    android:text="@string/cancel"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:visibility="gone" />
@@ -151,7 +151,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_button_edit"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Edit"
+                    android:text="@string/edit"
                     android:textAllCaps="false"
                     android:textColor="@color/white" />
 
@@ -162,7 +162,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_button_primary"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:visibility="gone" />

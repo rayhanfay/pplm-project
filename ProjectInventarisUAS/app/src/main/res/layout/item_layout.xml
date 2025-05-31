@@ -46,7 +46,7 @@
                 android:id="@+id/tvItemName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tool Name"
+                android:text="@string/tool_name"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -55,7 +55,7 @@
                 android:id="@+id/tvItemCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Item Code"
+                android:text="@string/item_code"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
@@ -63,7 +63,7 @@
                 android:id="@+id/tvItemStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Condition"
+                android:text="@string/condition"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
         </LinearLayout>

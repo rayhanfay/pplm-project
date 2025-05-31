@@ -35,7 +35,7 @@
                 android:layout_marginBottom="12dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:paddingTop="20dp"
-                android:text="Login"
+                android:text="@string/login_title"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/poppins"
-                    android:hint="Username"
+                    android:hint="@string/username"
                     android:inputType="text"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="12dp"
@@ -82,7 +82,7 @@
                     android:drawableEnd="@drawable/ic_eye_closed"
                     android:drawablePadding="10dp"
                     android:fontFamily="@font/poppins"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="12dp"
@@ -100,7 +100,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_button_primary"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Login"
+                android:text="@string/login_button"
                 android:textSize="16sp"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
@@ -114,7 +114,7 @@
                 android:fontFamily="@font/poppins_extralight_italic"
                 android:gravity="center"
                 android:paddingBottom="20dp"
-                android:text="Belum Memiliki Akun? Hubungi Admin" />
+                android:text="@string/no_account_prompt" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

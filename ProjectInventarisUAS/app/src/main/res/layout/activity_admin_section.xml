@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Welcome Admin"
+                android:text="@string/welcome_admin"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -55,7 +55,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                android:contentDescription="Add Item"
+                android:contentDescription="@string/add_item"
                 android:src="@android:drawable/ic_input_add"
                 android:visibility="gone"
                 app:tint="@color/white" />
@@ -67,7 +67,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                android:contentDescription="Scan Return"
+                android:contentDescription="@string/scan_return"
                 android:src="@drawable/ic_scan_barcode"
                 android:visibility="gone"
                 app:tint="@color/white" />

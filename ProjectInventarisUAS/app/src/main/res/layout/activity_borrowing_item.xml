@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Nama Barang"
+                android:text="@string/borrowing_code"
                 android:textColor="@color/colorPrimary" />
 
             <EditText
@@ -50,14 +50,14 @@
                 android:background="@drawable/rounded_edittext"
                 android:enabled="false"
                 android:fontFamily="@font/poppins"
-                android:hint="Contoh: Proyektor Epson" />
+                android:hint="@string/example_item_name" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Nama Admin"
+                android:text="@string/admin_name"
                 android:textColor="@color/colorPrimary" />
 
             <AutoCompleteTextView
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_edittext"
                 android:fontFamily="@font/poppins"
-                android:hint="Masukkan Nama Admin"
+                android:hint="@string/enter_admin_name"
                 android:inputType="none" />
 
             <TextView
@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Tanggal Peminjaman"
+                android:text="@string/date_borrowed"
                 android:textColor="@color/colorPrimary" />
 
             <EditText
@@ -84,14 +84,14 @@
                 android:background="@drawable/rounded_edittext"
                 android:focusable="false"
                 android:fontFamily="@font/poppins"
-                android:hint="Masukkan Tanggal Peminjaman" />
+                android:hint="@string/enter_borrow_date" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Waktu Peminjaman"
+                android:text="@string/borrowing_hours"
                 android:textColor="@color/colorPrimary" />
 
             <LinearLayout
@@ -162,7 +162,7 @@
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_button_add"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Borrow Item"
+                android:text="@string/borrow_item"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
         </LinearLayout>

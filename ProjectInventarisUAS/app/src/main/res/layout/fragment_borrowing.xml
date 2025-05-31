@@ -24,7 +24,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Borrowing Status"
+                android:text="@string/borrowing_status"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

@@ -26,7 +26,7 @@
             android:id="@+id/tvBorrowingStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status"
+            android:text="@string/status"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -35,7 +35,7 @@
             android:id="@+id/tvBorrowingCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Count"
+            android:text="@string/count"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
     </LinearLayout>
