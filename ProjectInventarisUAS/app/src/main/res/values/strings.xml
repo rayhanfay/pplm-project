@@ -5,6 +5,7 @@
     <!-- Istilah Umum -->
     <string name="ok">OK</string>
     <string name="close">Tutup</string>
+    <string name="tv_cancel">Cancel</string>
     <string name="cancel">Batal</string>
     <string name="save">Simpan</string>
     <string name="edit">Edit</string>
@@ -93,6 +94,92 @@
     <string name="welcome_image">Gambar Selamat Datang</string>
     <string name="onboarding_description">Deskripsi onboarding disini</string>
 
+    <!-- File Onboarding Kt -->
+    <string name="onboarding_title_1">Selamat Datang di Aplikasi Peminjaman Inventaris Teknik Informatika!</string>
+    <string name="onboarding_desc_1">Aplikasi ini memudahkan Anda untuk meminjam peralatan penting seperti infokus, proyektor, dan alat lainnya untuk menunjang kegiatan di jurusan kami.</string>
+    <string name="onboarding_title_2">Pilih Barang yang Ingin Dipinjam!</string>
+    <string name="onboarding_desc_2">Cari dan pilih barang yang Anda butuhkan, seperti infokus atau alat peraga lainnya, lalu tentukan waktu peminjaman yang sesuai.</string>
+    <string name="onboarding_title_3">Konfirmasi dan Pengembalian Barang</string>
+    <string name="onboarding_desc_3">Setelah selesai menggunakan barang, Anda dapat mengatur pengembalian sesuai jadwal dan pastikan barang kembali dalam kondisi baik.</string>
 
-    <!-- File Kt -->
+    <!-- Permission Kt -->
+    <string name="permission_required_message">Aplikasi membutuhkan izin %1$s untuk melanjutkan.</string>
+    <string name="permission_manual_enable_message">Izin %1$s dibutuhkan agar aplikasi berjalan dengan baik. Aktifkan secara manual di Pengaturan.</string>
+    <string name="logout_message">Yakin ingin logout?</string>
+
+    <!-- Scan Kt -->
+    <string name="item_not_found">Item dengan kode \'%1$s\' tidak ditemukan.</string>
+    <string name="camera_permission_denied">Izin kamera ditolak</string>
+    <string name="item_in_use">Item sedang dipinjam dan belum dikembalikan</string>
+    <string name="scan_timeout">Pemindaian kedaluwarsa. Silakan coba lagi.</string>
+    <string name="image_processing_failed">Gagal memproses gambar: %1$s</string>
+
+    <!-- BrDetailDialog Kt -->
+    <string name="unsaved_changes_close">Anda memiliki perubahan yang belum disimpan. Yakin ingin menutup?</string>
+    <string name="unsaved_changes_cancel">Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?</string>
+    <string name="save_confirmation">Apakah Anda yakin ingin menyimpan perubahan ini?</string>
+    <string name="save_success">Borrowing berhasil diperbarui</string>
+    <string name="no_permission_to_edit">Anda tidak memiliki izin untuk mengubah data</string>
+    <string name="delet_confimation">Yakin ingin menghapus peminjaman ini?</string>
+    <string name="delet_succes">Peminjaman berhasil dihapus</string>
+
+    <!-- Return Kt -->
+    <string name="camera_permission_denied_to_qr">Izin kamera diperlukan untuk memindai kode QR</string>
+    <string name="return_success">Barang berhasil dikembalikan</string>
+    <string name="scan_failed">Gagal scan: %1$s</string>
+    <string name="item_registered_not_borrowed">Barang dengan ID \'%1$s\' terdaftar, tetapi tidak sedang dipinjam.</string>
+    <string name="item_not_registered">Barang dengan ID \'%1$s\' tidak terdaftar.</string>
+    <string name="return_success_item_available">Barang berhasil dikembalikan dan status item diubah ke \'Available\'</string>
+    <string name="return_success_item_update_failed">Status pengembalian berhasil, tapi gagal update status item</string>
+    <string name="borrowing_update_failed">Gagal update status peminjaman</string>
+    <string name="scan_expired">Pemindaian kedaluwarsa. Silakan coba lagi.</string>
+
+    <!-- Add Item Kt -->
+    <string name="item_already_exists">Item dengan ID \'%1$s\' sudah ada</string>
+    <string name="item_save_success">Item berhasil disimpan</string>
+    <string name="item_save_failed">Gagal menyimpan item</string>
+    <string name="all_fields_required">Semua field harus diisi</string>
+    <string name="item_id_required">ID item harus diisi</string>
+    <string name="item_name_required">Nama item harus diisi</string>
+    <string name="item_type_required">Tipe item harus diisi</string>
+    <string name="item_status_required">Status item harus diisi</string>
+    <string name="add_item_confirmation">Apakah Anda yakin ingin menambahkan item ini?</string>
+    <string name="unsaved_changes_discard">Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?</string>
+    <string name="item_update_success">Item berhasil diperbarui</string>
+    <string name="no_permission_to_edit_item">Anda tidak memiliki izin untuk mengubah data item</string>
+    <string name="confirm_save_changes">Apakah Anda yakin ingin menyimpan perubahan?</string>
+    <string name="confirm_delet">Yakin ingin menghapus item ini?</string>
+    <string name="delet_item_succes">Item berhasil dihapus</string>
+
+    <!-- Change Password -->
+    <string name="title_change_password">Password berhasil diubah</string>
+    <string name="success_change_password">Silakan login kembali dengan password baru</string>
+    <string name="failed">Gagal</string>
+    <string name="failed_change_password">Gagal mengubah password. Silakan coba lagi.</string>
+    <string name="need_change_password">Anda perlu mengganti password terlebih dahulu</string>
+
+    <!-- Login -->
+    <string name="login_success">Login berhasil</string>
+    <string name="login_failed">Login gagal</string>
+    <string name="first_login">Ini adalah login pertama Anda. Silakan ganti password terlebih dahulu.</string>
+    <string name="find_your_stuff">Temukan Barang Yang Ingin Dipinjam</string>
+    <string name="failed_login">Username atau password salah</string>
+    <string name="cant_find_item">Item tidak ditemukan atau tidak tersedia</string>
+    <string name="success_save_borrow">Data peminjaman disimpan</string>
+    <string name="failed_save_borrow">Gagal menyimpan data peminjaman \'%1$s\'</string>
+
+    <!-- Borrowing Validation -->
+    <string name="cant_borrow_weekend">Tidak bisa memilih hari Sabtu atau Minggu</string>
+    <string name="hour_star_fail">Jam mulai tidak valid</string>
+    <string name="hour_end_fail">Jam selesai tidak valid</string>
+    <string name="error_start_time_earliest">Jam mulai paling cepat 07:30</string>
+    <string name="error_start_time_latest">Jam mulai paling lambat 18:00 (hanya 18:00)</string>
+    <string name="error_start_time_range">Jam mulai harus antara 07:30 hingga 18:00</string>
+    <string name="error_end_time_earliest">Jam akhir paling cepat 07:30</string>
+    <string name="error_end_time_latest">Jam akhir paling lambat 18:00 (hanya 18:00)</string>
+    <string name="error_end_time_range">Jam akhir harus antara 07:30 hingga 18:00</string>
+    <string name="error_end_before_start">Jam akhir harus lebih dari jam mulai</string>
+    <string name="error_min_duration">Durasi peminjaman minimal 30 menit</string>
+    <string name="borrowing">Peminjaman</string>
+    <string name="item">Barang</string>
 </resources>

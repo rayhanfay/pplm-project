@@ -89,7 +89,7 @@ class AdminSectionActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             CustomDialog.confirm(
                 context = this,
-                message = "Yakin ingin logout?",
+                message = getString(R.string.logout_message),
                 onConfirm = {
                     getSharedPreferences("LoginSession", MODE_PRIVATE).edit { clear() }
                     startActivity(Intent(this, LoginActivity::class.java).apply {

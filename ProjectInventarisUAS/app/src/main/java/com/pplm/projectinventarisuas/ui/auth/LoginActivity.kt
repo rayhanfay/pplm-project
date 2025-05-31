@@ -126,8 +126,8 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("LoginActivity", "Mengarahkan ke ChangePasswordActivity karena password belum diubah.")
                     CustomDialog.alert(
                         context = this,
-                        title = "Perlu Ganti Password",
-                        message = "Ini adalah login pertama Anda. Silakan ganti password terlebih dahulu."
+                        title = getString(R.string.need_change_password),
+                        message = getString(R.string.first_login)
                     ) {
                         val intent = Intent(this, ChangePasswordActivity::class.java)
                         intent.putExtra("userId", user.id)
@@ -146,8 +146,8 @@ class LoginActivity : AppCompatActivity() {
                         Log.d("LoginActivity", "Login berhasil, mengarahkan ke ${user.role} section.")
                         CustomDialog.success(
                             context = this,
-                            title = "Login berhasil!",
-                            message = "",
+                            title = getString(R.string.login_success),
+                            message = getString(R.string.find_your_stuff),
                         ) {
                             startActivity(it)
                             finish()
@@ -158,8 +158,8 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("LoginActivity", "Login gagal: Username atau password salah.")
                 CustomDialog.alert(
                     context = this,
-                    title = "Login gagal",
-                    message = "Username atau password salah"
+                    title = getString(R.string.login_failed),
+                    message = getString(R.string.failed_login)
                 )
             }
         }

@@ -107,12 +107,12 @@ class ItemDetailDialogFragment : DialogFragment() {
 
             CustomDialog.confirm(
                 context = requireContext(),
-                message = "Apakah Anda yakin ingin menyimpan perubahan?",
+                message = getString(R.string.confirm_save_changes),
                 onConfirm = {
                     viewModel.updateItem(updatedItem)
                     CustomDialog.success(
                         context = requireContext(),
-                        message = "Item berhasil diperbarui",
+                        message = getString(R.string.item_update_success),
                         onDismiss = {
                             item = updatedItem
                             originalItem = item.copy()
@@ -124,7 +124,7 @@ class ItemDetailDialogFragment : DialogFragment() {
         } else {
             CustomDialog.alert(
                 context = requireContext(),
-                message = "Anda tidak memiliki izin untuk mengubah data"
+                message = getString(R.string.no_permission_to_edit)
             )
         }
     }
@@ -163,7 +163,7 @@ class ItemDetailDialogFragment : DialogFragment() {
         if (hasUnsavedChanges()) {
             CustomDialog.confirm(
                 context = requireContext(),
-                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                message = getString(R.string.unsaved_changes_discard),
                 onConfirm = {
                     displayItemDetails(originalItem)
                     setEditMode(false)

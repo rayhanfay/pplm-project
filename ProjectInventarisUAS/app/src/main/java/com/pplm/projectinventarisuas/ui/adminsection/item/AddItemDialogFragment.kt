@@ -67,12 +67,12 @@ class AddItemDialogFragment : DialogFragment() {
                 if (exists) {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Item dengan kode '$code' sudah ada",
+                        message = getString(R.string.item_already_exists, code),
                     )
                 } else {
                     CustomDialog.confirm(
                         context = requireContext(),
-                        message = "Apakah Anda yakin ingin menambahkan item ini?",
+                        message = getString(R.string.add_item_confirmation),
                         onConfirm = {
                             val item = Item(
                                 item_id = code,
@@ -86,13 +86,13 @@ class AddItemDialogFragment : DialogFragment() {
                                 if (success) {
                                     CustomDialog.success(
                                         context = requireContext(),
-                                        message = "Item berhasil disimpan",
+                                        message = getString(R.string.item_save_success),
                                         onDismiss = { dismiss() }
                                     )
                                 } else {
                                     CustomDialog.alert(
                                         context = requireContext(),
-                                        message = "Gagal menyimpan item"
+                                        message = getString(R.string.item_save_failed)
                                     )
                                 }
                             }
@@ -112,7 +112,7 @@ class AddItemDialogFragment : DialogFragment() {
         if (code.isEmpty() || name.isEmpty() || type.isEmpty() || description.isEmpty()) {
             CustomDialog.alert(
                 context = requireContext(),
-                message = "Semua field harus diisi"
+                message = getString(R.string.all_fields_required)
             )
             return false
         }
@@ -128,7 +128,7 @@ class AddItemDialogFragment : DialogFragment() {
         if (code.isNotEmpty() || name.isNotEmpty() || type.isNotEmpty() || description.isNotEmpty()) {
             CustomDialog.confirm(
                 context = requireContext(),
-                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                message = getString(R.string.unsaved_changes_discard),
                 onConfirm = { dismiss() }
             )
         } else {

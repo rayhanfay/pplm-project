@@ -12,6 +12,7 @@ import com.pplm.projectinventarisuas.utils.adapter.ItemSummaryAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
 import com.pplm.projectinventarisuas.data.repository.ItemRepository
@@ -95,7 +96,7 @@ class ItemFragment : Fragment() {
         isDialogVisible = true
         CustomDialog.options(
             context = requireContext(),
-            title = "Pilih Aksi",
+            title = getString(R.string.select_option),
             onView = {
                 showItemDetailDialog(item, false)
                 isDialogVisible = false
@@ -116,12 +117,12 @@ class ItemFragment : Fragment() {
     private fun deleteItem(item: Item) {
         CustomDialog.confirm(
             context = requireContext(),
-            message = "Yakin ingin menghapus item ini?",
+            message =  getString(R.string.confirm_delet),
             onConfirm = {
                 viewModel.deleteItem(item)
                 CustomDialog.alert(
                     context = requireContext(),
-                    message = "Item berhasil dihapus",
+                    message = getString(R.string.delet_item_succes),
                     onDismiss = { isDialogVisible = false }
                 )
             },

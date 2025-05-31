@@ -11,6 +11,7 @@ import com.pplm.projectinventarisuas.databinding.ActivityAddItemBinding
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.AddItemViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
+import com.pplm.projectinventarisuas.R
 
 class AddItemActivity : AppCompatActivity() {
 
@@ -47,7 +48,7 @@ class AddItemActivity : AppCompatActivity() {
                 if (exists) {
                     CustomDialog.alert(
                         context = this,
-                        message = "Item dengan ID '$id' sudah ada",
+                        message = getString(R.string.item_already_exists, id),
                     )
                 } else {
                     val item = Item(
@@ -61,13 +62,13 @@ class AddItemActivity : AppCompatActivity() {
                         if (success) {
                             CustomDialog.alert(
                                 context = this,
-                                message = "Item berhasil disimpan",
+                                message = getString(R.string.item_save_success),
                                 onDismiss = { finish() }
                             )
                         } else {
                             CustomDialog.alert(
                                 context = this,
-                                message = "Gagal menyimpan item"
+                                message = getString(R.string.item_save_failed)
                             )
                         }
                     }
@@ -85,28 +86,40 @@ class AddItemActivity : AppCompatActivity() {
         if (id.isEmpty() && name.isEmpty() && type.isEmpty() && status.isEmpty()) {
             CustomDialog.alert(
                 context = this,
-                message = "Semua field harus diisi"
+                message = getString(R.string.all_fields_required)
             )
             return false
         }
 
         if (id.isEmpty()) {
-            CustomDialog.alert(context = this, message = "ID item harus diisi")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.item_id_required)
+            )
             return false
         }
 
         if (name.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Nama item harus diisi")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.item_name_required)
+            )
             return false
         }
 
         if (type.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Tipe item harus diisi")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.item_type_required)
+            )
             return false
         }
 
         if (status.isEmpty()) {
-            CustomDialog.alert(context = this, message = "Status item harus diisi")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.item_status_required)
+            )
             return false
         }
 

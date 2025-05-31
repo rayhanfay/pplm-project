@@ -10,6 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.model.ItemSummary
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
@@ -112,7 +113,7 @@ class StudentSectionActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             CustomDialog.confirm(
                 context = this,
-                message = "Yakin ingin logout?",
+                message = getString(R.string.logout_message),
                 onConfirm = {
                     getSharedPreferences("LoginSession", MODE_PRIVATE).edit { clear() }
                     startActivity(Intent(this, LoginActivity::class.java).apply {

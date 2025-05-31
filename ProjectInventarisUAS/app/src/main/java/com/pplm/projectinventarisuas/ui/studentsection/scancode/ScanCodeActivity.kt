@@ -20,6 +20,7 @@ import com.pplm.projectinventarisuas.databinding.ActivityScanCodeBinding
 import com.pplm.projectinventarisuas.ui.studentsection.borrowing.BorrowingItemActivity
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import java.util.concurrent.Executors
+import com.pplm.projectinventarisuas.R
 
 class ScanCodeActivity : AppCompatActivity() {
 
@@ -50,7 +51,7 @@ class ScanCodeActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Izin kamera ditolak",
+                    message = getString(R.string.camera_permission_denied),
                     onDismiss = { finish() }
                 )
             }
@@ -98,7 +99,7 @@ class ScanCodeActivity : AppCompatActivity() {
                                                 isDialogShowing = true
                                                 CustomDialog.alert(
                                                     context = this,
-                                                    message = "Item dengan kode '$rawValue' tidak ditemukan.",
+                                                    message = getString(R.string.item_not_found, rawValue),
                                                     onDismiss = {
                                                         isDialogShowing = false
                                                         isActivityStarted = false
@@ -114,7 +115,7 @@ class ScanCodeActivity : AppCompatActivity() {
                                                     isDialogShowing = true
                                                     CustomDialog.alert(
                                                         context = this,
-                                                        message = "Item sedang dipinjam dan belum dikembalikan",
+                                                        message = getString(R.string.item_in_use),
                                                         onDismiss = {
                                                             isDialogShowing = false
                                                             isActivityStarted = false
@@ -139,7 +140,7 @@ class ScanCodeActivity : AppCompatActivity() {
                                 isDialogShowing = true
                                 CustomDialog.alert(
                                     context = this,
-                                    message = "Gagal memproses gambar: ${it.message}",
+                                    message = getString(R.string.image_processing_failed, it.message),
                                     onDismiss = {
                                         isDialogShowing = false
                                         isActivityStarted = false
@@ -182,7 +183,7 @@ class ScanCodeActivity : AppCompatActivity() {
                 isDialogShowing = true
                 CustomDialog.alert(
                     context = this,
-                    message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
+                    message = getString(R.string.scan_timeout),
                     onDismiss = {
                         isDialogShowing = false
                         finish()

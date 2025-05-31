@@ -20,18 +20,18 @@ class WelcomeActivity : AppCompatActivity() {
 
         val fragments = listOf(
             WelcomeFragment.newInstance(
-                title = "Selamat Datang di Aplikasi Peminjaman Inventaris Teknik Informatika!",
-                description = "Aplikasi ini memudahkan Anda untuk meminjam peralatan penting seperti infokus, proyektor, dan alat lainnya untuk menunjang kegiatan di jurusan kami.",
+                title =  getString(R.string.onboarding_title_1),
+                description = getString(R.string.onboarding_desc_1),
                 imageRes = R.drawable.onboarding_image1
             ),
             WelcomeFragment.newInstance(
-                title = "Pilih Barang yang Ingin Dipinjam !",
-                description = "Cari dan pilih barang yang Anda butuhkan, seperti infokus atau alat peraga lainnya, lalu tentukan waktu peminjaman yang sesuai.",
+                title =  getString(R.string.onboarding_title_2),
+                description = getString(R.string.onboarding_desc_2),
                 imageRes = R.drawable.onboarding_image2
             ),
             WelcomeFragment.newInstance(
-                title = "Konfirmasi dan Pengembalian Barang",
-                description = "Setelah selesai menggunakan barang, Anda dapat mengatur pengembalian sesuai jadwal dan pastikan barang kembali dalam kondisi baik.",
+                title =  getString(R.string.onboarding_title_3),
+                description = getString(R.string.onboarding_desc_3),
                 imageRes = R.drawable.onboarding_image3,
                 isLast = true
             )

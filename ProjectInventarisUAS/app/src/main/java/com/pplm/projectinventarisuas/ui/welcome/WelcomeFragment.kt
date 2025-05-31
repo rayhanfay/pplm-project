@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.FragmentWelcomeBinding
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 
@@ -159,7 +160,7 @@ class WelcomeFragment : Fragment() {
                 if (shouldShowRationale) {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Aplikasi membutuhkan izin ${permission.substringAfterLast('.')} untuk melanjutkan.",
+                        message = getString(R.string.permission_required_message, permission.substringAfterLast('.')),
                         onDismiss = {
                             requestPermissions(arrayOf(permission), REQUEST_CODE_PERMISSIONS)
                         }
@@ -167,7 +168,7 @@ class WelcomeFragment : Fragment() {
                 } else {
                     CustomDialog.alert(
                         context = requireContext(),
-                        message = "Izin ${permission.substringAfterLast('.')} dibutuhkan agar aplikasi berjalan dengan baik. Aktifkan secara manual di Pengaturan.",
+                        message = getString(R.string.permission_manual_enable_message, permission.substringAfterLast('.')),
                         onDismiss = {
                             val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)

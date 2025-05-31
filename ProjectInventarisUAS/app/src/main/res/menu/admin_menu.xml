@@ -5,12 +5,12 @@
     <item
         android:id="@+id/borrowing_menu"
         android:icon="@drawable/ic_borrowing"
-        android:title="Borrowing"
+        android:title="@string/borrowing"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/item_menu"
         android:icon="@drawable/ic_add_list"
-        android:title="Item"
+        android:title="@string/item"
         app:showAsAction="ifRoom" />
 
 </menu>

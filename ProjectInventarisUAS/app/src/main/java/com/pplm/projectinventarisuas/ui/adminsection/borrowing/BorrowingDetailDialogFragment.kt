@@ -104,7 +104,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             if (isEditMode && hasUnsavedChanges()) {
                 CustomDialog.confirm(
                     context = requireContext(),
-                    message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin menutup?",
+                    message = getString(R.string.unsaved_changes_close),
                     onConfirm = { dismiss() }
                 )
             } else {
@@ -136,12 +136,12 @@ class BorrowingDetailDialogFragment : DialogFragment() {
 
             CustomDialog.confirm(
                 context = requireContext(),
-                message = "Apakah Anda yakin ingin menyimpan perubahan ini?",
+                message = getString(R.string.save_confirmation),
                 onConfirm = {
                     viewModel.updateBorrowing(updatedBorrowing)
                     CustomDialog.success(
                         context = requireContext(),
-                        message = "Borrowing berhasil diperbarui",
+                        message = getString(R.string.save_success),
                         onDismiss = {
                             borrowing = updatedBorrowing
                             originalBorrowing =
@@ -154,7 +154,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
         } else {
             CustomDialog.alert(
                 context = requireContext(),
-                message = "Anda tidak memiliki izin untuk mengubah data"
+                message = getString(R.string.no_permission_to_edit)
             )
         }
     }
@@ -235,7 +235,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
         if (hasUnsavedChanges()) {
             CustomDialog.confirm(
                 context = requireContext(),
-                message = "Anda memiliki perubahan yang belum disimpan. Yakin ingin membatalkan?",
+                message = getString(R.string.unsaved_changes_cancel),
                 onConfirm = {
                     displayBorrowingDetails(originalBorrowing)
                     setEditMode(false)

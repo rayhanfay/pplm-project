@@ -140,8 +140,8 @@ class ChangePasswordActivity : AppCompatActivity() {
             if (success) {
                 CustomDialog.success(
                     context = this,
-                    title = "Password berhasil diubah",
-                    message = "Silakan login kembali dengan password baru"
+                    title = getString(R.string.title_change_password),
+                    message = getString(R.string.success_change_password)
                 ) {
                     val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
                     with(sharedPref.edit()) {
@@ -155,8 +155,8 @@ class ChangePasswordActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    title = "Gagal",
-                    message = "Gagal mengubah password. Silakan coba lagi."
+                    title = getString(R.string.failed),
+                    message = getString(R.string.failed_change_password)
                 )
             }
         }

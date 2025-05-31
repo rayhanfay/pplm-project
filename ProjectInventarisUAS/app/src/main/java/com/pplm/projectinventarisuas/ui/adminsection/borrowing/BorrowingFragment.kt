@@ -21,6 +21,7 @@ import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.BorrowingViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
 import android.util.Log
+import com.pplm.projectinventarisuas.R
 
 class BorrowingFragment : Fragment() {
 
@@ -84,7 +85,7 @@ class BorrowingFragment : Fragment() {
         isDialogVisible = true
         CustomDialog.options(
             context = requireContext(),
-            title = "Pilih Aksi",
+            title = getString(R.string.select_option),
             onView = {
                 Log.d(
                     "BorrowingFragment",
@@ -120,12 +121,12 @@ class BorrowingFragment : Fragment() {
         isDialogVisible = true
         CustomDialog.confirm(
             context = requireContext(),
-            message = "Yakin ingin menghapus peminjaman ini?",
+            message = getString(R.string.delet_confimation),
             onConfirm = {
                 viewModel.deleteBorrowing(borrowing)
                 CustomDialog.alert(
                     context = requireContext(),
-                    message = "Peminjaman berhasil dihapus",
+                    message = getString(R.string.delet_succes),
                     onDismiss = { isDialogVisible = false }
                 )
             },

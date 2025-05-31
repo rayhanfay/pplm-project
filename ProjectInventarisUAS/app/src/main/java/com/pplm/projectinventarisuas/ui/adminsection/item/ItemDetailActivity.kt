@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.pplm.projectinventarisuas.R
 import com.pplm.projectinventarisuas.databinding.ActivityItemDetailBinding
 import com.pplm.projectinventarisuas.data.model.Item
 import com.pplm.projectinventarisuas.data.repository.BorrowingRepository
@@ -99,7 +100,7 @@ class ItemDetailActivity : AppCompatActivity() {
                 viewModel.updateItem(updatedItem)
                 CustomDialog.alert(
                     context = this,
-                    message = "Item berhasil diperbarui",
+                    message = getString(R.string.item_update_success),
                     onDismiss = { finish() }
                 )
                 setEditMode(false)
@@ -107,7 +108,7 @@ class ItemDetailActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Anda tidak memiliki izin untuk mengubah data"
+                    message = getString(R.string.no_permission_to_edit_item)
                 )
             }
         }

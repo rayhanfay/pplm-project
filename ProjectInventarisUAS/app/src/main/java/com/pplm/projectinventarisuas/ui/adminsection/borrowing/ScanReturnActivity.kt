@@ -22,6 +22,7 @@ import com.pplm.projectinventarisuas.databinding.ActivityScanCodeBinding
 import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.pplm.projectinventarisuas.R
 import java.util.concurrent.Executors
 
 class ScanReturnActivity : AppCompatActivity() {
@@ -53,7 +54,7 @@ class ScanReturnActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Izin kamera ditolak",
+                    message = getString(R.string.camera_permission_denied),
                     onDismiss = { finish() }
                 )
                 finish()
@@ -131,7 +132,7 @@ class ScanReturnActivity : AppCompatActivity() {
                         "Returned" -> {
                             CustomDialog.alert(
                                 context = this,
-                                message = "Barang sudah dikembalikan",
+                                message = getString(R.string.return_success),
                                 onDismiss = { isProcessing = false }
                             )
                         }
@@ -156,13 +157,13 @@ class ScanReturnActivity : AppCompatActivity() {
             if (item != null) {
                 CustomDialog.alert(
                     context = this,
-                    message = "Barang dengan ID '$itemId' terdaftar, tetapi tidak sedang dipinjam.",
+                    message = getString(R.string.item_registered_not_borrowed, itemId),
                     onDismiss = { isProcessing = false }
                 )
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Barang dengan ID '$itemId' tidak terdaftar.",
+                    message = getString(R.string.item_not_registered, itemId),
                     onDismiss = { isProcessing = false }
                 )
             }
@@ -181,13 +182,13 @@ class ScanReturnActivity : AppCompatActivity() {
                     if (itemUpdated) {
                         CustomDialog.alert(
                             context = this,
-                            message = "Barang berhasil dikembalikan dan status item diubah ke 'Available'",
+                            message = getString(R.string.return_success_item_available),
                             onDismiss = { finish() }
                         )
                     } else {
                         CustomDialog.alert(
                             context = this,
-                            message = "Status pengembalian berhasil, tapi gagal update status item",
+                            message = getString(R.string.return_success_item_update_failed),
                             onDismiss = { finish() }
                         )
                     }
@@ -195,7 +196,7 @@ class ScanReturnActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Gagal update status peminjaman",
+                    message = getString(R.string.borrowing_update_failed),
                     onDismiss = { isProcessing = false }
                 )
             }
@@ -214,7 +215,7 @@ class ScanReturnActivity : AppCompatActivity() {
                 isDialogShowing = true
                 CustomDialog.alert(
                     context = this,
-                    message = "Pemindaian kedaluwarsa. Silakan coba lagi.",
+                    message = getString(R.string.scan_expired),
                     onDismiss = {
                         isDialogShowing = false
                         finish()

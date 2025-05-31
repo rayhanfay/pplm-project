@@ -72,7 +72,7 @@ class BorrowingItemActivity : AppCompatActivity() {
             if (name == null || name.isEmpty()) {
                 CustomDialog.alert(
                     context = this,
-                    message = "Item tidak ditemukan atau tidak tersedia"
+                    message = getString(R.string.cant_find_item)
                 ) {
                     val intent = Intent(this, StudentSectionActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -95,7 +95,7 @@ class BorrowingItemActivity : AppCompatActivity() {
 
                 CustomDialog.success(
                     context = this,
-                    message = "Data peminjaman disimpan"
+                    message = getString(R.string.success_save_borrow)
                 ) {
                     val prefs = getSharedPreferences("BorrowingSession", MODE_PRIVATE)
                     prefs.edit { putString("activeBorrowingId", borrowingId) }
@@ -109,7 +109,7 @@ class BorrowingItemActivity : AppCompatActivity() {
             } else {
                 CustomDialog.alert(
                     context = this,
-                    message = "Gagal menyimpan: $message"
+                    message = getString(R.string.failed_save_borrow, message)
                 )
                 Log.e("SaveError", "Error saving: $message")
             }
@@ -161,7 +161,7 @@ class BorrowingItemActivity : AppCompatActivity() {
                     if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
                         CustomDialog.alert(
                             context = this,
-                            message = "Tidak bisa memilih hari Sabtu atau Minggu"
+                            message = getString(R.string.cant_borrow_weekend)
                         )
                     } else {
                         binding.etDateBorrowed.setText("$day/${month + 1}/$year")
@@ -357,7 +357,7 @@ class BorrowingItemActivity : AppCompatActivity() {
         if (admin.isEmpty() || date.isEmpty() || startHour.isEmpty() || startMinute.isEmpty() || endHour.isEmpty() || endMinute.isEmpty()) {
             CustomDialog.alert(
                 context = this,
-                message = "Semua field harus diisi"
+                message = getString(R.string.all_fields_required)
             )
             return false
         }
@@ -368,11 +368,17 @@ class BorrowingItemActivity : AppCompatActivity() {
         val endMinuteInt = endMinute.toIntOrNull()
 
         if (startHourInt == null || startMinuteInt == null) {
-            CustomDialog.alert(context = this, message = "Jam mulai tidak valid")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.hour_star_fail)
+            )
             return false
         }
         if (endHourInt == null || endMinuteInt == null) {
-            CustomDialog.alert(context = this, message = "Jam akhir tidak valid")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.hour_end_fail)
+            )
             return false
         }
 
@@ -382,49 +388,61 @@ class BorrowingItemActivity : AppCompatActivity() {
         val maxBorrowMinutesTotal = 18 * 60
 
         if (startHourInt == 7 && startMinuteInt < 30) {
-            CustomDialog.alert(context = this, message = "Jam mulai paling cepat 07:30")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.error_start_time_earliest)
+            )
             return false
         }
         if (startHourInt == 18 && startMinuteInt != 0) {
             CustomDialog.alert(
                 context = this,
-                message = "Jam mulai paling lambat 18:00 (hanya 18:00)"
+                message = getString(R.string.error_start_time_latest)
             )
             return false
         }
         if (startTotalMinutes < minBorrowMinutesTotal || startTotalMinutes > maxBorrowMinutesTotal) {
             CustomDialog.alert(
                 context = this,
-                message = "Jam mulai harus antara 07:30 hingga 18:00"
+                message = getString(R.string.error_start_time_range)
             )
             return false
         }
 
         if (endHourInt == 7 && endMinuteInt < 30) {
-            CustomDialog.alert(context = this, message = "Jam akhir paling cepat 07:30")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.error_end_time_earliest)
+            )
             return false
         }
         if (endHourInt == 18 && endMinuteInt != 0) {
             CustomDialog.alert(
                 context = this,
-                message = "Jam akhir paling lambat 18:00 (hanya 18:00)"
+                message = getString(R.string.error_end_time_latest)
             )
             return false
         }
         if (endTotalMinutes < minBorrowMinutesTotal || endTotalMinutes > maxBorrowMinutesTotal) {
             CustomDialog.alert(
                 context = this,
-                message = "Jam akhir harus antara 07:30 hingga 18:00"
+                message = getString(R.string.error_end_time_range)
             )
             return false
         }
 
         if (endTotalMinutes <= startTotalMinutes) {
-            CustomDialog.alert(context = this, message = "Jam akhir harus lebih dari jam mulai")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.error_end_before_start)
+            )
             return false
         }
         if (endTotalMinutes - startTotalMinutes < 30) {
-            CustomDialog.alert(context = this, message = "Durasi peminjaman minimal 30 menit")
+            CustomDialog.alert(
+                context = this,
+                message = getString(R.string.error_min_duration)
+            )
             return false
         }
 
