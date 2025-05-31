@@ -5,7 +5,7 @@
     <!-- Istilah Umum -->
     <string name="ok">OK</string>
     <string name="close">Tutup</string>
-    <string name="tv_cancel">Cancel</string>
+    <string name="tv_cancel">Batal</string>
     <string name="cancel">Batal</string>
     <string name="save">Simpan</string>
     <string name="edit">Edit</string>
@@ -122,6 +122,19 @@
     <string name="no_permission_to_edit">Anda tidak memiliki izin untuk mengubah data</string>
     <string name="delet_confimation">Yakin ingin menghapus peminjaman ini?</string>
     <string name="delet_succes">Peminjaman berhasil dihapus</string>
+    <string name="student_phone_number">Nomor Telepon Siswa</string>
+    <string name="admin_phone_number">Nomor Telepon Admin</string>
+    <string name="call_student">Hubungi Siswa</string>
+    <string name="call_admin">Hubungi Admin</string>
+    <string name="open_map">Buka Peta</string>
+    <string name="no_phone_number">Nomor telepon tidak tersedia.</string>
+    <string name="invalid_coordinates">Koordinat tidak valid.</string>
+    <string name="no_app_to_handle">Tidak ada aplikasi yang dapat menangani tindakan ini.</string>
+    <string name="select_contact_method">Pilih Metode Kontak</string>
+    <string name="call">Telepon</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="last_location_not_available">Lokasi terakhir tidak tersedia.</string>
+    <string name="open_map_with">Buka Peta dengan</string>
 
     <!-- Return Kt -->
     <string name="camera_permission_denied_to_qr">Izin kamera diperlukan untuk memindai kode QR</string>

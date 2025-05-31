@@ -64,9 +64,10 @@ class BorrowingRepository : BorrowingDao {
             database.child("admin").child(originalBorrowing.admin_id).get()
                 .addOnSuccessListener { adminSnapshot ->
                     val adminName = adminSnapshot.child("admin_name").value.toString()
+                    val adminPhoneNumber = adminSnapshot.child("phone_number").value.toString()
                     synchronized(this) {
                         interimBorrowings[borrowingId] =
-                            interimBorrowings[borrowingId]!!.copy(admin_name = adminName)
+                            interimBorrowings[borrowingId]!!.copy(admin_name = adminName, admin_phone_number = adminPhoneNumber)
                     }
                     Log.d("BorrowingRepo", "Nama admin diambil untuk ID peminjaman: ${borrowingId}")
                     checkCompletion()
@@ -82,9 +83,10 @@ class BorrowingRepository : BorrowingDao {
             database.child("student").child(originalBorrowing.student_id).get()
                 .addOnSuccessListener { studentSnapshot ->
                     val studentName = studentSnapshot.child("student_name").value.toString()
+                    val studentPhoneNumber = studentSnapshot.child("phone_number").value.toString()
                     synchronized(this) {
                         interimBorrowings[borrowingId] =
-                            interimBorrowings[borrowingId]!!.copy(student_name = studentName)
+                            interimBorrowings[borrowingId]!!.copy(student_name = studentName, student_phone_number = studentPhoneNumber) // Tambahkan student_phone_number
                     }
                     Log.d("BorrowingRepo", "Nama siswa diambil untuk ID peminjaman: ${borrowingId}")
                     checkCompletion()

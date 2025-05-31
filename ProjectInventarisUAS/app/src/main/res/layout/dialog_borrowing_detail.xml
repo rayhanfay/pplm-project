@@ -186,6 +186,50 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/student_phone_number"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <EditText
+                                android:id="@+id/etStudentPhoneNumber"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_edittext"
+                                android:enabled="false"
+                                android:fontFamily="@font/poppins"
+                                android:padding="10dp"
+                                android:textSize="14sp"
+                                tools:text="081234567890" />
+
+                            <android.widget.Button
+                                android:id="@+id/btnStudentPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_button_primary"
+                                android:contentDescription="@string/call_student"
+                                android:drawableEnd="@drawable/ic_phone_calling"
+                                android:drawableTint="@color/white"
+                                android:minWidth="24dp"
+                                android:minHeight="24dp"
+                                android:padding="8dp"
+                                android:visibility="gone"
+                                app:drawableTint="@color/white" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
                             android:text="@string/admin_name"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
@@ -207,22 +251,89 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
-                            android:text="@string/last_location"
+                            android:text="@string/admin_phone_number"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
-                        <EditText
-                            android:id="@+id/etLastLocation"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:layout_marginBottom="8dp"
-                            android:background="@drawable/rounded_edittext"
-                            android:enabled="false"
-                            android:fontFamily="@font/poppins"
-                            android:padding="10dp"
-                            android:textSize="14sp"
-                            tools:text="Lab A" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <EditText
+                                android:id="@+id/etAdminPhoneNumber"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_edittext"
+                                android:enabled="false"
+                                android:fontFamily="@font/poppins"
+                                android:padding="10dp"
+                                android:textSize="14sp"
+                                tools:text="081234567891" />
+
+                            <android.widget.Button
+                                android:id="@+id/btnAdminPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:minHeight="24dp"
+                                android:minWidth="24dp"
+                                android:background="@drawable/bg_button_primary"
+                                android:drawableEnd="@drawable/ic_phone_calling"
+                                android:contentDescription="@string/call_admin"
+                                app:drawableTint="@color/white"
+                                android:drawableTint="@color/white"
+                                android:padding="8dp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="@string/last_location"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <EditText
+                                android:id="@+id/etLastLocation"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_edittext"
+                                android:enabled="false"
+                                android:fontFamily="@font/poppins"
+                                android:padding="10dp"
+                                android:textSize="14sp"
+                                tools:text="0.478231,101.382194" />
+
+                            <android.widget.Button
+                                android:id="@+id/btnOpenMap"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:minHeight="24dp"
+                                android:minWidth="24dp"
+                                android:background="@drawable/bg_button_primary"
+                                android:drawableEnd="@drawable/ic_location"
+                                android:contentDescription="@string/open_map"
+                                app:drawableTint="@color/white"
+                                android:drawableTint="@color/white"
+                                android:padding="8dp"
+                                android:visibility="gone" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"

@@ -1,6 +1,8 @@
 package com.pplm.projectinventarisuas.ui.adminsection.borrowing
 
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,9 @@ import com.pplm.projectinventarisuas.utils.components.CustomDialog
 import com.pplm.projectinventarisuas.utils.viewmodel.BorrowingViewModel
 import com.pplm.projectinventarisuas.utils.viewmodel.ViewModelFactory
 import android.util.Log
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.os.Build
 
 class BorrowingDetailDialogFragment : DialogFragment() {
 
@@ -67,6 +72,7 @@ class BorrowingDetailDialogFragment : DialogFragment() {
         displayBorrowingDetails(borrowing)
         setupUserPermission()
         setupButtons()
+        setupActionButtons()
     }
 
     private fun setupViewModel() {
@@ -113,6 +119,230 @@ class BorrowingDetailDialogFragment : DialogFragment() {
         }
     }
 
+    private fun setupActionButtons() {
+        binding.btnStudentPhone.setOnClickListener {
+            val phoneNumber = binding.etStudentPhoneNumber.text.toString()
+            if (phoneNumber.isNotEmpty() && phoneNumber != "-") {
+                openPhoneChooser(phoneNumber)
+            } else {
+                CustomDialog.alert(requireContext(), message = getString(R.string.no_phone_number))
+            }
+        }
+
+        binding.btnAdminPhone.setOnClickListener {
+            val phoneNumber = binding.etAdminPhoneNumber.text.toString()
+            if (phoneNumber.isNotEmpty() && phoneNumber != "-") {
+                openPhoneChooser(phoneNumber)
+            } else {
+                CustomDialog.alert(requireContext(), message = getString(R.string.no_phone_number))
+            }
+        }
+
+        binding.btnOpenMap.setOnClickListener {
+            val coordinates = binding.etLastLocation.text.toString()
+            if (coordinates.isNotEmpty() && coordinates != "-") {
+                openMap(coordinates)
+            } else {
+                CustomDialog.alert(
+                    requireContext(),
+                    message = getString(R.string.last_location_not_available)
+                )
+            }
+        }
+    }
+
+    private fun openPhoneChooser(phoneNumber: String) {
+        val cleanedPhoneNumber = phoneNumber.replace("[^\\d]".toRegex(), "")
+
+        val targetIntents: MutableList<Intent> = ArrayList()
+
+        val callIntent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$cleanedPhoneNumber")
+        }
+        targetIntents.add(callIntent)
+
+        val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("smsto:$cleanedPhoneNumber")
+        }
+        targetIntents.add(smsIntent)
+
+        addWhatsAppIntents(cleanedPhoneNumber, targetIntents)
+
+        if (targetIntents.isEmpty()) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.no_app_to_handle))
+            return
+        }
+
+        val chooserIntent =
+            Intent.createChooser(targetIntents[0], getString(R.string.select_contact_method))
+
+        if (targetIntents.size > 1) {
+            val remainingIntents = targetIntents.drop(1).toTypedArray()
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, remainingIntents)
+        }
+
+        try {
+            startActivity(chooserIntent)
+        } catch (e: Exception) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.no_app_to_handle))
+            Log.e("BorrowingDetailDialog", "Failed to open phone/WhatsApp chooser: ${e.message}")
+        }
+    }
+
+    private fun addWhatsAppIntents(phoneNumber: String, targetIntents: MutableList<Intent>) {
+        val packageManager = requireContext().packageManager
+
+        val whatsappPackages = listOf(
+            "com.whatsapp",
+            "com.whatsapp.w4b"
+        )
+
+        for (packageName in whatsappPackages) {
+            try {
+                val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                val whatsappIntent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber")
+                    setPackage(packageName)
+                }
+
+                if (packageManager.resolveActivity(whatsappIntent, 0) != null) {
+                    targetIntents.add(whatsappIntent)
+                    Log.d(
+                        "BorrowingDetailDialog",
+                        "Added WhatsApp intent for package: $packageName"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("BorrowingDetailDialog", "Package $packageName not found or not accessible")
+            }
+        }
+
+        val whatsappBaseIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber")
+        }
+
+        val resolveInfos: List<ResolveInfo> =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.queryIntentActivities(
+                    whatsappBaseIntent,
+                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.queryIntentActivities(
+                    whatsappBaseIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY
+                )
+            }
+
+        for (info in resolveInfos) {
+            val packageName = info.activityInfo.packageName
+
+            if (targetIntents.any { it.`package` == packageName }) {
+                continue
+            }
+
+            val intent = Intent(whatsappBaseIntent).apply {
+                setPackage(packageName)
+            }
+            targetIntents.add(intent)
+            Log.d(
+                "BorrowingDetailDialog",
+                "Added additional WhatsApp-like intent for package: $packageName"
+            )
+        }
+    }
+
+    private fun openMap(coordinates: String) {
+        val parts = coordinates.split(",")
+        if (parts.size != 2) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.invalid_coordinates))
+            Log.e("BorrowingDetailDialog", "Invalid coordinates format: $coordinates")
+            return
+        }
+
+        val latitude = parts[0].trim()
+        val longitude = parts[1].trim()
+
+        try {
+            val lat = latitude.toDouble()
+            val lng = longitude.toDouble()
+
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                throw NumberFormatException("Invalid coordinate range")
+            }
+        } catch (e: NumberFormatException) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.invalid_coordinates))
+            Log.e("BorrowingDetailDialog", "Invalid coordinates values: $coordinates")
+            return
+        }
+
+        val targetIntents: MutableList<Intent> = ArrayList()
+
+        val geoIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude")
+        }
+        targetIntents.add(geoIntent)
+
+        val googleMapsIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://maps.google.com/?q=$latitude,$longitude")
+            setPackage("com.google.android.apps.maps")
+        }
+
+        val packageManager = requireContext().packageManager
+        try {
+            packageManager.getPackageInfo("com.google.android.apps.maps", 0)
+            targetIntents.add(googleMapsIntent)
+        } catch (e: Exception) {
+            Log.d("BorrowingDetailDialog", "Google Maps not installed")
+        }
+
+        val resolveInfos: List<ResolveInfo> =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.queryIntentActivities(
+                    geoIntent,
+                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.queryIntentActivities(geoIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            }
+
+        for (info in resolveInfos) {
+            val packageName = info.activityInfo.packageName
+
+            if (targetIntents.any { it.`package` == packageName } ||
+                packageName == requireContext().packageName) {
+                continue
+            }
+
+            val intent = Intent(geoIntent).apply {
+                setPackage(packageName)
+            }
+            targetIntents.add(intent)
+        }
+
+        if (targetIntents.isEmpty()) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.no_app_to_handle))
+            return
+        }
+
+        val chooserIntent =
+            Intent.createChooser(targetIntents[0], getString(R.string.open_map_with))
+
+        if (targetIntents.size > 1) {
+            val remainingIntents = targetIntents.drop(1).toTypedArray()
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, remainingIntents)
+        }
+
+        try {
+            startActivity(chooserIntent)
+        } catch (e: Exception) {
+            CustomDialog.alert(requireContext(), message = getString(R.string.no_app_to_handle))
+            Log.e("BorrowingDetailDialog", "Failed to open map chooser: ${e.message}")
+        }
+    }
+
     private fun saveBorrowingDetails() {
         Log.d("BorrowingDetailDialog", "saveBorrowingDetails dipanggil.")
         val userRole = getUserRole()
@@ -129,7 +359,9 @@ class BorrowingDetailDialogFragment : DialogFragment() {
                 return_time = binding.etReturnTime.text.toString(),
                 status = binding.etStatus.text.toString(),
                 student_name = binding.etStudentName.text.toString(),
+                student_phone_number = binding.etStudentPhoneNumber.text.toString(),
                 admin_name = binding.etAdminName.text.toString(),
+                admin_phone_number = binding.etAdminPhoneNumber.text.toString(),
                 item_name = borrowing.item_name
             )
             Log.d("BorrowingDetailDialog", "Memperbarui peminjaman: $updatedBorrowing")
@@ -170,10 +402,16 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             etStartHours.isEnabled = enabled
             etEndHours.isEnabled = enabled
             etStudentName.isEnabled = enabled
+            etStudentPhoneNumber.isEnabled = enabled
             etAdminName.isEnabled = enabled
+            etAdminPhoneNumber.isEnabled = enabled
             etLastLocation.isEnabled = enabled
             etReturnTime.isEnabled = enabled
             etStatus.isEnabled = enabled
+
+            btnStudentPhone.visibility = if (enabled) View.GONE else View.VISIBLE
+            btnAdminPhone.visibility = if (enabled) View.GONE else View.VISIBLE
+            btnOpenMap.visibility = if (enabled) View.GONE else View.VISIBLE
         }
 
         binding.btnEdit.visibility = if (enabled) View.GONE else View.VISIBLE
@@ -198,7 +436,9 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             etStartHours.setText(borrowingToDisplay.start_hour)
             etEndHours.setText(borrowingToDisplay.end_hour)
             etStudentName.setText(borrowingToDisplay.student_name)
+            etStudentPhoneNumber.setText(borrowingToDisplay.student_phone_number)
             etAdminName.setText(borrowingToDisplay.admin_name)
+            etAdminPhoneNumber.setText(borrowingToDisplay.admin_phone_number)
             etLastLocation.setText(borrowingToDisplay.last_location)
             etReturnTime.setText(borrowingToDisplay.return_time)
             etStatus.setText(borrowingToDisplay.status)
@@ -225,7 +465,9 @@ class BorrowingDetailDialogFragment : DialogFragment() {
             return_time = binding.etReturnTime.text.toString(),
             status = binding.etStatus.text.toString(),
             student_name = binding.etStudentName.text.toString(),
+            student_phone_number = binding.etStudentPhoneNumber.text.toString(),
             admin_name = binding.etAdminName.text.toString(),
+            admin_phone_number = binding.etAdminPhoneNumber.text.toString(),
             item_name = borrowing.item_name
         )
         return currentBorrowing != originalBorrowing

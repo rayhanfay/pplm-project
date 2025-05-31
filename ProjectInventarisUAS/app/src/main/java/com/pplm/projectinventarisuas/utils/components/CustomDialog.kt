@@ -15,6 +15,21 @@ object CustomDialog {
 
     private var loadingDialog: AlertDialog? = null
 
+    fun showOptions(
+        context: Context,
+        title: String,
+        options: Array<String>,
+        onOptionSelected: (String) -> Unit
+    ) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setItems(options) { dialog, which ->
+            onOptionSelected(options[which])
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
     fun showLoading(context: Context, message: String = "Memproses...") {
         if (loadingDialog?.isShowing == true) return
 

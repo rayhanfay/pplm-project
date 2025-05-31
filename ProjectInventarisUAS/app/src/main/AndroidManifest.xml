@@ -16,6 +16,76 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+
+        <package android:name="com.google.android.apps.maps" />
+
+        <package android:name="com.waze" />
+        <package android:name="com.here.app.maps" />
+
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.CALL" />
+            <data android:scheme="tel" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="sms" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="maps.google.com" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="www.google.com" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="api.whatsapp.com" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" android:host="wa.me" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="whatsapp" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -28,9 +98,6 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.auth.ChangePasswordActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.adminsection.borrowing.BorrowingDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ui.welcome.WelcomeActivity"
@@ -46,12 +113,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.studentsection.scancode.ScanCodeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.adminsection.item.ItemDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.adminsection.item.AddItemActivity"
             android:exported="false" />
         <activity
             android:name=".ui.studentsection.StudentSectionActivity"
