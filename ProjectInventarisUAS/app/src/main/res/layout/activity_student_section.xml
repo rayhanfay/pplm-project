@@ -32,12 +32,13 @@
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/btnLogout"
+                android:id="@+id/btnDropdownMenu"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_white"
+                android:contentDescription="@string/desc_more"
                 android:padding="8dp"
-                android:src="@drawable/ic_logout" />
+                android:src="@drawable/ic_more" />
         </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

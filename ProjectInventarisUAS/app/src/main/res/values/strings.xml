@@ -248,7 +248,7 @@
     <!-- Change Phone Number-->
     <string name="need_phone_number">Nomor Telepon Diperlukan</string>
     <string name="first_login_phone_number">Mohon lengkapi nomor telepon Anda untuk melanjutkan.</string>
-    <string name="change_phone_number_title">Halo %1$s, Ganti Nomor Telepon Anda</string>
+    <string name="change_phone_number_title">Ganti Nomor Telepon</string>
     <string name="change_phone_number_title_placeholder">Ganti Nomor Telepon</string>
     <string name="hint_phone_number">Nomor Telepon</string>
     <string name="phone_number_empty_error">Nomor telepon tidak boleh kosong</string>
@@ -257,4 +257,10 @@
     <string name="phone_number_update_failed">Gagal memperbarui nomor telepon.</string>
     <string name="phone_number_required">Untuk melanjutkan, anda harus mengisi nomor telepon Anda</string>
     <string name="phone_number_required_for_scan">Anda harus mengisi nomor telepon Anda untuk melakukan proses scan</string>
+
+    <!--  More  -->
+    <string name="desc_more">Button for dropdown menu</string>
+    <string name="menu_change_password">Ganti Password</string>
+    <string name="menu_change_phone_number">Ganti Nomor Telepon</string>
+    <string name="menu_logout">Keluar</string>
 </resources>

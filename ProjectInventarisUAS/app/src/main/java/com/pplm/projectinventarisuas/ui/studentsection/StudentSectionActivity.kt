@@ -3,7 +3,15 @@ package com.pplm.projectinventarisuas.ui.studentsection
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.widget.doOnTextChanged
@@ -18,6 +26,7 @@ import com.pplm.projectinventarisuas.data.repository.ItemRepository
 import com.pplm.projectinventarisuas.data.repository.UserRepository
 import com.pplm.projectinventarisuas.databinding.ActivityStudentSectionBinding
 import com.pplm.projectinventarisuas.ui.adminsection.item.ItemDetailDialogFragment
+import com.pplm.projectinventarisuas.ui.auth.ChangePasswordActivity
 import com.pplm.projectinventarisuas.ui.auth.ChangePhoneNumberActivity
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.ui.studentsection.scancode.ScanCodeActivity
@@ -46,7 +55,7 @@ class StudentSectionActivity : AppCompatActivity() {
         setupRecyclerViews()
         setupViewModel()
         setupSearchBar()
-        setupLogoutButton()
+        setupDropdownMenu()
         setupScanCodeButton()
     }
 
@@ -132,8 +141,73 @@ class StudentSectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupLogoutButton() {
-        binding.btnLogout.setOnClickListener {
+//    private fun setupLogoutButton() {
+//        binding.btnLogout.setOnClickListener {
+//            CustomDialog.confirm(
+//                context = this,
+//                message = getString(R.string.logout_message),
+//                onConfirm = {
+//                    getSharedPreferences("LoginSession", MODE_PRIVATE).edit { clear() }
+//                    startActivity(Intent(this, LoginActivity::class.java).apply {
+//                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    })
+//                    finish()
+//                }
+//            )
+//        }
+//    }
+
+    private fun setupDropdownMenu() {
+        binding.btnDropdownMenu.setOnClickListener { view ->
+            showCustomDropdownMenu(view)
+        }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun showCustomDropdownMenu(anchorView: View) {
+        val popupView = LayoutInflater.from(this).inflate(R.layout.dialog_custom_dropdown, null)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        popupWindow.setBackgroundDrawable(resources.getDrawable(android.R.color.transparent))
+        popupWindow.elevation = 8f
+        val tvChangePassword = popupView.findViewById<TextView>(R.id.tvChangePassword)
+        val tvChangePhoneNumber = popupView.findViewById<TextView>(R.id.tvChangePhoneNumber)
+        val btnLogout = popupView.findViewById<Button>(R.id.btnLogout)
+
+        tvChangePassword.setOnClickListener {
+            popupWindow.dismiss()
+            val intent = Intent(this, ChangePasswordActivity::class.java)
+            val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+            intent.putExtra("userId", sharedPref.getString("studentId", ""))
+            intent.putExtra("userRole", sharedPref.getString("userRole", ""))
+            intent.putExtra("userName", sharedPref.getString("userName", ""))
+            startActivity(intent)
+        }
+
+        tvChangePhoneNumber.setOnClickListener {
+            popupWindow.dismiss()
+            checkPhoneNumberAndProceed {
+                val sharedPref = getSharedPreferences("LoginSession", MODE_PRIVATE)
+                val userId = sharedPref.getString("studentId", "")
+                val userRole = sharedPref.getString("userRole", "")
+                val userName = sharedPref.getString("userName", "") ?: ""
+
+                val intent = Intent(this, ChangePhoneNumberActivity::class.java)
+                intent.putExtra("userId", userId)
+                intent.putExtra("userRole", userRole)
+                intent.putExtra("userName", userName)
+                startActivity(intent)
+            }
+        }
+
+        btnLogout.setOnClickListener {
+            popupWindow.dismiss()
             CustomDialog.confirm(
                 context = this,
                 message = getString(R.string.logout_message),
@@ -146,6 +220,11 @@ class StudentSectionActivity : AppCompatActivity() {
                 }
             )
         }
+
+        val xOffset = anchorView.width - popupView.measuredWidth
+        val yOffset = anchorView.height
+
+        popupWindow.showAsDropDown(anchorView, xOffset, 0, Gravity.END)
     }
 
     private fun setupSwipeToRefresh() {
