@@ -140,6 +140,7 @@
     <!-- Return Kt -->
     <string name="camera_permission_denied_to_qr">Izin kamera diperlukan untuk memindai kode QR</string>
     <string name="return_success">Barang berhasil dikembalikan</string>
+    <string name="item_already_returned">Barang ini sudah berstatus Dikembalikan</string>
     <string name="scan_failed">Gagal scan: %1$s</string>
     <string name="item_registered_not_borrowed">Barang dengan ID \'%1$s\' terdaftar, tetapi tidak sedang dipinjam.</string>
     <string name="item_not_registered">Barang dengan ID \'%1$s\' tidak terdaftar.</string>

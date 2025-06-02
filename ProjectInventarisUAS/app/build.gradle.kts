@@ -70,7 +70,7 @@ dependencies {
     // Google Play Services
     implementation(libs.play.services.location)
 
-    // Lttie Animation
+    //Lttie Animation
     implementation("com.airbnb.android:lottie:6.3.0")
 
     // Splash Screen

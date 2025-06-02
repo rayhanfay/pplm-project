@@ -124,11 +124,26 @@ class BorrowingRepository : BorrowingDao {
     }
 
     fun getBorrowingByItemId(itemId: String, callback: (List<Borrowing>) -> Unit) {
+        Log.d("BorrowingRepo", "Getting borrowings for item ID: $itemId")
+
         database.child("borrowing").get().addOnSuccessListener { snapshot ->
-            val borrowingList = snapshot.children.mapNotNull { it.getValue(Borrowing::class.java) }
+            Log.d("BorrowingRepo", "Retrieved ${snapshot.childrenCount} total borrowing records")
+
+            val borrowingList = snapshot.children.mapNotNull {
+                val borrowing = it.getValue(Borrowing::class.java)
+                Log.d("BorrowingRepo", "Processing borrowing: ${borrowing?.borrowing_id}, item_id: ${borrowing?.item_id}, status: ${borrowing?.status}")
+                borrowing
+            }
             val filteredList = borrowingList.filter { it.item_id == itemId }
-            fetchRelatedData(filteredList, callback)
-        }.addOnFailureListener {
+
+            Log.d("BorrowingRepo", "Found ${filteredList.size} borrowings for item $itemId")
+            filteredList.forEach {
+                Log.d("BorrowingRepo", "Filtered borrowing: ID=${it.borrowing_id}, Status=${it.status}, ItemID=${it.item_id}")
+            }
+
+            callback(filteredList)
+        }.addOnFailureListener { exception ->
+            Log.e("BorrowingRepo", "Failed to get borrowings for item $itemId", exception)
             callback(emptyList())
         }
     }
@@ -153,11 +168,45 @@ class BorrowingRepository : BorrowingDao {
         returnTime: String,
         callback: (Boolean) -> Unit
     ) {
+        Log.d("BorrowingRepo", "Attempting to update borrowing $borrowingId to status: $status, return_time: $returnTime")
+
         val borrowingRef = database.child("borrowing").child(borrowingId)
-        borrowingRef.child("status").setValue(status)
-        borrowingRef.child("return_time").setValue(returnTime)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
+
+        borrowingRef.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                Log.d("BorrowingRepo", "Borrowing $borrowingId exists, current data: ${snapshot.value}")
+
+                val updates = hashMapOf<String, Any>(
+                    "status" to status,
+                    "return_time" to returnTime
+                )
+
+                borrowingRef.updateChildren(updates)
+                    .addOnSuccessListener {
+                        Log.d("BorrowingRepo", "Successfully updated borrowing $borrowingId to status: $status with return time: $returnTime")
+
+                        borrowingRef.get().addOnSuccessListener { verifySnapshot ->
+                            val updatedStatus = verifySnapshot.child("status").value
+                            val updatedReturnTime = verifySnapshot.child("return_time").value
+                            Log.d("BorrowingRepo", "Verification - Status: $updatedStatus, Return Time: $updatedReturnTime")
+                            callback(true)
+                        }.addOnFailureListener {
+                            Log.w("BorrowingRepo", "Update successful but verification failed for $borrowingId")
+                            callback(true)
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("BorrowingRepo", "Failed to update borrowing status for $borrowingId: ${e.message}", e)
+                        callback(false)
+                    }
+            } else {
+                Log.e("BorrowingRepo", "Borrowing $borrowingId does not exist")
+                callback(false)
+            }
+        }.addOnFailureListener { e ->
+            Log.e("BorrowingRepo", "Failed to check existence of borrowing $borrowingId: ${e.message}", e)
+            callback(false)
+        }
     }
 
     fun fetchItemById(itemId: String, callback: (Item?) -> Unit) {

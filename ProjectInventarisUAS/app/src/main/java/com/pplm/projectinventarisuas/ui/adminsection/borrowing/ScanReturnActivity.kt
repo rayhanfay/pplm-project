@@ -25,6 +25,8 @@ import java.util.Locale
 import com.pplm.projectinventarisuas.R
 import java.util.concurrent.Executors
 import android.view.View
+import java.util.concurrent.atomic.AtomicInteger
+import android.util.Log
 
 class ScanReturnActivity : AppCompatActivity() {
 
@@ -157,30 +159,111 @@ class ScanReturnActivity : AppCompatActivity() {
     }
 
     private fun checkBorrowingStatus(itemId: String) {
+        Log.d("ScanReturn", "Checking borrowing status for item: $itemId")
+
         borrowingRepository.getBorrowingByItemId(itemId) { borrowings ->
+            Log.d("ScanReturn", "Found ${borrowings.size} borrowing records for item $itemId")
+
             if (borrowings.isNotEmpty()) {
-                val latestBorrowing = borrowings.maxByOrNull { it.date_borrowed }
-                latestBorrowing?.let {
-                    when (it.status) {
-                        "Dikembalikan" -> {
-                            CustomDialog.alert(
-                                context = this,
-                                message = getString(R.string.return_success),
-                                onDismiss = { isProcessing = false }
-                            )
-                        }
-                        "Sedang Digunakan" -> {
-                            updateBorrowingStatusToReturned(it, getCurrentTime())
-                        }
-                        else -> {
-                            checkItemExists(itemId)
-                        }
-                    }
-                } ?: run {
-                    checkItemExists(itemId)
+                borrowings.forEachIndexed { index, borrowing ->
+                    Log.d("ScanReturn", "Borrowing $index: ID=${borrowing.borrowing_id}, Status=${borrowing.status}, ItemID=${borrowing.item_id}")
+                }
+
+                val activeBorrowings = borrowings.filter {
+                    it.status in listOf("Dipinjam", "Terlambat", "Hilang")
+                }
+
+                Log.d("ScanReturn", "Found ${activeBorrowings.size} active borrowings")
+                activeBorrowings.forEach { borrowing ->
+                    Log.d("ScanReturn", "Active borrowing: ID=${borrowing.borrowing_id}, Status=${borrowing.status}")
+                }
+
+                if (activeBorrowings.isEmpty()) {
+                    Log.d("ScanReturn", "All borrowings already returned")
+                    CustomDialog.success(
+                        context = this,
+                        message = getString(R.string.item_already_returned),
+                        onDismiss = { isProcessing = false }
+                    )
+                } else {
+                    Log.d("ScanReturn", "Updating ${activeBorrowings.size} active borrowings to returned")
+                    updateAllActiveBorrowingsToReturned(activeBorrowings, itemId)
                 }
             } else {
+                Log.d("ScanReturn", "No borrowing records found, checking if item exists")
                 checkItemExists(itemId)
+            }
+        }
+    }
+
+    private fun updateAllActiveBorrowingsToReturned(activeBorrowings: List<Borrowing>, itemId: String) {
+        val returnTime = getCurrentTime()
+        val totalBorrowings = activeBorrowings.size
+        val completedUpdates = AtomicInteger(0)
+        var hasFailure = false
+
+        Log.d("ScanReturn", "Starting update of $totalBorrowings active borrowings with return time: $returnTime")
+
+        val checkCompletion = { success: Boolean, borrowingId: String ->
+            if (!success) {
+                hasFailure = true
+                Log.e("ScanReturn", "Failed to update borrowing: $borrowingId")
+            } else {
+                Log.d("ScanReturn", "Successfully updated borrowing: $borrowingId")
+            }
+
+            val completed = completedUpdates.incrementAndGet()
+            Log.d("ScanReturn", "Completed updates: $completed / $totalBorrowings")
+
+            if (completed == totalBorrowings) {
+                if (hasFailure) {
+                    Log.e("ScanReturn", "Some borrowing updates failed")
+                    CustomDialog.alert(
+                        context = this,
+                        message = "Beberapa data peminjaman gagal diupdate",
+                        onDismiss = { isProcessing = false }
+                    )
+                } else {
+                    Log.d("ScanReturn", "All borrowing updates successful, updating item status")
+                    updateItemStatusToAvailable(itemId)
+                }
+            }
+        }
+
+        activeBorrowings.forEach { borrowing ->
+            Log.d("ScanReturn", "Updating borrowing ${borrowing.borrowing_id} from ${borrowing.status} to Dikembalikan")
+
+            borrowingRepository.updateBorrowingStatus(
+                borrowing.borrowing_id,
+                "Dikembalikan",
+                returnTime
+            ) { success ->
+                checkCompletion(success, borrowing.borrowing_id)
+            }
+        }
+    }
+
+    private fun updateItemStatusToAvailable(itemId: String) {
+        Log.d("ScanReturn", "Updating item $itemId status to Tersedia")
+
+        itemRepository.updateItemStatus(itemId, "Tersedia") { itemUpdated ->
+            if (itemUpdated) {
+                Log.d("ScanReturn", "Item $itemId status updated successfully")
+                CustomDialog.success(
+                    context = this,
+                    message = getString(R.string.return_success_item_available),
+                    onDismiss = {
+                        Log.d("ScanReturn", "Return process completed successfully")
+                        finish()
+                    }
+                )
+            } else {
+                Log.e("ScanReturn", "Failed to update item $itemId status")
+                CustomDialog.alert(
+                    context = this,
+                    message = getString(R.string.return_success_item_update_failed),
+                    onDismiss = { finish() }
+                )
             }
         }
     }
@@ -197,39 +280,6 @@ class ScanReturnActivity : AppCompatActivity() {
                 CustomDialog.alert(
                     context = this,
                     message = getString(R.string.item_not_registered, itemId),
-                    onDismiss = { isProcessing = false }
-                )
-            }
-        }
-    }
-
-    private fun updateBorrowingStatusToReturned(borrowing: Borrowing, returnTime: String) {
-        borrowingRepository.updateBorrowingStatus(
-            borrowing.borrowing_id,
-            "Dikembalikan ",
-            returnTime
-        ) { success ->
-            if (success) {
-                val itemId = borrowing.item_id
-                itemRepository.updateItemStatus(itemId, "Tersedia") { itemUpdated ->
-                    if (itemUpdated) {
-                        CustomDialog.alert(
-                            context = this,
-                            message = getString(R.string.return_success_item_available),
-                            onDismiss = { finish() }
-                        )
-                    } else {
-                        CustomDialog.alert(
-                            context = this,
-                            message = getString(R.string.return_success_item_update_failed),
-                            onDismiss = { finish() }
-                        )
-                    }
-                }
-            } else {
-                CustomDialog.alert(
-                    context = this,
-                    message = getString(R.string.borrowing_update_failed),
                     onDismiss = { isProcessing = false }
                 )
             }
