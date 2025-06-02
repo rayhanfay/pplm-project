@@ -1,6 +1,6 @@
 # Inventory Lending Management System
 
-![](images/logo.png)
+![](images/teknovaris.png)
 
 An Android-based application for managing and tracking asset items at the Faculty of Engineering, University of Riau. Designed to address asset loss issues, inaccurate lending data, and weak identity verification present in the current manual system. This application integrates with the Faculty of Engineering student database to ensure that borrowing is only done by authorized academic community members.
 
