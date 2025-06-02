@@ -1,4 +1,4 @@
-# Inventory Lending Management System
+# TeknoVaris: Inventory Lending Management System
 
 ![](images/teknovaris.png)
 
@@ -22,6 +22,8 @@ An Android-based application for managing and tracking asset items at the Facult
 - **Integrated Login System & Real-Time Database**: Login system integrated with student and faculty databases with real-time data updates
 - **Location Tracking & Timer Reminder**: Tracking of device's last location and automatic reminder system for return deadlines
 
+## 🏗️ App Architecture
+
 ## 🔍 Project Scope
 
 ### 📱 Mobile Application Development
@@ -35,15 +37,12 @@ An Android-based application for managing and tracking asset items at the Facult
 
 - **Firebase Real-Time Database**: Scalable cloud database with instant synchronization
 - **Secure Authentication System**: Multi-layer security with encrypted user data
-- **Backup & Recovery**: Automated data backup and recovery systems
 - **Analytics Dashboard**: Usage statistics and system performance monitoring
 
 ### ⚙️ Advanced Features
 
 - **Smart Notifications**: Contextual reminders and status updates
 - **GPS Integration**: Location-based services for item tracking
-- **Offline Capability**: Limited offline functionality with sync when connected
-- **Report Generation**: Automated reports for lending statistics and inventory status
 
 ## 🛠️ Tech Stack
 
@@ -58,21 +57,17 @@ An Android-based application for managing and tracking asset items at the Facult
 
 - **Firebase Realtime Database** - Real-time data synchronization
 - **Firebase Authentication** - User authentication and management
-- **Firebase Cloud Messaging** - Push notifications
-- **Firebase Storage** - File and image storage
 
 ### Libraries & APIs
 
 - **CameraX** - Camera functionality and image capture
-- **MLKit Barcode Scanner** - QR code and barcode scanning
+- **MLKit Barcode Scanner** - Barcode scanning
 - **Google Play Services** - Location services and authentication
-- **Retrofit** - HTTP client for API communication
-- **Glide** - Image loading and caching
+- **Lottie Animation** - Displays lightweight, vector-based animations
+- **MVVM** - Architecture pattern for separation of concerns and easier state management
 
 ### Security & Performance
 
-- **ProGuard** - Code obfuscation and optimization
-- **SSL/TLS** - Secure data transmission
 - **Firebase Security Rules** - Database access control
 
 ## 📲 Installation
@@ -81,8 +76,9 @@ An Android-based application for managing and tracking asset items at the Facult
 
 - Android device with API level 21+ (Android 5.0 Lollipop)
 - Internet connection for real-time features
-- Camera permission for QR code scanning
+- Camera permission for barcode scanning
 - Location permission for tracking features
+- Alarm Notifaction for reminder
 
 ### Download Options
 
@@ -90,20 +86,20 @@ An Android-based application for managing and tracking asset items at the Facult
 
 ```bash
 # Download the latest APK from releases
-wget https://github.com/your-username/inventory-lending-app/releases/latest/download/app-release.apk
+wget https://github.com/rayhanfay/pplm-project/releases/latest/download/TeknoVaris.apk
 
 # Install using ADB (if connected to computer)
-adb install app-release.apk
+adb install TeknoVaris.apk
 ```
 
 #### Option 2: Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/inventory-lending-app.git
+git clone https://github.com/rayhanfay/pplm-project.git
 
 # Open in Android Studio
-cd inventory-lending-app
+cd pplm-project
 # Open project in Android Studio and build
 ```
 
@@ -114,7 +110,7 @@ cd inventory-lending-app
 3. **Complete Onboarding** process to understand app features
 4. **Login** with your faculty credentials
 5. **Update Password** if logging in for the first time
-6. **Verify Phone Number** for notification services
+6. **Verify Phone Number** for borrowing services
 
 ## 🎯 Usage
 
@@ -122,22 +118,20 @@ cd inventory-lending-app
 
 1. **Login** with your student credentials
 2. **Browse Available Items** in the student dashboard
-3. **Scan QR Code** of desired item
+3. **Scan barcode** of desired item
 4. **Fill Lending Form** with required details
 5. **Set Lending Duration** according to your needs
-6. **Submit Request** and wait for admin approval
+6. **Submit Borrowing** to confirm borrow
 
 ### For Administrators
 
 1. **Login** with admin credentials
-2. **Monitor Lending Requests** in admin dashboard
-3. **Approve/Reject** lending requests
-4. **Manage Inventory** - add, edit, or remove items
-5. **Process Returns** using QR scanner
-6. **Generate Reports** for inventory tracking
+2. **Monitoring Item and Borrowing Status** in admin dashboard
+3. **Manage Inventory** - add, edit, or remove items
+4. **Process Returns** using barcode scanner
 
-### QR Code Operations
+### Barcode Operations
 
-- **Lending**: Scan item QR code to initiate lending process
-- **Returning**: Scan same QR code to process return
-- **Inventory**: Each item has unique QR code for tracking
+- **Lending**: Student Scan item barcode to initiate lending process
+- **Returning**: Adminstrator Scan same barcode to process return
+- **Inventory**: Each item has unique bardcode for tracking
