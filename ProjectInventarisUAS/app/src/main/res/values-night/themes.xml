@@ -1,9 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ProjectInventarisUAS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
 
-        <item name="android:statusBarColor">#1976d2</item>
+    <style name="Base.Theme.ProjectInventarisUAS" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/colorAppBar</item>
+
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+        <item name="android:datePickerStyle">@style/AppTheme_DatePicker</item>
+        <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
     </style>
+
+    <style name="Theme.ProjectInventarisUAS" parent="Base.Theme.ProjectInventarisUAS" />
+
+    <style name="AppTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
+        <item name="titleTextAppearance">@style/AppTheme.Toolbar.TitleTextAppearance</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.TitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/App.BottomNavigationView.ActiveIndicator</item>
+    </style>
+
+    <style name="App.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/bottom_nav_active_indicator_color</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="AppTheme_DatePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:headerBackground">@color/colorPrimary</item>
+        <item name="android:dayOfWeekBackground">@color/colorPrimaryLight</item>
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <item name="android:textColorAlertDialogListItem">@color/black</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerButtonStyle</item>
+    </style>
+
+    <style name="DatePickerButtonStyle" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_inset</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:statusBarColor">@color/colorAppBar</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="postSplashScreenTheme">@style/Theme.ProjectInventarisUAS</item>
+    </style>
+
 </resources>

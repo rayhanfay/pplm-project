@@ -25,70 +25,58 @@
 
         <intent>
             <action android:name="android.intent.action.DIAL" />
-
             <data android:scheme="tel" />
         </intent>
         <intent>
             <action android:name="android.intent.action.CALL" />
-
             <data android:scheme="tel" />
         </intent>
         <intent>
             <action android:name="android.intent.action.SENDTO" />
-
             <data android:scheme="sms" />
         </intent>
         <intent>
             <action android:name="android.intent.action.SENDTO" />
-
             <data android:scheme="smsto" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data android:scheme="geo" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data
                 android:host="maps.google.com"
                 android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data
                 android:host="www.google.com"
                 android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data
                 android:host="api.whatsapp.com"
                 android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data
                 android:host="wa.me"
                 android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data android:scheme="whatsapp" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data android:scheme="https" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-
             <data android:scheme="http" />
         </intent>
     </queries>
@@ -135,10 +123,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.SplashScreenActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -150,7 +138,7 @@
 
         <receiver
             android:name=".utils.ReminderReceiver"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

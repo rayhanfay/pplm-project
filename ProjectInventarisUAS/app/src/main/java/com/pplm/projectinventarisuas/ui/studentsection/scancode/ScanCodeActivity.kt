@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.Size
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,8 @@ class ScanCodeActivity : AppCompatActivity() {
     private var shutdownHandler: Handler? = null
     private var shutdownRunnable: Runnable? = null
     private var isDialogShowing = false
+    private var camera: Camera? = null
+    private var isFlashOn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,30 @@ class ScanCodeActivity : AppCompatActivity() {
 
         requestPermissionAndStartCamera()
         startAutoCloseTimer()
+        setupFlashButton()
+    }
+
+    private fun setupFlashButton() {
+        binding.btnFlash.setOnClickListener {
+            toggleFlash()
+        }
+    }
+
+    private fun toggleFlash() {
+        camera?.cameraControl?.enableTorch(!isFlashOn)?.let {
+            it.addListener(Runnable {
+                isFlashOn = !isFlashOn
+                updateFlashButtonIcon()
+            }, ContextCompat.getMainExecutor(this))
+        }
+    }
+
+    private fun updateFlashButtonIcon() {
+        if (isFlashOn) {
+            binding.btnFlash.setImageResource(R.drawable.ic_flash_on)
+        } else {
+            binding.btnFlash.setImageResource(R.drawable.ic_flash_off)
+        }
     }
 
     private fun requestPermissionAndStartCamera() {
@@ -158,7 +185,12 @@ class ScanCodeActivity : AppCompatActivity() {
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+            camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+            if (camera?.cameraInfo?.hasFlashUnit() == true) {
+                binding.btnFlash.visibility = View.VISIBLE
+            } else {
+                binding.btnFlash.visibility = View.GONE
+            }
 
         }, ContextCompat.getMainExecutor(this))
     }

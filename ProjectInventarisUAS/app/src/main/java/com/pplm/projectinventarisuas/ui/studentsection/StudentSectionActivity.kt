@@ -141,22 +141,6 @@ class StudentSectionActivity : AppCompatActivity() {
         }
     }
 
-//    private fun setupLogoutButton() {
-//        binding.btnLogout.setOnClickListener {
-//            CustomDialog.confirm(
-//                context = this,
-//                message = getString(R.string.logout_message),
-//                onConfirm = {
-//                    getSharedPreferences("LoginSession", MODE_PRIVATE).edit { clear() }
-//                    startActivity(Intent(this, LoginActivity::class.java).apply {
-//                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    })
-//                    finish()
-//                }
-//            )
-//        }
-//    }
-
     private fun setupDropdownMenu() {
         binding.btnDropdownMenu.setOnClickListener { view ->
             showCustomDropdownMenu(view)

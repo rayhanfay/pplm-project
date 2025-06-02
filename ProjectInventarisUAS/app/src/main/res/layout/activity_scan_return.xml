@@ -5,27 +5,42 @@
     android:id="@+id/scan_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/colorBackground"
+    android:fitsSystemWindows="true"
     tools:context=".ui.adminsection.borrowing.ScanReturnActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cameraCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="48dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="10dp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/previewView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/btnFlash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="24dp"
+            android:background="@drawable/circle_white"
+            android:contentDescription="@string/flash_button"
+            android:minWidth="24dp"
+            android:minHeight="24dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_flash_off" />
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

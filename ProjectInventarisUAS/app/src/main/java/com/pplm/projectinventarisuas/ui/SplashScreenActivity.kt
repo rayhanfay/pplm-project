@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pplm.projectinventarisuas.ui.auth.LoginActivity
 import com.pplm.projectinventarisuas.databinding.ActivitySplashScreenBinding
 import com.pplm.projectinventarisuas.ui.adminsection.AdminSectionActivity
@@ -19,6 +20,7 @@ class SplashScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashScreenBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)

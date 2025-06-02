@@ -113,6 +113,7 @@
     <string name="item_in_use">Item sedang dipinjam dan belum dikembalikan</string>
     <string name="scan_timeout">Pemindaian kedaluwarsa. Silakan coba lagi.</string>
     <string name="image_processing_failed">Gagal memproses gambar: %1$s</string>
+    <string name="flash_button">Tombol lampu kilat</string>
 
     <!-- BrDetailDialog Kt -->
     <string name="unsaved_changes_close">Anda memiliki perubahan yang belum disimpan. Yakin ingin menutup?</string>
