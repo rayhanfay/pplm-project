@@ -24,6 +24,8 @@ An Android-based application for managing and tracking asset items at the Facult
 
 ## 🏗️ App Architecture
 
+![](images/archirecture.png)
+
 ## 🔍 Project Scope
 
 ### 📱 Mobile Application Development
@@ -135,3 +137,109 @@ cd pplm-project
 - **Lending**: Student Scan item barcode to initiate lending process
 - **Returning**: Adminstrator Scan same barcode to process return
 - **Inventory**: Each item has unique bardcode for tracking
+
+## 🔐 Environment Setup
+
+### 1. Create `google-services.json`
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select or create a new project
+3. Add your Android app (use your app's package name)
+4. Download the `google-services.json` file
+5. Place it in your Android project under:
+
+   ```
+   app/google-services.json
+   ```
+
+### 2. Firebase Configuration (example `google-services.json` content)
+
+```json
+{
+  "project_info": {
+    "project_number": "123xxxxxxxx",
+    "firebase_url": "https://your-project-id.firebaseio.com",
+    "project_id": "your-project-id",
+    "storage_bucket": "your-project-id.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789012:android:abc123def456",
+        "android_client_info": {
+          "package_name": "com.example.yourapp"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyXXXXXXX"
+        }
+      ]
+    }
+  ],
+  "configuration_version": "1x"
+}
+```
+
+> ⚠️ Replace placeholders with actual values from your Firebase project.
+
+### 3. Integrate Firebase into Android Project
+
+#### Using Groovy (default):
+
+**In `build.gradle (Project)`**:
+
+```gradle
+buildscript {
+    dependencies {
+        classpath 'com.google.gms:google-services:4.3.15'
+    }
+}
+```
+
+**In `build.gradle (App)`**:
+
+```gradle
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+}
+```
+
+#### Using Kotlin DSL (`build.gradle.kts`):
+
+**In `build.gradle.kts (Project)`**:
+
+```kotlin
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.3.15")
+    }
+}
+```
+
+**In `build.gradle.kts (App)`**:
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("com.google.gms.google-services")
+}
+```
+
+## 📂 Dummy Data
+
+### User
+
+| Username     | Password      | Role      |
+| ------------ | ------------- | --------- |
+| 1234         | 12345678      | Student   |
+| 4321         | 12345678      | Admin     |
+
+### Item
+
+![](images/dummy_item_barcode.png)
+
+| Item ID      | Item Name    | Item Status  | Item Type   | Item Description |
+| ------------ | ------------ | ------------ | ----------- | ---------------- |
+| 010102012023 | Remote TV LG | Tersedia     | Remote      | Remote TV merek LG untuk keperluan presentasi di ruang kelas |
